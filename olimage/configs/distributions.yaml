@@ -1,6 +1,6 @@
 debian:
   components: ['main', 'contrib', 'non-free']
-  recomended: 'buster'
+  recommended: 'buster'
   releases:
     stretch: ~
     buster: ~
@@ -8,7 +8,7 @@ debian:
 
 ubuntu:
   components: ['main', 'universe', 'multiverse']
-  recomended: 'bionic'
+  recommended: 'bionic'
   releases:
     xenial: ~
     bionic: ~

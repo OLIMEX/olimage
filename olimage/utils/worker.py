@@ -2,7 +2,7 @@ import logging
 
 import cliapp
 
-import environment
+import olimage.environment as environment
 
 
 class Worker(object):
@@ -10,7 +10,7 @@ class Worker(object):
         pass
 
     @staticmethod
-    def run(*args, **kwargs):
+    def run(*args):
 
         if isinstance(args[1], logging.Logger):
             logger = args[1]
@@ -20,6 +20,8 @@ class Worker(object):
         def handle_output(data):
             for line in data.decode().rstrip().split('\n'):
                 logger.debug(line)
+
+        kwargs = dict()
 
         kwargs['env'] = environment.env
         kwargs['stdout_callback'] = handle_output

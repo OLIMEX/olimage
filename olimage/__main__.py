@@ -29,13 +29,10 @@ import os
 import sys
 
 import click
-import yaml
-
-
-# from .bsp import BSP
-# from .debootstrap import Debootstrap
 
 from olimage.board import Board
+from olimage.debootstrap import Debootstrap
+
 import olimage.environment as environment
 
 
@@ -60,15 +57,13 @@ def generate_environment(**kwargs):
 
     # Add paths
     root = os.path.dirname(os.path.abspath(__file__))
-    environment.env.update({
-        'paths': {
+    environment.paths.update({
             'root' : root,
             'configs' : os.path.join(root, 'configs')
-        }
     })
 
     # Copy command-line parameters to global env
-    environment.env.update(kwargs)
+    environment.options.update(kwargs)
 
     # Setup environment variables
     environment.env.update(os.environ.copy())
@@ -85,14 +80,14 @@ def prepare_logging():
 
     :return: None
     """
-    if environment.env['log'] is None:
+    if environment.options['log'] is None:
         return
 
     logging.basicConfig(
-        filename=environment.env['log'],
+        filename=environment.options['log'],
         filemode='w',
         format='\033[1m%(name)s\033[0m | %(message)s',
-        level=logging.DEBUG if environment.env['verbose'] > 0 else logging.INFO)
+        level=logging.DEBUG if environment.options['verbose'] > 0 else logging.INFO)
 
 
 def prepare_tree():
@@ -105,7 +100,7 @@ def prepare_tree():
     # Get working directory
     workdir = os.path.join(
         os.path.dirname(os.path.abspath(__file__)),
-        environment.env['workdir'])
+        environment.options['workdir'])
 
     # Check required directory structure
     if not os.path.exists(workdir):
@@ -131,7 +126,10 @@ def cli(**kwargs):
 
     # Generate board object
     b = Board(kwargs['target'])
-    print(b)
+
+    # Build rootfs
+    Debootstrap(b, kwargs['release']).build()
+
 
 
 #

@@ -1,17 +1,37 @@
+# Copyright (c) 2019 Olimex Ltd.
+#
+# MIT License
+#
+# Permission is hereby granted, free of charge, to any person obtaining
+# a copy of this software and associated documentation files (the
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
+# distribute, sublicense, and/or sell copies of the Software, and to
+# permit persons to whom the Software is furnished to do so, subject to
+# the following conditions:
+#
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+# LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+# OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+# WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
 import logging
 import os
-import subprocess
 import shlex
-import logging
-import yaml
-
-import environment
-
 import shutil
 
-from utils.worker import Worker
-from utils.printer import Printer
-from utils.stamper import RootFSStamper
+import yaml
+
+import olimage.environment as environment
+from olimage.utils.printer import Printer
+from olimage.utils.stamper import RootFSStamper
+from olimage.utils.worker import Worker
 
 logger = logging.getLogger(__name__)
 
@@ -75,14 +95,16 @@ class Distribution(object):
 
 
 class Debootstrap(object):
-    def __init__(self, arch, target):
-        self._target = dict()
+    def __init__(self, board, target):
+        self._target = {
+            'distribution' : None,
+            'release' :  None
+        }
         self._targets = dict()
-        self._arch = arch
+        self._board = board
 
         # Parse configuration file
-        cfg = os.path.dirname(os.path.abspath(__file__))
-        cfg = os.path.join(cfg, 'configs/distributions.yaml')
+        cfg = os.path.join(environment.paths['configs'], 'distributions.yaml')
         with open(cfg, 'r') as f:
             self._config = yaml.full_load(f.read())
 
@@ -92,11 +114,10 @@ class Debootstrap(object):
                 continue
             self._targets[key] = Distribution(key, value)
 
-
         # Check if target is distribution
         if target in self._targets:
             self._target['distribution'] = self._targets[target]
-            self._target['release'] = self._targets[target].releases[self._config[target]['recomended']]
+            self._target['release'] = self._targets[target].releases[self._config[target]['recommended']]
         else:
             for _, value in self._targets.items():
                 if target in value.releases:
@@ -106,13 +127,14 @@ class Debootstrap(object):
 
         for _, value in self._target.items():
             if value is None:
-                raise Exception("Not font")  # TODO: Fix this
+                raise Exception("Target distribution \'{}\' not found in configuration files".format(target))
 
         # Set build path
-        self._path = os.path.join(environment.env['workdir'], 'rootfs', "{}-{}".format(self._arch, self._target['release']))
+        self._path = os.path.join(
+            environment.options['workdir'], 'rootfs', "{}-{}".format(self._board.arch, self._target['release']))
 
         # Configure stamper
-        self._stamper = RootFSStamper(os.path.join(environment.env['workdir'], 'rootfs'))
+        self._stamper = RootFSStamper(os.path.join(environment.options['workdir'], 'rootfs'))
 
     @Printer("Creating base system")
     def _qemu_debootstrap(self):
@@ -133,7 +155,7 @@ class Debootstrap(object):
 
         Worker.run(
             shlex.split("qemu-debootstrap --arch={} --components={} {} {} {}".format(
-                self._arch,
+                self._board.arch,
                 ",".join(self._target['distribution'].components),
                 self._target['release'],
                 self._path, self._target['distribution'].repository)),
@@ -141,7 +163,7 @@ class Debootstrap(object):
         )
         self._stamper.stamp('debootstrap')
 
-    @Printer("Setting-up system hostname")
+    # @Printer("Setting-up system hostname")
     def _set_hostname(self, hostname):
 
         # Write hostname ot /etc/hostname
@@ -164,7 +186,7 @@ class Debootstrap(object):
         print("\nBuilding: \033[1m{}\033[0m based distribution".format(self._target['release']))
 
         self._qemu_debootstrap()
-        self._set_hostname('a64-olinuxino')
+        # self._set_hostname('a64-olinuxino')
         return
 
 
