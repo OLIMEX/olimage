@@ -39,5 +39,7 @@ bsp:
       - 'modules'
     toolchain: *toolchain
 
+hostname: 'a64-olinuxino'
+
 
 

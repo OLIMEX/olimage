@@ -163,7 +163,7 @@ class Debootstrap(object):
         )
         self._stamper.stamp('debootstrap')
 
-    # @Printer("Setting-up system hostname")
+    @Printer("Setting-up system hostname")
     def _set_hostname(self, hostname):
 
         # Write hostname ot /etc/hostname
@@ -173,20 +173,22 @@ class Debootstrap(object):
 
         # Add hostname to /etc/hosts
         path = os.path.join(self._path, 'etc/hosts')
-        with open(path, 'r') as f:
-            content = f.readlines()
-
         with open(path, 'w') as f:
-            f.write("127.0.1.1\t{}\n".format(hostname))
-            for line in content:
-                if hostname not in line:
-                    f.write('{}'.format(line))
+            f.write('127.0.0.1\tlocalhost {}\n'.format(hostname))
+            f.write('::1\t\tlocalhost {} ip6-localhost ip6-loopback\n'.format(hostname))
+            f.write('fe00::0\t\tip6-localnet\n')
+            f.write('ff00::0\t\tip6-mcastprefix\n')
+            f.write('ff02::1\t\tip6-allnodes\n')
+            f.write('ff02::2\t\tip6-allrouters\n')
 
     def build(self):
         print("\nBuilding: \033[1m{}\033[0m based distribution".format(self._target['release']))
 
+        # Run build steps
         self._qemu_debootstrap()
-        # self._set_hostname('a64-olinuxino')
+
+        # Run configure steps
+        self._set_hostname(self._board.hostname)
         return
 
 

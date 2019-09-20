@@ -48,4 +48,8 @@ class Board(object):
         """
         return self._config['bsp']
 
+    @property
+    def hostname(self):
+        return self._config['hostname']
+
 

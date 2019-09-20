@@ -1,6 +1,4 @@
-# Bare minimal packager
-minimal:
-  packages:
-    - nano
-
+root:
+  password: '1234'
+  force_change: yes
 
