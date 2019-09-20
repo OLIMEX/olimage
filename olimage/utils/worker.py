@@ -6,15 +6,14 @@ import olimage.environment as environment
 
 
 class Worker(object):
-    def __init__(self):
-        pass
 
     @staticmethod
-    def run(*args):
+    def run(command, logger=None):
 
-        if isinstance(args[1], logging.Logger):
-            logger = args[1]
-        else:
+        if not isinstance(command, list):
+            raise ValueError("Command should be list")
+
+        if logger is None or not isinstance(logger, logging.Logger):
             logger = logging.getLogger(__name__)
 
         def handle_output(data):
@@ -27,5 +26,11 @@ class Worker(object):
         kwargs['stdout_callback'] = handle_output
         kwargs['stderr_callback'] = handle_output
 
-        return cliapp.runcmd(args[0], **kwargs)
+        return cliapp.runcmd(command, **kwargs)
+
+    @staticmethod
+    def chroot(command, directory, logger=None):
+        if not isinstance(command, list):
+            raise ValueError("Command should be list")
+        Worker.run(['chroot', directory] + command, logger)
 

@@ -1,4 +1,8 @@
-root:
-  password: '1234'
-  force_change: yes
+users:
+  root:
+    password: '1234'
+    force_change: yes
+
+  test15:
+    password: 'olimex'
 

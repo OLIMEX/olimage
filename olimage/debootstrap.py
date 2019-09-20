@@ -129,6 +129,11 @@ class Debootstrap(object):
             if value is None:
                 raise Exception("Target distribution \'{}\' not found in configuration files".format(target))
 
+        # Parse image configuration
+        cfg = os.path.join(environment.paths['configs'], 'images.yaml')
+        with open(cfg, 'r') as f:
+            self._images = yaml.full_load(f.read())
+
         # Set build path
         self._path = os.path.join(
             environment.options['workdir'], 'rootfs', "{}-{}".format(self._board.arch, self._target['release']))
@@ -181,6 +186,19 @@ class Debootstrap(object):
             f.write('ff02::1\t\tip6-allnodes\n')
             f.write('ff02::2\t\tip6-allrouters\n')
 
+    @Printer("Setting-up users")
+    def _set_users(self):
+
+        for user, cfg in self._images['users'].items():
+            # Assuming root user is always present
+            if user != "root":
+                passwd = cfg['password']
+                Worker.chroot(
+                    shlex.split("/bin/bash -c '(echo {}; echo {};) | adduser --gecos {} {}'".format(passwd, passwd, user, user)),
+                    self._path,
+                    logger
+                )
+
     def build(self):
         print("\nBuilding: \033[1m{}\033[0m based distribution".format(self._target['release']))
 
@@ -188,7 +206,10 @@ class Debootstrap(object):
         self._qemu_debootstrap()
 
         # Run configure steps
-        self._set_hostname(self._board.hostname)
+        # self._set_hostname(self._board.hostname)
+
+        if 'users' in self._images:
+            self._set_users()
         return
 
 
