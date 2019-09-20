@@ -1,0 +1,6 @@
+# Bare minimal packager
+minimal:
+  packages:
+    - nano
+
+

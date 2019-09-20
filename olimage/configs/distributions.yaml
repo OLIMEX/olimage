@@ -1,0 +1,15 @@
+debian:
+  components: ['main', 'contrib', 'non-free']
+  recomended: 'buster'
+  releases:
+    stretch: ~
+    buster: ~
+  repository: 'http://httpredir.debian.org/debian'
+
+ubuntu:
+  components: ['main', 'universe', 'multiverse']
+  recomended: 'bionic'
+  releases:
+    xenial: ~
+    bionic: ~
+  repository: 'http://ports.ubuntu.com/'

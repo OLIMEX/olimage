@@ -1,0 +1,43 @@
+arch: &arch 'arm64'
+
+boards:
+  - 'A64-OLinuXino'
+  - 'A64-OLinuXino-eMMC'
+
+bsp:
+  arm-trusted-firmware:
+    debug: true
+    images:
+      - 'build/sun50i_a64/debug/bl31.bin'
+    platform: 'sun50i_a64'
+    refs: 'v2.1'
+    source: 'https://github.com/ARM-software/arm-trusted-firmware.git'
+    targets:
+      - 'bl31'
+    toolchain: &toolchain
+      prefix: 'aarch64-linux-gnu-'
+      version: 7
+
+  u-boot:
+    defconfig: 'a64-olinuxino'
+    depends:
+      - 'arm-trusted-firmware'
+    install:
+      - 'u-boot-sunxi-with-spl.bin:usr/lib/u-boot/a64-olinuxino/'
+    refs: 'v2019.07'
+    source: 'https://github.com/u-boot/u-boot.git'
+    toolchain: *toolchain
+
+  linux:
+    arch: *arch
+    defconfig: ~
+    source: 'https://kernel.googlesource.com/pub/scm/linux/kernel/git/stable/linux-stable'
+    refs: 'linux-5.3.y'
+    targets:
+      - 'Image'
+      - 'dtbs'
+      - 'modules'
+    toolchain: *toolchain
+
+
+
