@@ -2,7 +2,7 @@ import os
 
 import yaml
 
-import environment
+import olimage.environment as environment
 
 
 class Board(object):

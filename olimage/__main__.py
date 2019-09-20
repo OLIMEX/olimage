@@ -1,4 +1,28 @@
-#!/usr/env/bin python3
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+#
+# Copyright (c) 2019 Olimex Ltd.
+#
+# MIT License
+#
+# Permission is hereby granted, free of charge, to any person obtaining
+# a copy of this software and associated documentation files (the
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
+# distribute, sublicense, and/or sell copies of the Software, and to
+# permit persons to whom the Software is furnished to do so, subject to
+# the following conditions:
+#
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+# LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+# OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+# WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import logging
 import os
@@ -8,14 +32,11 @@ import click
 import yaml
 
 
-
-
-from .bsp import BSP
-from .debootstrap import Debootstrap
+# from .bsp import BSP
+# from .debootstrap import Debootstrap
 
 from olimage.board import Board
 import olimage.environment as environment
-
 
 
 def find_target(target):
@@ -27,6 +48,7 @@ def find_target(target):
     """
     boards = os.path.dirname(__file__)
     print(boards)
+
 
 def generate_environment(**kwargs):
     """
@@ -49,12 +71,12 @@ def generate_environment(**kwargs):
     environment.env.update(kwargs)
 
     # Setup environment variables
-    # environment.env.update(os.environ.copy())
-    # environment.env['LC_ALL'] = 'C'
-    # environment.env['LANGUAGE'] = 'C'
-    # environment.env['LANG'] = 'C'
-    # environment.env['DEBIAN_FRONTEND'] = 'noninteractive'
-    # environment.env['DEBCONF_NONINTERACTIVE_SEEN'] = 'true'
+    environment.env.update(os.environ.copy())
+    environment.env['LC_ALL'] = 'C'
+    environment.env['LANGUAGE'] = 'C'
+    environment.env['LANG'] = 'C'
+    environment.env['DEBIAN_FRONTEND'] = 'noninteractive'
+    environment.env['DEBCONF_NONINTERACTIVE_SEEN'] = 'true'
 
 
 def prepare_logging():
@@ -94,12 +116,10 @@ def prepare_tree():
 
 
 @click.command()
-
 # Options
 @click.option("-w", "--workdir", default="output", help="Specify working directory.")
 @click.option("-v", "--verbose", count=True, help="Increase loggging verbosity.")
 @click.option("--log", help="Logging file.")
-
 # Arguments
 @click.argument("target")
 @click.argument("release")

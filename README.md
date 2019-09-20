@@ -2,6 +2,10 @@
 
 ## Description
 ## Usage
+
+### From sources
+
 ```shell script
-sudo python3 builder --help
+cd olimage
+sudo python3 -m olimage --help
 ```
