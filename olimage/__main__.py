@@ -128,7 +128,16 @@ def cli(**kwargs):
     b = Board(kwargs['target'])
 
     # Build rootfs
-    Debootstrap(b, kwargs['release']).build().generate().format().mount().configure()
+    d = Debootstrap(b, kwargs['release']).build()
+
+    # Generate empty target image
+    d.generate().format()
+
+    # Make final configurations
+    d.configure()
+
+    # Copy rootfs files to the image
+    d.copy()
 
 
 

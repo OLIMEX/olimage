@@ -9,6 +9,7 @@ RUN apt-get install -y \
     parted \
     python3 \
     python3-pip \
+    rsync \
     qemu-user-static \
     qemu-utils \
     udev

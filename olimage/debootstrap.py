@@ -145,14 +145,10 @@ class Debootstrap(object):
         # Configure stamper
         self._stamper = RootFSStamper(os.path.join(environment.options['workdir'], 'rootfs'))
 
-        # Configure templater
-        self._templater = Templater(environment.paths['overlay'], self._path)
-
         # Output image
         self._image = os.path.join(environment.paths['workdir'], 'images', 'test.img')
 
     def __del__(self):
-        logger.info("Cleanup")
         for f in reversed(self._cleanup):
             f()
 
@@ -184,6 +180,17 @@ class Debootstrap(object):
 
         return self
 
+    @Printer("Installing overlay files")
+    def _install_overlay(self):
+        """
+        Copying overlay directory to target
+
+        :return: self
+        """
+        Worker.run(shlex.split("rsync -aHWXhv {}/ {}/".format(environment.paths['overlay'], self._path), logger))
+
+        return self
+
     @Printer("Setting-up system hostname")
     def _set_hostname(self, hostname):
         """
@@ -193,10 +200,9 @@ class Debootstrap(object):
         :return: self
         """
 
-        self._templater.install(
+        Templater.install(
             [
-                'etc/hostname',
-                'etc/hosts'
+                os.path.join(self._path, f) for f in ['etc/hostname', 'etc/hosts']
             ],
             hostname=hostname
         )
@@ -210,9 +216,10 @@ class Debootstrap(object):
 
         :return: self
         """
-        self._templater.install(
+
+        Templater.install(
             [
-                'etc/fstab'
+                os.path.join(self._path, 'etc/fstab')
             ],
             partitions = [
                 {
@@ -236,7 +243,7 @@ class Debootstrap(object):
             if user != "root":
                 passwd = cfg['password']
                 Worker.chroot(
-                    shlex.split("/bin/bash -c '(echo {}; echo {};) | adduser --gecos {} {}'".format(passwd*2, user*2)),
+                    shlex.split("/bin/bash -c '(echo {}; echo {};) | adduser --gecos {} {}'".format(passwd, passwd, user, user)),
                     self._path,
                     logger
                 )
@@ -248,10 +255,9 @@ class Debootstrap(object):
 
         # Run configure steps
         self._stamper.remove('configured')
+        self._install_overlay()
         self._set_hostname(self._board.hostname)
         self._set_fstab()
-
-        return self
 
         if 'users' in self._images:
             self._set_users()
@@ -293,6 +299,25 @@ class Debootstrap(object):
 
         return self
 
+    def _mount(self, part):
+        # Create mounting point
+        mount = os.path.join(os.path.dirname(self._image), ".mnt_{}".format(part))
+        self._images['partitions'][part]['mount'] = mount
+
+        if os.path.exists(mount):
+            shutil.rmtree(mount)
+
+        # Mount root
+        logger.info("Creating mounting point: {}".format(mount))
+        os.mkdir(mount)
+
+        cfg = self._images['partitions'][part]
+        Worker.run(shlex.split('mount {} {}'.format(cfg['device'], mount)), logger)
+
+        self._cleanup.append(lambda: Worker.run(shlex.split('umount {}'.format(self._images['partitions'][part]['mount'])), logger))
+
+        return self
+
     @Printer("Creating partitions")
     def format(self):
 
@@ -325,15 +350,14 @@ class Debootstrap(object):
             if w[0] == 'add':
                 device = os.path.join('/dev/mapper', w[2])
                 index = int(re.match(r'^loop\d+p(\d+)$', w[2])[1])
-                cfg = list(self._images['partitions'].items())[index - 1][1]
-                type = cfg['type']
+                part, cfg = list(self._images['partitions'].items())[index - 1]
                 opts = ''
 
-                if type == 'ext4':
+                if cfg['type'] == 'ext4':
                     opts = '-O ^64bit,^metadata_csum'
 
                 # Make filesystem
-                Worker.run(shlex.split('mkfs.{} {} {}'.format(type, opts, device)), logger)
+                Worker.run(shlex.split('mkfs.{} {} {}'.format(cfg['type'], opts, device)), logger)
                 Worker.run(shlex.split('udevadm trigger {}'.format(device)), logger)
                 Worker.run(shlex.split('udevadm settle'.format(device)), logger)
 
@@ -343,31 +367,13 @@ class Debootstrap(object):
                     logger
                 ).decode().splitlines()[0]
 
-        return self
-
-    @Printer("Mounting filesystem")
-    def mount(self):
-        # Create mounting point
-        root = os.path.join(os.path.dirname(self._image), '.mnt')
-        boot = os.path.join(root, 'boot')
-
-        if os.path.exists(root):
-            shutil.rmtree(root)
-
-        # Mount root
-        logger.info("Creating mounting point: {}".format(root))
-        os.mkdir(root)
-
-        cfg = self._images['partitions']['rootfs']
-        Worker.run(shlex.split('mount {} {}'.format(cfg['device'], root)), logger)
-        self._cleanup.append(lambda: Worker.run(shlex.split('umount {}'.format(self._images['partitions']['rootfs']['device'])), logger))
-
-        # Mount boot
-        logger.info("Creating mounting point: {}".format(boot))
-        os.mkdir(boot)
-
-        cfg = self._images['partitions']['boot']
-        Worker.run(shlex.split('mount {} {}'.format(cfg['device'], boot)))
-        self._cleanup.append(lambda: Worker.run(shlex.split('umount {}'.format(self._images['partitions']['boot']['device'])), logger))
+                # Mount part
+                self._mount(part)
 
         return self
+
+    @Printer("Copying rootfs files to the image file")
+    def copy(self):
+        # Copy root
+        Worker.run(shlex.split('rsync -aHWXhv --exclude="/boot/*" --exclude="/dev/*" --exclude="/proc/*" --exclude="/run/*" --exclude="/tmp/*" \
+                        --exclude="/sys/*" {}/ {}/'.format(self._path, self._images['partitions']['rootfs']['mount'])))

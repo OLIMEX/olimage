@@ -30,20 +30,9 @@ logger = logging.getLogger(__name__)
 
 
 class Templater(object):
-    """
-    Install template files to target path
-    """
-    def __init__(self, source, target):
-        """
-        Configure paths
 
-        :param source: Source directory
-        :param target: Target directory
-        """
-        self._source = source
-        self._target = target
-
-    def install(self, files, **kwargs):
+    @staticmethod
+    def install(files, **kwargs):
         """
         Render templates
 
@@ -55,12 +44,10 @@ class Templater(object):
 
         for file in files:
             logger.debug("Generating template file : {}".format(file))
-            with open(os.path.join(self._source, file), 'r') as f:
+            with open(file, 'r') as f:
                 data = f.read()
 
             tm = Template(data)
             data = tm.render(**kwargs)
-            with open(os.path.join(self._target, file), 'w') as f:
+            with open(file, 'w') as f:
                 f.write(data + "\n")
-
-        return self
