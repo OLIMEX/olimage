@@ -59,7 +59,9 @@ def generate_environment(**kwargs):
     root = os.path.dirname(os.path.abspath(__file__))
     environment.paths.update({
             'root' : root,
-            'configs' : os.path.join(root, 'configs')
+            'configs' : os.path.join(root, 'configs'),
+            'workdir' : os.path.join(root, kwargs['workdir']),
+            'overlay' : os.path.join(root, kwargs['overlay'])
     })
 
     # Copy command-line parameters to global env
@@ -97,15 +99,12 @@ def prepare_tree():
     :return: None
     """
 
-    # Get working directory
-    workdir = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)),
-        environment.options['workdir'])
-
     # Check required directory structure
+    workdir = environment.paths['workdir']
     if not os.path.exists(workdir):
         os.mkdir(workdir)
-    for d in ['dl', 'build', 'rootfs']:
+
+    for d in ['dl', 'build', 'rootfs', 'images']:
         if not os.path.exists(os.path.join(workdir, d)):
             os.mkdir(os.path.join(workdir, d))
 
@@ -113,6 +112,7 @@ def prepare_tree():
 @click.command()
 # Options
 @click.option("-w", "--workdir", default="output", help="Specify working directory.")
+@click.option("--overlay", default="overlay", help="Path to overlay files")
 @click.option("-v", "--verbose", count=True, help="Increase loggging verbosity.")
 @click.option("--log", help="Logging file.")
 # Arguments
@@ -128,7 +128,7 @@ def cli(**kwargs):
     b = Board(kwargs['target'])
 
     # Build rootfs
-    Debootstrap(b, kwargs['release']).build()
+    Debootstrap(b, kwargs['release']).build().generate().format().mount().configure()
 
 
 

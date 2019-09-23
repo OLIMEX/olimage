@@ -1,8 +1,29 @@
+partitions:
+  boot:
+    type: 'vfat'
+    offset: '1MiB'
+    size: '64MiB'
+    fstab:
+      mount: '/boot'
+      options: 'defaults'
+      dump: 0
+      pass: 2
+
+  rootfs:
+    type: 'ext4'
+    offset: '64MiB'
+    size: ~
+    fstab:
+      mount: '/'
+      options: 'defaults,noatime,nodiratime,commit=600,errors=remount-ro'
+      dump: 0
+      pass: 1
+
 users:
   root:
     password: '1234'
     force_change: yes
 
-  test15:
+  olimex:
     password: 'olimex'
 

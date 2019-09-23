@@ -22,7 +22,9 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import logging
+import math
 import os
+import re
 import shlex
 import shutil
 
@@ -32,6 +34,7 @@ import olimage.environment as environment
 from olimage.utils.printer import Printer
 from olimage.utils.stamper import RootFSStamper
 from olimage.utils.worker import Worker
+from olimage.utils.templater import Templater
 
 logger = logging.getLogger(__name__)
 
@@ -102,6 +105,7 @@ class Debootstrap(object):
         }
         self._targets = dict()
         self._board = board
+        self._cleanup = []
 
         # Parse configuration file
         cfg = os.path.join(environment.paths['configs'], 'distributions.yaml')
@@ -141,6 +145,17 @@ class Debootstrap(object):
         # Configure stamper
         self._stamper = RootFSStamper(os.path.join(environment.options['workdir'], 'rootfs'))
 
+        # Configure templater
+        self._templater = Templater(environment.paths['overlay'], self._path)
+
+        # Output image
+        self._image = os.path.join(environment.paths['workdir'], 'images', 'test.img')
+
+    def __del__(self):
+        logger.info("Cleanup")
+        for f in reversed(self._cleanup):
+            f()
+
     @Printer("Creating base system")
     def _qemu_debootstrap(self):
         """
@@ -150,10 +165,9 @@ class Debootstrap(object):
         """
 
         if 'debootstrap' in self._stamper.stamps and os.path.exists(self._path):
-            return
+            return self
 
         self._stamper.remove('debootstrap')
-
         if os.path.exists(self._path):
             shutil.rmtree(self._path)
         os.mkdir(self._path)
@@ -168,23 +182,51 @@ class Debootstrap(object):
         )
         self._stamper.stamp('debootstrap')
 
+        return self
+
     @Printer("Setting-up system hostname")
     def _set_hostname(self, hostname):
+        """
+        Prepare /etc/hostname and /ets/hosts
 
-        # Write hostname ot /etc/hostname
-        path = os.path.join(self._path, 'etc/hostname')
-        with open(path, 'w') as f:
-            f.write("{}\n".format(hostname))
+        :param hostname: board hostname
+        :return: self
+        """
 
-        # Add hostname to /etc/hosts
-        path = os.path.join(self._path, 'etc/hosts')
-        with open(path, 'w') as f:
-            f.write('127.0.0.1\tlocalhost {}\n'.format(hostname))
-            f.write('::1\t\tlocalhost {} ip6-localhost ip6-loopback\n'.format(hostname))
-            f.write('fe00::0\t\tip6-localnet\n')
-            f.write('ff00::0\t\tip6-mcastprefix\n')
-            f.write('ff02::1\t\tip6-allnodes\n')
-            f.write('ff02::2\t\tip6-allrouters\n')
+        self._templater.install(
+            [
+                'etc/hostname',
+                'etc/hosts'
+            ],
+            hostname=hostname
+        )
+
+        return self
+
+    @Printer("Configuring fstab")
+    def _set_fstab(self):
+        """
+        Prepare /etc/fstab
+
+        :return: self
+        """
+        self._templater.install(
+            [
+                'etc/fstab'
+            ],
+            partitions = [
+                {
+                    'uuid' : '{:41}'.format('UUID=' + p['fstab']['uuid']),
+                    'mount' : '{:15}'.format(p['fstab']['mount']),
+                    'type' : '{:7}'.format(p['type']),
+                    'options' : '{:8}'.format(p['fstab']['options']),
+                    'dump' : '{:7}'.format(p['fstab']['dump']),
+                    'pass' : '{:8}'.format(p['fstab']['pass'])
+                } for _, p in self._images['partitions'].items()
+            ]
+        )
+
+        return self
 
     @Printer("Setting-up users")
     def _set_users(self):
@@ -194,23 +236,138 @@ class Debootstrap(object):
             if user != "root":
                 passwd = cfg['password']
                 Worker.chroot(
-                    shlex.split("/bin/bash -c '(echo {}; echo {};) | adduser --gecos {} {}'".format(passwd, passwd, user, user)),
+                    shlex.split("/bin/bash -c '(echo {}; echo {};) | adduser --gecos {} {}'".format(passwd*2, user*2)),
                     self._path,
                     logger
                 )
+
+    def configure(self):
+
+        if 'configured' in self._stamper.stamps:
+            return self
+
+        # Run configure steps
+        self._stamper.remove('configured')
+        self._set_hostname(self._board.hostname)
+        self._set_fstab()
+
+        return self
+
+        if 'users' in self._images:
+            self._set_users()
+        self._stamper.stamp('configured')
+
+        return self
 
     def build(self):
         print("\nBuilding: \033[1m{}\033[0m based distribution".format(self._target['release']))
 
         # Run build steps
-        self._qemu_debootstrap()
 
-        # Run configure steps
-        # self._set_hostname(self._board.hostname)
+        return self._qemu_debootstrap()
 
-        if 'users' in self._images:
-            self._set_users()
-        return
+    @staticmethod
+    def get_size(path):
+        size = 0
+        for dir, _, file in os.walk(path):
+            for f in file:
+                fp = os.path.join(dir, f)
 
+                if not os.path.islink(fp):
+                    size += os.path.getsize(fp)
 
+        return size
 
+    @Printer("Generating blank image")
+    def generate(self):
+
+        # Get size and add 100MiB size
+        size = math.ceil(self.get_size(self._path)/1024/1024) + 100
+
+        logger.info("Creating empty file: {} with size {}".format(self._image, size))
+
+        Worker.run(
+            shlex.split("qemu-img create -f raw {} {}M".format(self._image, size)),
+            logger
+        )
+
+        return self
+
+    @Printer("Creating partitions")
+    def format(self):
+
+        # Create disk label
+        logger.info("Creating disk label: msdos")
+        Worker.run(
+            shlex.split('parted -s {} mklabel msdos'.format(self._image)),
+            logger
+        )
+
+        # Create partitions
+        for key, value in self._images['partitions'].items():
+            logger.info("Creating paritition: {}".format(key))
+            Worker.run(
+                shlex.split('parted -s {} mkpart primary {} {} {}'.format(
+                    self._image,
+                    'fat32' if value['type'] == 'vfat' else value['type'],
+                    value['offset'],
+                    '100%' if value['size'] is None else value['size']
+                )),
+                logger
+            )
+
+        # Map partitions
+        output = Worker.run(shlex.split('kpartx -avs {}'.format(self._image)), logger).decode('utf-8', 'ignore')
+        self._cleanup.append(lambda: Worker.run(shlex.split('kpartx -dvs {}'.format(self._image)), logger))
+
+        for line in output.splitlines():
+            w = line.split()
+            if w[0] == 'add':
+                device = os.path.join('/dev/mapper', w[2])
+                index = int(re.match(r'^loop\d+p(\d+)$', w[2])[1])
+                cfg = list(self._images['partitions'].items())[index - 1][1]
+                type = cfg['type']
+                opts = ''
+
+                if type == 'ext4':
+                    opts = '-O ^64bit,^metadata_csum'
+
+                # Make filesystem
+                Worker.run(shlex.split('mkfs.{} {} {}'.format(type, opts, device)), logger)
+                Worker.run(shlex.split('udevadm trigger {}'.format(device)), logger)
+                Worker.run(shlex.split('udevadm settle'.format(device)), logger)
+
+                cfg['device'] = device
+                cfg['fstab']['uuid'] = Worker.run(
+                    shlex.split('blkid -s UUID -o value {}'.format(device)),
+                    logger
+                ).decode().splitlines()[0]
+
+        return self
+
+    @Printer("Mounting filesystem")
+    def mount(self):
+        # Create mounting point
+        root = os.path.join(os.path.dirname(self._image), '.mnt')
+        boot = os.path.join(root, 'boot')
+
+        if os.path.exists(root):
+            shutil.rmtree(root)
+
+        # Mount root
+        logger.info("Creating mounting point: {}".format(root))
+        os.mkdir(root)
+
+        cfg = self._images['partitions']['rootfs']
+        Worker.run(shlex.split('mount {} {}'.format(cfg['device'], root)), logger)
+        self._cleanup.append(lambda: Worker.run(shlex.split('umount {}'.format(self._images['partitions']['rootfs']['device'])), logger))
+
+        # Mount boot
+        logger.info("Creating mounting point: {}".format(boot))
+        os.mkdir(boot)
+
+        cfg = self._images['partitions']['boot']
+        Worker.run(shlex.split('mount {} {}'.format(cfg['device'], boot)))
+        self._cleanup.append(lambda: Worker.run(shlex.split('umount {}'.format(self._images['partitions']['boot']['device'])), logger))
+
+        return self
