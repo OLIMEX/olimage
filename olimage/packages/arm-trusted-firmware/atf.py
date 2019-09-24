@@ -48,3 +48,8 @@ class ATF(Package):
 
         # BL31 is needed for u-boot compilation
         environment.env['BL31'] = b.paths['extract'] + '/' + self._config['images'][0]
+
+        return self
+
+    def package(self):
+        return self

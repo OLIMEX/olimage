@@ -8,6 +8,7 @@ docker run -i -t \
 	--privileged \
 	-v /tmp:/tmp \
 	-v /dev:/dev \
+	-v /proc:/proc \
 	-v $(pwd):/olimage \
 	olimex/test1
 

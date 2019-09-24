@@ -15,6 +15,12 @@ class Package(object):
     def dependency(self):
         raise NotImplementedError("'dependency' method not implemented")
 
+    def build(self):
+        raise NotImplementedError("'build' method not implemented")
+
+    def package(self):
+        raise NotImplementedError("'package' method not implemented")
+
 
 Pool = {}
 

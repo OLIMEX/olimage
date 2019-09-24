@@ -3,14 +3,18 @@ FROM debian:latest
 RUN apt-get update
 
 RUN apt-get install -y \
+    bc \
     bison \
+    cpio \
     debootstrap \
     device-tree-compiler \
     dosfstools \
     gcc-aarch64-linux-gnu \
     git \
     flex \
+    kmod \
     kpartx \
+    libssl-dev \
     parted \
     python-dev \
     python3 \

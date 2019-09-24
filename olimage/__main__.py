@@ -138,7 +138,9 @@ def cli(**kwargs):
 
 
     # print(board_packages)
-    board_packages['u-boot'].build().package()
+    # board_packages['arm-trusted-firmware'].build().package()
+    # board_packages['u-boot'].build().package()
+    board_packages['linux'].build().package()
     return
 
     # Build rootfs
