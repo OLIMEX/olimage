@@ -47,7 +47,7 @@ class Templater(object):
             with open(file, 'r') as f:
                 data = f.read()
 
-            tm = Template(data)
+            tm = Template(data, trim_blocks=True, keep_trailing_newline=False)
             data = tm.render(**kwargs)
             with open(file, 'w') as f:
                 f.write(data + "\n")

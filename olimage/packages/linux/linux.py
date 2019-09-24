@@ -1,21 +1,18 @@
 import logging
 
-from utils.downloader import Downloader
-from utils.builder import Builder
-
-import bsp
+from olimage.utils.downloader import Downloader
+from olimage.utils.builder import Builder
+from olimage.packages import Package
 
 logger = logging.getLogger(__name__)
 
 
-class Kernel(bsp.BSP):
+class Linux(Package):
 
-    def __init__(self, config, **kwargs):
+    def __init__(self, config):
 
         self._name = 'linux'
-
-        self._config = config[self._name]
-        self._workdir = kwargs['workdir']
+        self._config = config
 
     @staticmethod
     def alias():
@@ -35,15 +32,15 @@ class Kernel(bsp.BSP):
         print("\nBuilding: \033[1m{}\033[0m".format(self))
 
         # Download package
-        Downloader(self._name, self._workdir, self._config).download()
+        Downloader(self._name, self._config).download()
 
         # Build package
-        Builder(self._name, self._workdir, self._config)\
-            .extract()\
-            .configure("ARCH={} {}".format(
+        b = Builder(self._name, self._config)
+        b.extract()
+        b.configure("ARCH={} {}".format(
                 self._config['arch'],
-                'defconfig' if self._config['defconfig'] is None else self._config['defconfig'] + '_defconfig'))\
-            .build("ARCH={} CROSS_COMPILE={} {}".format(
+                'defconfig' if self._config['defconfig'] is None else self._config['defconfig'] + '_defconfig'))
+        b.build("ARCH={} CROSS_COMPILE={} {}".format(
                 self._config['arch'],
                 self._config['toolchain']['prefix'],
                 ' '.join(self._config['targets'])))

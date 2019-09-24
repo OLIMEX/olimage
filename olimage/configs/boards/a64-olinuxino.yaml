@@ -4,7 +4,9 @@ boards:
   - 'A64-OLinuXino'
   - 'A64-OLinuXino-eMMC'
 
-bsp:
+hostname: 'a64-olinuxino'
+
+packages:
   arm-trusted-firmware:
     debug: true
     images:
@@ -19,6 +21,7 @@ bsp:
       version: 7
 
   u-boot:
+    arch: *arch
     defconfig: 'a64-olinuxino'
     depends:
       - 'arm-trusted-firmware'
@@ -38,8 +41,6 @@ bsp:
       - 'dtbs'
       - 'modules'
     toolchain: *toolchain
-
-hostname: 'a64-olinuxino'
 
 
 

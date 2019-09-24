@@ -40,13 +40,13 @@ class Board(object):
         return self._config['arch']
 
     @property
-    def bsp(self):
+    def packages(self):
         """
         Get BSP configuration
 
         :return: configuration dict
         """
-        return self._config['bsp']
+        return self._config['packages']
 
     @property
     def hostname(self):

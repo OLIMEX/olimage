@@ -8,7 +8,7 @@ import olimage.environment as environment
 class Worker(object):
 
     @staticmethod
-    def run(command, logger=None):
+    def run(command, logger=None, **kwargs):
 
         if not isinstance(command, list):
             raise ValueError("Command should be list")
@@ -20,13 +20,14 @@ class Worker(object):
             for line in data.decode().rstrip().split('\n'):
                 logger.debug(line)
 
-        kwargs = dict()
+        kw = dict()
 
-        kwargs['env'] = environment.env
-        kwargs['stdout_callback'] = handle_output
-        kwargs['stderr_callback'] = handle_output
+        kw['env'] = environment.env
+        kw['stdout_callback'] = handle_output
+        kw['stderr_callback'] = handle_output
+        kw.update(kwargs)
 
-        return cliapp.runcmd(command, **kwargs)
+        return cliapp.runcmd(command, **kw)
 
     @staticmethod
     def chroot(command, directory, logger=None):

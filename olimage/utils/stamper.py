@@ -43,6 +43,7 @@ class Stamper(object):
         if os.path.exists(file):
             os.remove(file)
 
+
 class RootFSStamper(Stamper):
     def __init__(self, path):
         super().__init__(path)
@@ -50,6 +51,7 @@ class RootFSStamper(Stamper):
             'debootstrap',  # qemu-debootstrap process finished successfully
             'configured',   # rootfs was configured
         ]
+
 
 class PackageStamper(Stamper):
     def __init__(self, path):

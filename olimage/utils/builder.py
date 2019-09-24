@@ -4,21 +4,22 @@ import shlex
 import shutil
 import tarfile
 
-from utils.printer import Printer
-from utils.stamper import Stamper
-from utils.package import Package
-from utils.worker import Worker
+from olimage.utils.printer import Printer
+from olimage.utils.stamper import PackageStamper
+from olimage.utils.worker import Worker
+
+from olimage.utils import Util
 
 logger = logging.getLogger(__name__)
 
 
-class Builder(Package):
+class Builder(Util):
 
-    def __init__(self, name, path, config):
-        super().__init__(name, path, config)
+    def __init__(self, name, config):
+        super().__init__(name, config)
 
         # Configure stamper
-        self.stamper = Stamper(self._path['build'])
+        self.stamper = PackageStamper(self.paths['build'])
 
     @property
     def printer(self):
@@ -31,19 +32,19 @@ class Builder(Package):
     @Printer("Extracting archive")
     def extract(self):
 
-        self.printer.text += " \'{}\'".format(os.path.basename(self._path['archive']))
+        self.printer.text += " \'{}\'".format(os.path.basename(self.paths['archive']))
 
-        if 'extracted' in self.stamper.get_stamps():
+        if 'extracted' in self.stamper.stamps:
             return self
 
         # Cleanup directory
-        if os.path.exists(self._path['extract']):
-            logger.debug("Removing dirty directory: {}".format(self._path['extract']))
-            shutil.rmtree(self._path['extract'])
+        if os.path.exists(self.paths['extract']):
+            logger.debug("Removing dirty directory: {}".format(self.paths['extract']))
+            shutil.rmtree(self.paths['extract'])
 
         # Extract sources
-        with tarfile.open(name=self._path['archive'], mode='r:gz') as tar:
-            tar.extractall(path=self._path['extract'])
+        with tarfile.open(name=self.paths['archive'], mode='r:gz') as tar:
+            tar.extractall(path=self.paths['extract'])
 
         self.stamper.stamp('extracted')
 
@@ -54,7 +55,7 @@ class Builder(Package):
 
         self.printer.text += " \'{}\'".format(self)
 
-        if 'configured' in self.stamper.get_stamps():
+        if 'configured' in self.stamper.stamps:
             return self
 
         # Command is none, then assume user whats to skip this step
@@ -68,12 +69,11 @@ class Builder(Package):
 
         Worker.run(
             shlex.split("/bin/bash -c 'make -C {} {} -j{}'".format(
-                self._path['extract'],
+                self.paths['extract'],
                 command,
                 1 if os.cpu_count() is None else os.cpu_count())
             ),
-            stdout_callback=handle_output,
-            stderr_callback=handle_output
+            logger
         )
 
         return self
@@ -93,12 +93,11 @@ class Builder(Package):
 
         Worker.run(
             shlex.split("/bin/bash -c 'make -C {} {} -j{}'".format(
-                self._path['extract'],
+                self.paths['extract'],
                 command,
                 1 if os.cpu_count() is None else os.cpu_count())
             ),
-            stdout_callback=handle_output,
-            stderr_callback=handle_output,
+            logger
         )
 
         return self

@@ -34,6 +34,7 @@ from olimage.board import Board
 from olimage.debootstrap import Debootstrap
 
 import olimage.environment as environment
+import olimage.packages as package
 
 
 def find_target(target):
@@ -126,6 +127,19 @@ def cli(**kwargs):
 
     # Generate board object
     b = Board(kwargs['target'])
+
+    board_packages = {}
+    for key, value in b.packages.items():
+        try:
+            obj = package.Pool[key]
+            board_packages[key] = obj(value)
+        except KeyError as e:
+            raise Exception("Missing package builder: {}".format(e))
+
+
+    # print(board_packages)
+    board_packages['u-boot'].build().package()
+    return
 
     # Build rootfs
     d = Debootstrap(b, kwargs['release']).build()

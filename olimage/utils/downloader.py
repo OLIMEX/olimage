@@ -5,22 +5,22 @@ import shutil
 import git
 from git.exc import CommandError, InvalidGitRepositoryError, RepositoryDirtyError, GitCommandError
 
-from utils.printer import Printer
-from utils.stamper import Stamper
-from utils.package import Package
+from olimage.utils.printer import Printer
+from olimage.utils.stamper import PackageStamper
+from olimage.utils import Util
 
 logger = logging.getLogger(__name__)
 
 
-class Downloader(Package):
+class Downloader(Util):
 
-    def __init__(self, name, path, config):
+    def __init__(self, name, config):
 
         # Initialize parent
-        super().__init__(name, path, config)
+        super().__init__(name, config)
 
         # Configure stamper
-        self._stamper = Stamper(self._path['package'])
+        self._stamper = PackageStamper(self.paths['package'])
 
     @property
     def printer(self):
@@ -32,12 +32,12 @@ class Downloader(Package):
 
     def download(self):
         # Check existing stamps
-        stamps = self._stamper.get_stamps()
+        stamps = self._stamper.stamps
 
         if 'downloaded' not in stamps:
-            if os.path.exists(self._path['clone']):
-                logger.debug("Removing {} existing folder".format(self._path['clone']))
-                shutil.rmtree(self._path['clone'])
+            if os.path.exists(self.paths['clone']):
+                logger.debug("Removing {} existing folder".format(self.paths['clone']))
+                shutil.rmtree(self.paths['clone'])
 
             repo = self.clone()
             self._stamper.stamp('downloaded')
@@ -46,46 +46,46 @@ class Downloader(Package):
 
         else:
             try:
-                logger.debug("Checking repository: {}".format(self._path['clone']))
-                repo = git.Repo(self._path['clone'])
+                logger.debug("Checking repository: {}".format(self.paths['clone']))
+                repo = git.Repo(self.paths['clone'])
 
                 if repo.is_dirty(untracked_files=True):
                     raise RepositoryDirtyError(repo, None)
 
-                if 'archived' in self._stamper.get_stamps():
+                if 'archived' in self._stamper.stamps:
                     return repo
 
                 return self.archive(repo)
 
             except InvalidGitRepositoryError:
-                logger.error("Folder \'{}\' is not a valid git repository. Removing.".format(self._path['clone']))
+                logger.error("Folder \'{}\' is not a valid git repository. Removing.".format(self.paths['clone']))
             except RepositoryDirtyError:
-                logger.error("Repository \'{}\' is dirty. Removing.".format(self._path['clone']))
+                logger.error("Repository \'{}\' is dirty. Removing.".format(self.paths['clone']))
 
             if self._try_count > 5:
-                raise Exception("Failed to clone {}".format(self._config['source']))
+                raise Exception("Failed to clone {}".format(self.config['source']))
             self._try_count += 1
 
             # Remove package download folder and try again
-            shutil.rmtree(self._path['package'])
-            os.mkdir(self._path['package'])
+            shutil.rmtree(self.paths['package'])
+            os.mkdir(self.paths['package'])
             return Downloader.download()
 
     @Printer("Cloning repository")
     def clone(self):
 
         self._printer.text += " \'{} {}\'".format(self._config['source'], self._config['refs'])
-        logger.info("Cloning {} from {} to {}".format(self._config['refs'], self._config['source'], self._path['clone']))
+        logger.info("Cloning {} from {} to {}".format(self._config['refs'], self._config['source'], self.paths['clone']))
 
-        return git.Repo.clone_from(self._config['source'], self._path['clone'], depth=1, branch=self._config['refs'])
+        return git.Repo.clone_from(self._config['source'], self.paths['clone'], depth=1, branch=self._config['refs'])
 
     @Printer("Archiving repository")
     def archive(self, repo):
 
-        self.printer.text += " \'{}\'".format(os.path.basename(self._path['archive']))
-        logger.info("Creating archive {}".format(os.path.basename(self._path['archive'])))
+        self.printer.text += " \'{}\'".format(os.path.basename(self.paths['archive']))
+        logger.info("Creating archive {}".format(os.path.basename(self.paths['archive'])))
 
-        with open(self._path['archive'], 'wb') as f:
+        with open(self.paths['archive'], 'wb') as f:
             repo.archive(f, format='tar.gz')
 
         self._stamper.stamp('archived')

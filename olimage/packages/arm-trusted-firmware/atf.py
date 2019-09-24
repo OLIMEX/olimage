@@ -1,21 +1,20 @@
 import logging
 
-from utils.downloader import Downloader
-from utils.builder import Builder
+from olimage.utils.downloader import Downloader
+from olimage.utils.builder import Builder
+from olimage.packages import Package
 
-import bsp
-import environment
+import olimage.environment as environment
 
 logger = logging.getLogger(__name__)
 
 
-class ATF(bsp.BSP):
+class ATF(Package):
 
-    def __init__(self, config, **kwargs):
+    def __init__(self, config):
 
         self._name = 'arm-trusted-firmware'
-        self._config = config[self._name]
-        self._workdir = kwargs['workdir']
+        self._config = config
 
     @staticmethod
     def alias():
@@ -35,10 +34,10 @@ class ATF(bsp.BSP):
         print("\nBuilding: \033[1m{}\033[0m".format(self))
 
         # Download package
-        Downloader(self._name, self._workdir, self._config).download()
+        Downloader(self._name, self._config).download()
 
         # Build package
-        b = Builder(self._name, self._workdir, self._config)
+        b = Builder(self._name, self._config)
         b.extract()
         b.configure()
         b.build("CROSS_COMPILE={} PLAT={} DEBUG={} {}".format(
@@ -48,4 +47,4 @@ class ATF(bsp.BSP):
             self._config['targets'][0]))
 
         # BL31 is needed for u-boot compilation
-        environment.env['BL31'] = b.path['extract'] + '/' + self._config['images'][0]
+        environment.env['BL31'] = b.paths['extract'] + '/' + self._config['images'][0]
