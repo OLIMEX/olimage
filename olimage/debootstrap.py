@@ -147,6 +147,7 @@ class Debootstrap(object):
 
         # Output image
         self._image = os.path.join(environment.paths['workdir'], 'images', 'test.img')
+        self._order = []
 
     def __del__(self):
         for f in reversed(self._cleanup):
@@ -250,6 +251,10 @@ class Debootstrap(object):
 
     def configure(self):
 
+        self._mount()
+        self._umount()
+        return
+
         if 'configured' in self._stamper.stamps:
             return self
 
@@ -286,6 +291,11 @@ class Debootstrap(object):
 
     @Printer("Generating blank image")
     def generate(self):
+        """
+        Generate black image
+
+        :return: self
+        """
 
         # Get size and add 100MiB size
         size = math.ceil(self.get_size(self._path)/1024/1024) + 100
@@ -299,29 +309,120 @@ class Debootstrap(object):
 
         return self
 
-    def _mount(self, part):
-        # Create mounting point
-        mount = os.path.join(os.path.dirname(self._image), ".mnt_{}".format(part))
-        self._images['partitions'][part]['mount'] = mount
+    def _umap(self):
+        """
+        Umap partitions
 
-        if os.path.exists(mount):
-            shutil.rmtree(mount)
-
-        # Mount root
-        logger.info("Creating mounting point: {}".format(mount))
-        os.mkdir(mount)
-
-        cfg = self._images['partitions'][part]
-        Worker.run(shlex.split('mount {} {}'.format(cfg['device'], mount)), logger)
-
-        self._cleanup.append(lambda: Worker.run(shlex.split('umount {}'.format(self._images['partitions'][part]['mount'])), logger))
+        :return: self
+        """
+        self._order = []
+        Worker.run(shlex.split('kpartx -dvs {}'.format(self._image)), logger)
 
         return self
 
-    @Printer("Creating partitions")
-    def format(self):
+    def _map(self):
+        """
+        Map partitions
 
-        # Create disk label
+        :return: self
+        """
+
+        # Map partitions
+        output = Worker.run(shlex.split('kpartx -avs {}'.format(self._image)), logger).decode('utf-8', 'ignore')
+
+        self._order = []
+        for line in output.splitlines():
+            w = line.split()
+            if w[0] == 'add':
+                device = os.path.join('/dev/mapper', w[2])
+                index = int(re.match(r'^loop\d+p(\d+)$', w[2])[1])
+                part, cfg = list(self._images['partitions'].items())[index - 1]
+
+                if cfg['fstab']['mount'] == '/':
+                    self._order.insert(0, (device, part, cfg))
+                else:
+                    self._order.append((device, part, cfg))
+
+        return self
+
+    def _mount(self):
+
+        # Make sure image is mapped
+        self._map()
+
+        mount = os.path.join(os.path.dirname(self._image), ".mnt")
+
+        if os.path.exists(mount):
+            shutil.rmtree(mount)
+        os.mkdir(mount)
+
+        for device, name, cfg in self._order:
+            submount = os.path.join(mount, cfg['fstab']['mount'].lstrip('/'))
+
+            if not os.path.exists(submount):
+                os.mkdir(submount)
+
+            Worker.run(shlex.split('mount {} {}'.format(device, submount)), logger)
+
+        Worker.run(shlex.split('df'))
+
+        for device, _, _ in reversed(self._order):
+            Worker.run(shlex.split('umount {}'.format(device)), logger)
+
+
+
+        #
+        # # Mount root
+        # logger.info("Creating mounting point: {}".format(mount))
+        # os.mkdir(mount)
+        #
+        # cfg = self._images['partitions'][part]
+        # Worker.run(shlex.split('mount {} {}'.format(cfg['device'], mount)), logger)
+
+        # self._cleanup.append(lambda: Worker.run(shlex.split('umount {}'.format(self._images['partitions'][part]['mount'])), logger))
+
+
+        return self
+
+        pass
+
+    def _umount(self):
+        self._umap()
+        pass
+
+    @Printer("Formating partitions")
+    def format(self):
+        # Mount device
+        self._map()
+
+        for device, name, cfg in self._order:
+            opts = ''
+
+            if cfg['type'] == 'ext4':
+                opts = '-O ^64bit,^metadata_csum'
+
+            # Make filesystem
+            Worker.run(shlex.split('mkfs.{} {} {}'.format(cfg['type'], opts, device)), logger)
+            Worker.run(shlex.split('udevadm trigger {}'.format(device)), logger)
+            Worker.run(shlex.split('udevadm settle'.format(device)), logger)
+
+            # Generate UUID
+            cfg['fstab']['uuid'] = Worker.run(
+                shlex.split('blkid -s UUID -o value {}'.format(device)),
+                logger
+            ).decode().splitlines()[0]
+
+        # Umount device
+        self._umap()
+
+    @Printer("Creating partitions")
+    def partition(self):
+        """
+        Partition the output blank image
+
+        :return: self
+        """
+        # Create label
         logger.info("Creating disk label: msdos")
         Worker.run(
             shlex.split('parted -s {} mklabel msdos'.format(self._image)),
@@ -330,7 +431,7 @@ class Debootstrap(object):
 
         # Create partitions
         for key, value in self._images['partitions'].items():
-            logger.info("Creating paritition: {}".format(key))
+            logger.info("Creating partition: {}".format(key))
             Worker.run(
                 shlex.split('parted -s {} mkpart primary {} {} {}'.format(
                     self._image,
@@ -340,35 +441,6 @@ class Debootstrap(object):
                 )),
                 logger
             )
-
-        # Map partitions
-        output = Worker.run(shlex.split('kpartx -avs {}'.format(self._image)), logger).decode('utf-8', 'ignore')
-        self._cleanup.append(lambda: Worker.run(shlex.split('kpartx -dvs {}'.format(self._image)), logger))
-
-        for line in output.splitlines():
-            w = line.split()
-            if w[0] == 'add':
-                device = os.path.join('/dev/mapper', w[2])
-                index = int(re.match(r'^loop\d+p(\d+)$', w[2])[1])
-                part, cfg = list(self._images['partitions'].items())[index - 1]
-                opts = ''
-
-                if cfg['type'] == 'ext4':
-                    opts = '-O ^64bit,^metadata_csum'
-
-                # Make filesystem
-                Worker.run(shlex.split('mkfs.{} {} {}'.format(cfg['type'], opts, device)), logger)
-                Worker.run(shlex.split('udevadm trigger {}'.format(device)), logger)
-                Worker.run(shlex.split('udevadm settle'.format(device)), logger)
-
-                cfg['device'] = device
-                cfg['fstab']['uuid'] = Worker.run(
-                    shlex.split('blkid -s UUID -o value {}'.format(device)),
-                    logger
-                ).decode().splitlines()[0]
-
-                # Mount part
-                self._mount(part)
 
         return self
 

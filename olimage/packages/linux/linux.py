@@ -96,6 +96,3 @@ class Linux(Package):
 
     def _install(self):
         pass
-
-
-

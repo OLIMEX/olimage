@@ -110,20 +110,19 @@ def prepare_tree():
             os.mkdir(os.path.join(workdir, d))
 
 
-@click.command()
+@click.group()
 # Options
 @click.option("-w", "--workdir", default="output", help="Specify working directory.")
 @click.option("--overlay", default="overlay", help="Path to overlay files")
 @click.option("-v", "--verbose", count=True, help="Increase logging verbosity.")
 @click.option("--log", help="Logging file.")
-# Arguments
-@click.argument("target")
-@click.argument("release")
 def cli(**kwargs):
 
     generate_environment(**kwargs)
     prepare_logging()
     prepare_tree()
+
+    return
 
     # Generate board object
     b = Board(kwargs['target'])
@@ -143,19 +142,75 @@ def cli(**kwargs):
 
     return
 
+
+@cli.command(name="rootfs")
+# Arguments
+@click.argument("target")
+@click.argument("release")
+def build_rootfs(**kwargs):
+
+    # Update environment options
+    environment.options.update(kwargs)
+
+    # Generate board object
+    b = Board(kwargs['target'])
+
     # Build rootfs
     d = Debootstrap(b, kwargs['release']).build()
 
     # Generate empty target image
-    d.generate().format()
+    d.generate().partition()
+
+    # Create filesystems
+    d.format()
 
     # Make final configurations
     d.configure()
 
     # Copy rootfs files to the image
-    d.copy()
+    # d.copy()
 
 
+@cli.command(name="package")
+# Options
+@click.option("--step", type=click.Choice(['download', 'configure', 'build', 'package']), default='package')
+# Arguments
+@click.argument("target")
+@click.argument("package")
+def build_package(**kwargs):
+
+    # Update environment options
+    environment.options.update(kwargs)
+
+    # Generate board object
+    b = Board(kwargs['target'])
+
+    # Build board packages
+    board_packages = {}
+    for key, value in b.packages.items():
+        try:
+            obj = package.Pool[key]
+            board_packages[key] = obj(value)
+        except KeyError as e:
+            raise Exception("Missing package builder: {}".format(e))
+
+    obj = board_packages[kwargs['package']]  # type: package.Package
+
+    step = kwargs['step']
+
+    obj.download()
+    if step == 'download':
+        return
+
+    obj.configure()
+    if step == 'configure':
+        return
+
+    obj.build()
+    if step == 'build':
+        return
+
+    obj.package()
 
 #
 # @cli.command(name="build")
