@@ -4,7 +4,6 @@ import shlex
 import shutil
 import tarfile
 
-from olimage.utils.printer import Printer
 from olimage.utils.stamper import PackageStamper
 from olimage.utils.worker import Worker
 
@@ -21,26 +20,18 @@ class Builder(Util):
         # Configure stamper
         self.stamper = PackageStamper(self.paths['build'])
 
-    @property
-    def printer(self):
-        return self._printer
-
-    @printer.setter
-    def printer(self, printer):
-        self._printer = printer
-
-    @Printer("Extracting archive")
     def extract(self):
 
-        self.printer.text += " \'{}\'".format(os.path.basename(self.paths['archive']))
-
-        if 'extracted' in self.stamper.stamps:
+        path = self.paths['extract']
+        if 'extracted' in self.stamper.stamps and os.path.exists(path):
             return self
 
+        self.stamper.remove()
+
         # Cleanup directory
-        if os.path.exists(self.paths['extract']):
+        if os.path.exists(path):
             logger.debug("Removing dirty directory: {}".format(self.paths['extract']))
-            shutil.rmtree(self.paths['extract'])
+            shutil.rmtree(path)
 
         # Extract sources
         with tarfile.open(name=self.paths['archive'], mode='r:gz') as tar:
@@ -50,47 +41,7 @@ class Builder(Util):
 
         return self
 
-    @Printer("Configuring package")
-    def configure(self, command=None):
-
-        self.printer.text += " \'{}\'".format(self)
-
-        if 'configured' in self.stamper.stamps:
-            return self
-
-        # Command is none, then assume user whats to skip this step
-        if command is None:
-            self.stamper.stamp('configured')
-            return self
-
-        def handle_output(data):
-            for line in data.decode().rstrip().split('\n'):
-                logger.debug(line)
-
-        Worker.run(
-            shlex.split("/bin/bash -c 'make -C {} {} -j{}'".format(
-                self.paths['extract'],
-                command,
-                1 if os.cpu_count() is None else os.cpu_count())
-            ),
-            logger
-        )
-
-        return self
-
-    @Printer("Building package")
-    def build(self, command):
-
-        self.printer.text += " \'{}\'".format(self)
-
-        # Command is none, then assume user whats to skip this step
-        if command is None:
-            return self
-
-        def handle_output(data):
-            for line in data.decode().rstrip().split('\n'):
-                logger.debug(line)
-
+    def make(self, command):
         Worker.run(
             shlex.split("/bin/bash -c 'make -C {} {} -j{}'".format(
                 self.paths['extract'],

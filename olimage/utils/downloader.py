@@ -3,9 +3,9 @@ import os
 import shutil
 
 import git
-from git.exc import CommandError, InvalidGitRepositoryError, RepositoryDirtyError, GitCommandError
+from git.exc import InvalidGitRepositoryError, RepositoryDirtyError, NoSuchPathError
 
-from olimage.utils.printer import Printer
+
 from olimage.utils.stamper import PackageStamper
 from olimage.utils import Util
 
@@ -22,15 +22,10 @@ class Downloader(Util):
         # Configure stamper
         self._stamper = PackageStamper(self.paths['package'])
 
-    @property
-    def printer(self):
-        return self._printer
-
-    @printer.setter
-    def printer(self, printer):
-        self._printer = printer
+        self._try_count = 0
 
     def download(self):
+
         # Check existing stamps
         stamps = self._stamper.stamps
 
@@ -38,6 +33,10 @@ class Downloader(Util):
             if os.path.exists(self.paths['clone']):
                 logger.debug("Removing {} existing folder".format(self.paths['clone']))
                 shutil.rmtree(self.paths['clone'])
+
+            if os.path.exists(self.paths['build']):
+                logger.debug("Removing {} existing folder".format(self.paths['build']))
+                shutil.rmtree(self.paths['build'])
 
             repo = self.clone()
             self._stamper.stamp('downloaded')
@@ -61,6 +60,8 @@ class Downloader(Util):
                 logger.error("Folder \'{}\' is not a valid git repository. Removing.".format(self.paths['clone']))
             except RepositoryDirtyError:
                 logger.error("Repository \'{}\' is dirty. Removing.".format(self.paths['clone']))
+            except NoSuchPathError:
+                logger.error("Possibly changed refs. Cleaning-up.")
 
             if self._try_count > 5:
                 raise Exception("Failed to clone {}".format(self.config['source']))
@@ -69,20 +70,15 @@ class Downloader(Util):
             # Remove package download folder and try again
             shutil.rmtree(self.paths['package'])
             os.mkdir(self.paths['package'])
-            return Downloader.download()
+            return self.download()
 
-    @Printer("Cloning repository")
     def clone(self):
 
-        self._printer.text += " \'{} {}\'".format(self._config['source'], self._config['refs'])
         logger.info("Cloning {} from {} to {}".format(self._config['refs'], self._config['source'], self.paths['clone']))
-
         return git.Repo.clone_from(self._config['source'], self.paths['clone'], depth=1, branch=self._config['refs'])
 
-    @Printer("Archiving repository")
     def archive(self, repo):
 
-        self.printer.text += " \'{}\'".format(os.path.basename(self.paths['archive']))
         logger.info("Creating archive {}".format(os.path.basename(self.paths['archive'])))
 
         with open(self.paths['archive'], 'wb') as f:

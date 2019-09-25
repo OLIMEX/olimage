@@ -114,7 +114,7 @@ def prepare_tree():
 # Options
 @click.option("-w", "--workdir", default="output", help="Specify working directory.")
 @click.option("--overlay", default="overlay", help="Path to overlay files")
-@click.option("-v", "--verbose", count=True, help="Increase loggging verbosity.")
+@click.option("-v", "--verbose", count=True, help="Increase logging verbosity.")
 @click.option("--log", help="Logging file.")
 # Arguments
 @click.argument("target")
@@ -128,6 +128,7 @@ def cli(**kwargs):
     # Generate board object
     b = Board(kwargs['target'])
 
+    # Build board packages
     board_packages = {}
     for key, value in b.packages.items():
         try:
@@ -136,11 +137,10 @@ def cli(**kwargs):
         except KeyError as e:
             raise Exception("Missing package builder: {}".format(e))
 
+    for key, value in board_packages.items():
+        print("\nBuilding: \033[1m{}\033[0m".format(key))
+        value.download().configure().build().package().install()
 
-    # print(board_packages)
-    # board_packages['arm-trusted-firmware'].build().package()
-    # board_packages['u-boot'].build().package()
-    board_packages['linux'].build().package()
     return
 
     # Build rootfs

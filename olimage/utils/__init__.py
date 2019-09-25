@@ -14,28 +14,21 @@ class Util(object):
         """
         self._name = name
         self._config = config
-        self._printer = None
+
+        workdir = environment.paths['workdir']
 
         # Configure paths
         self._paths = {
-            'package': os.path.join(environment.paths['workdir'], 'dl', name),
-            'clone': os.path.join(environment.paths['workdir'], 'dl', name, config['refs']),
-            'archive': os.path.join(environment.paths['workdir'], 'dl', name, config['refs'] + '.tar.gz'),
-            'build': os.path.join(environment.paths['workdir'], 'build', name),
-            'extract': os.path.join(environment.paths['workdir'], 'build', name, config['refs']),
-            'rootfs' : os.path.join(environment.paths['workdir'], 'rootfs', name)
+            'package': os.path.join(workdir, 'dl', name),
+            'clone': os.path.join(workdir, 'dl', name, config['refs']),
+            'archive': os.path.join(workdir, 'dl', name, config['refs'] + '.tar.gz'),
+            'build': os.path.join(workdir, 'build', name),
+            'extract': os.path.join(workdir, 'build', name, config['refs']),
+            'rootfs' : os.path.join(workdir, 'rootfs', name)
         }
 
     def __str__(self):
         return self._name
-
-    @property
-    def printer(self):
-        raise NotImplementedError()
-
-    @printer.setter
-    def printer(self, printer):
-        raise NotImplementedError()
 
     @property
     def paths(self):

@@ -33,7 +33,12 @@ class Stamper(object):
 
         open(file, 'x').close()
 
-    def remove(self, name):
+    def remove(self, name=None):
+        if name is None:
+            for stamp in self.stamps:
+                self.remove(stamp)
+            return
+
         if name not in self._stamps:
             raise ValueError("Invalid stamp name: .stamp_{}".format(name))
 

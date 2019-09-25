@@ -1,6 +1,5 @@
 import functools
 import datetime
-import subprocess
 import sys
 import time
 
@@ -10,28 +9,101 @@ import halo
 class Printer(halo.Halo):
     """Wrapper for halo module"""
 
+    def __init__(self, text='', color='cyan', text_color=None, spinner=None, animation=None, placement='left',
+                 interval=-1, enabled=True, stream=sys.stdout):
+        super().__init__(text, color, text_color, spinner, animation, placement, interval, enabled, stream)
+
+        self._start = None
+
+    def __enter__(self):
+        self._start = time.time()
+        return super().__enter__()
+
+    def __exit__(self, type, value, traceback):
+        super().__exit__(type, value, traceback)
+
+    def frame(self):
+        """Builds and returns the frame to be rendered
+        Returns
+        -------
+        self
+        """
+        frames = self._spinner['frames']
+        frame = frames[self._frame_index]
+
+        if self._color:
+            frame = halo._utils.colored_frame(frame, self._color)
+
+        self._frame_index += 1
+        self._frame_index = self._frame_index % len(frames)
+
+        text_frame = self.text_frame()
+        delta = datetime.timedelta(seconds=int(time.time() - self._start))
+
+        return u'{} {:32} {}'.format(*[
+            (text_frame, frame, '')
+            if self._placement == 'right' else
+            (frame, text_frame, delta),
+        ][0])
+
     def __call__(self, f):
         """Allow the Halo object to be used as a regular function decorator."""
 
         @functools.wraps(f)
         def wrapped(*args, **kwargs):
             with self:
-                line = self.text
-                args[0].printer = self
                 try:
-                    start = time.time()
                     ret = f(*args, **kwargs)
-
-                    self.text = self.text + ' : {} '.format(str(datetime.timedelta(seconds=int(time.time() - start))))
                     self.succeed()
                     return ret
 
                 except Exception as e:
                     self.fail()
-                    print("    {}".format(e))
                     raise e
 
-                finally:
-                    self.text = line
-
         return wrapped
+
+    def stop_and_persist(self, symbol=' ', text=None):
+        """Stops the spinner and persists the final frame to be shown.
+        Parameters
+        ----------
+        symbol : str, optional
+            Symbol to be shown in final frame
+        text: str, optional
+            Text to be shown in final frame
+
+        Returns
+        -------
+        self
+        """
+        if not self.enabled:
+            return self
+
+        symbol = halo._utils.decode_utf_8_text(symbol)
+
+        if text is not None:
+            text = halo._utils.decode_utf_8_text(text)
+        else:
+            text = self._text['original']
+
+        text = text.strip()
+
+        if self._text_color:
+            text = halo._utils.colored_frame(text, self._text_color)
+
+        self.stop()
+
+        delta = datetime.timedelta(seconds=int(time.time() - self._start))
+
+        output = u'{} {:32} {}\n'.format(*[
+            (text, symbol, '')
+            if self._placement == 'right' else
+            (symbol, text, delta)
+        ][0])
+
+        try:
+            self._write(output)
+        except UnicodeEncodeError:
+            self._write(encode_utf_8_text(output))
+
+        return self
