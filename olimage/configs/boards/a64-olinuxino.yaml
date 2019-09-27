@@ -1,10 +1,30 @@
 arch: &arch 'arm64'
 
 boards:
-  - 'A64-OLinuXino'
-  - 'A64-OLinuXino-eMMC'
+  A64-OLinuXino-1Ge4GW:
+    - id : 8367
+    - fdt: 'allwinner/sun50i-a64-olinuxino.dtb'
+    - overlays: ~
 
-hostname: 'a64-olinuxino'
+  A64-OLinuXino-1G:
+    - id: 8857
+    - fdt: 'allwinner/sun50i-a64-olinuxino.dtb'
+    - overlays: ~
+
+  A64-OLinuXino-2Ge8G-IND:
+    - id: 8861
+    - fdt: 'allwinner/sun50i-a64-olinuxino.dtb'
+    - overlays: ~
+
+  A64-OLinuXino-1Gs16M:
+    - id: 9065
+    - fdt: 'allwinner/sun50i-a64-olinuxino.dtb'
+    - overlays: ~
+
+  A64-OLinuXino-1Ge16GW:
+    - id: 9849
+    - fdt: 'allwinner/sun50i-a64-olinuxino.dtb'
+    - overlays: ~
 
 packages:
   arm-trusted-firmware:
