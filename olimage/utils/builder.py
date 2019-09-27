@@ -41,8 +41,8 @@ class Builder(Util):
 
         return self
 
-    def make(self, command):
-        Worker.run(
+    def make(self, command, **kwargs):
+        return Worker.run(
             shlex.split("/bin/bash -c 'make -C {} {} -j{}'".format(
                 self.paths['extract'],
                 command,
@@ -50,5 +50,3 @@ class Builder(Util):
             ),
             logger
         )
-
-        return self

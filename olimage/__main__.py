@@ -31,7 +31,7 @@ import sys
 import click
 
 from olimage.board import Board
-from olimage.debootstrap import Debootstrap
+import olimage.rootfs
 
 import olimage.environment as environment
 import olimage.packages as package
@@ -61,8 +61,7 @@ def generate_environment(**kwargs):
     environment.paths.update({
             'root' : root,
             'configs' : os.path.join(root, 'configs'),
-            'workdir' : os.path.join(root, kwargs['workdir']),
-            'overlay' : os.path.join(root, kwargs['overlay'])
+            'workdir' : os.path.join(root, kwargs['workdir'])
     })
 
     # Copy command-line parameters to global env
@@ -113,7 +112,6 @@ def prepare_tree():
 @click.group()
 # Options
 @click.option("-w", "--workdir", default="output", help="Specify working directory.")
-@click.option("--overlay", default="overlay", help="Path to overlay files")
 @click.option("-v", "--verbose", count=True, help="Increase logging verbosity.")
 @click.option("--log", help="Logging file.")
 def cli(**kwargs):
@@ -122,10 +120,39 @@ def cli(**kwargs):
     prepare_logging()
     prepare_tree()
 
-    return
+
+# Add sub-commands
+cli.add_command(olimage.packages.build_package)
+cli.add_command(olimage.rootfs.build_rootfs)
+
+
+@cli.command()
+# Arguments
+@click.argument("target")
+@click.argument("release")
+# Options
+@click.option("--overlay", default="rootfs/overlay", help="Path to overlay files")
+def test(**kwargs):
+
+    # Update environment options
+    environment.options.update(kwargs)
+    environment.paths['overlay'] = os.path.join(environment.paths['root'], kwargs['overlay'])
 
     # Generate board object
     b = Board(kwargs['target'])
+
+    # Build rootfs
+    d = olimage.rootfs.Debootstrap(b, kwargs['release'])
+    d.build()
+
+    # Generate empty target image
+    d.generate().partition()
+
+    # Create filesystems
+    d.format()
+
+    # Make final configurations
+    d.configure()
 
     # Build board packages
     board_packages = {}
@@ -140,154 +167,7 @@ def cli(**kwargs):
         print("\nBuilding: \033[1m{}\033[0m".format(key))
         value.download().configure().build().package().install()
 
-    return
-
-
-@cli.command(name="rootfs")
-# Arguments
-@click.argument("target")
-@click.argument("release")
-def build_rootfs(**kwargs):
-
-    # Update environment options
-    environment.options.update(kwargs)
-
-    # Generate board object
-    b = Board(kwargs['target'])
-
-    # Build rootfs
-    d = Debootstrap(b, kwargs['release']).build()
-
-    # Generate empty target image
-    d.generate().partition()
-
-    # Create filesystems
-    d.format()
-
-    # Make final configurations
-    d.configure()
-
-    # Copy rootfs files to the image
-    # d.copy()
-
-
-@cli.command(name="package")
-# Options
-@click.option("--step", type=click.Choice(['download', 'configure', 'build', 'package']), default='package')
-# Arguments
-@click.argument("target")
-@click.argument("package")
-def build_package(**kwargs):
-
-    # Update environment options
-    environment.options.update(kwargs)
-
-    # Generate board object
-    b = Board(kwargs['target'])
-
-    # Build board packages
-    board_packages = {}
-    for key, value in b.packages.items():
-        try:
-            obj = package.Pool[key]
-            board_packages[key] = obj(value)
-        except KeyError as e:
-            raise Exception("Missing package builder: {}".format(e))
-
-    obj = board_packages[kwargs['package']]  # type: package.Package
-
-    step = kwargs['step']
-
-    obj.download()
-    if step == 'download':
-        return
-
-    obj.configure()
-    if step == 'configure':
-        return
-
-    obj.build()
-    if step == 'build':
-        return
-
-    obj.package()
-
-#
-# @cli.command(name="build")
-# @click.argument("target", help="123131")
-# @click.argument("board")
-# def build_command(target, board):
-#
-#     # Search config file
-#
-#
-#     # Parse config file
-#     with open('/home/stefan/Desktop/builder/configs/boards/a64-olinuxino.yaml', 'r') as f:
-#         config = yaml.full_load(f.read())
-#
-#     d = Debootstrap(config['arch'], target).build()
-#     return
-#
-#
-#     # Check BSP
-#     try:
-#         bsp_config = config['bsp']
-#     except KeyError as e:
-#         raise KeyError("Missing mandatory key in config file: {}".format(e))
-#
-#     board_packages = {}
-#
-#     for key in config['bsp']:
-#         obj = BSP.generate(key, bsp_config, **ctx.obj)
-#         if obj:
-#             board_packages[key] = obj
-#
-#
-#     # TODO: This needs serious work!
-#     build_order = []
-#     for name, obj in board_packages.items():
-#
-#         # Check dependency
-#         for dep in obj.dependency:
-#             if dep in board_packages and board_packages[dep] not in build_order:
-#                 build_order += [board_packages[dep]]
-#         if obj not in build_order:
-#             build_order += [obj]
-#
-#     # Build packager
-#     for pkg in build_order:
-#         pkg.build()
-#     return
-#
-#     # Parse config
-#     if 'u-boot' not in self._config:
-#         raise Exception("There is no \'u-boot\' object in {}".format(self._file))
-#     self._config = self._config['u-boot']
-#
-#     if 'source' not in self._config:
-#         raise Exception("Missing \'source\' object in {}".format(self._file))
-#
-#     # u = Uboot(, **ctx.obj)
-#     # u.build()
-#
-#     pass
-#     # w = Worker()
-#     # w.run("ls -l")
-#     # Build u-boot
-#     # u = Uboot()
-#     # u.configure().build()
-#
-#     # Generate rootfs
-#     # deb = Debootstrap()
-#     # deb.build(release)
-#
-# # @cli.command(name="uboot")
-# # @click.pass_context
-# # def build_uboot(ctx):
-# #     return
-# #     u = Uboot('/home/stefan/Desktop/builder/configs/boards/a64-olinuxino.yaml', **ctx.obj)
-#     # u.configure().build()
-
+    d.copy()
 
 
 if __name__ == "__main__":

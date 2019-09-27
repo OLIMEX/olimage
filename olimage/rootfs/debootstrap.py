@@ -36,6 +36,8 @@ from olimage.utils.stamper import RootFSStamper
 from olimage.utils.worker import Worker
 from olimage.utils.templater import Templater
 
+from olimage.rootfs.mount import Mount
+
 logger = logging.getLogger(__name__)
 
 
@@ -139,14 +141,16 @@ class Debootstrap(object):
             self._images = yaml.full_load(f.read())
 
         # Set build path
-        self._path = os.path.join(
+        self._rootfs = os.path.join(
             environment.options['workdir'], 'rootfs', "{}-{}".format(self._board.arch, self._target['release']))
+        environment.paths['rootfs'] = self._rootfs
 
         # Configure stamper
         self._stamper = RootFSStamper(os.path.join(environment.options['workdir'], 'rootfs'))
 
         # Output image
         self._image = os.path.join(environment.paths['workdir'], 'images', 'test.img')
+        environment.paths['image'] = self._image
         self._order = []
 
     def __del__(self):
@@ -161,20 +165,20 @@ class Debootstrap(object):
         :return: None
         """
 
-        if 'debootstrap' in self._stamper.stamps and os.path.exists(self._path):
+        if 'debootstrap' in self._stamper.stamps and os.path.exists(self._rootfs):
             return self
 
         self._stamper.remove('debootstrap')
-        if os.path.exists(self._path):
-            shutil.rmtree(self._path)
-        os.mkdir(self._path)
+        if os.path.exists(self._rootfs):
+            shutil.rmtree(self._rootfs)
+        os.mkdir(self._rootfs)
 
         Worker.run(
             shlex.split("qemu-debootstrap --arch={} --components={} {} {} {}".format(
                 self._board.arch,
                 ",".join(self._target['distribution'].components),
                 self._target['release'],
-                self._path, self._target['distribution'].repository)),
+                self._rootfs, self._target['distribution'].repository)),
             logger
         )
         self._stamper.stamp('debootstrap')
@@ -188,7 +192,7 @@ class Debootstrap(object):
 
         :return: self
         """
-        Worker.run(shlex.split("rsync -aHWXhv {}/ {}/".format(environment.paths['overlay'], self._path), logger))
+        Worker.run(shlex.split("rsync -aHWXhv {}/ {}/".format(environment.paths['overlay'], self._rootfs), logger))
 
         return self
 
@@ -203,7 +207,7 @@ class Debootstrap(object):
 
         Templater.install(
             [
-                os.path.join(self._path, f) for f in ['etc/hostname', 'etc/hosts']
+                os.path.join(self._rootfs, f) for f in ['etc/hostname', 'etc/hosts']
             ],
             hostname=hostname
         )
@@ -220,7 +224,7 @@ class Debootstrap(object):
 
         Templater.install(
             [
-                os.path.join(self._path, 'etc/fstab')
+                os.path.join(self._rootfs, 'etc/fstab')
             ],
             partitions = [
                 {
@@ -245,15 +249,12 @@ class Debootstrap(object):
                 passwd = cfg['password']
                 Worker.chroot(
                     shlex.split("/bin/bash -c '(echo {}; echo {};) | adduser --gecos {} {}'".format(passwd, passwd, user, user)),
-                    self._path,
+                    self._rootfs,
                     logger
                 )
 
+    @Mount()
     def configure(self):
-
-        self._mount()
-        self._umount()
-        return
 
         if 'configured' in self._stamper.stamps:
             return self
@@ -261,7 +262,7 @@ class Debootstrap(object):
         # Run configure steps
         self._stamper.remove('configured')
         self._install_overlay()
-        self._set_hostname(self._board.hostname)
+        self._set_hostname(self._board)
         self._set_fstab()
 
         if 'users' in self._images:
@@ -298,7 +299,7 @@ class Debootstrap(object):
         """
 
         # Get size and add 100MiB size
-        size = math.ceil(self.get_size(self._path)/1024/1024) + 100
+        size = math.ceil(self.get_size(self._rootfs)/1024/1024) + 200
 
         logger.info("Creating empty file: {} with size {}".format(self._image, size))
 
@@ -309,111 +310,30 @@ class Debootstrap(object):
 
         return self
 
-    def _umap(self):
-        """
-        Umap partitions
-
-        :return: self
-        """
-        self._order = []
-        Worker.run(shlex.split('kpartx -dvs {}'.format(self._image)), logger)
-
-        return self
-
-    def _map(self):
-        """
-        Map partitions
-
-        :return: self
-        """
-
-        # Map partitions
-        output = Worker.run(shlex.split('kpartx -avs {}'.format(self._image)), logger).decode('utf-8', 'ignore')
-
-        self._order = []
-        for line in output.splitlines():
-            w = line.split()
-            if w[0] == 'add':
-                device = os.path.join('/dev/mapper', w[2])
-                index = int(re.match(r'^loop\d+p(\d+)$', w[2])[1])
-                part, cfg = list(self._images['partitions'].items())[index - 1]
-
-                if cfg['fstab']['mount'] == '/':
-                    self._order.insert(0, (device, part, cfg))
-                else:
-                    self._order.append((device, part, cfg))
-
-        return self
-
-    def _mount(self):
-
-        # Make sure image is mapped
-        self._map()
-
-        mount = os.path.join(os.path.dirname(self._image), ".mnt")
-
-        if os.path.exists(mount):
-            shutil.rmtree(mount)
-        os.mkdir(mount)
-
-        for device, name, cfg in self._order:
-            submount = os.path.join(mount, cfg['fstab']['mount'].lstrip('/'))
-
-            if not os.path.exists(submount):
-                os.mkdir(submount)
-
-            Worker.run(shlex.split('mount {} {}'.format(device, submount)), logger)
-
-        Worker.run(shlex.split('df'))
-
-        for device, _, _ in reversed(self._order):
-            Worker.run(shlex.split('umount {}'.format(device)), logger)
-
-
-
-        #
-        # # Mount root
-        # logger.info("Creating mounting point: {}".format(mount))
-        # os.mkdir(mount)
-        #
-        # cfg = self._images['partitions'][part]
-        # Worker.run(shlex.split('mount {} {}'.format(cfg['device'], mount)), logger)
-
-        # self._cleanup.append(lambda: Worker.run(shlex.split('umount {}'.format(self._images['partitions'][part]['mount'])), logger))
-
-
-        return self
-
-        pass
-
-    def _umount(self):
-        self._umap()
-        pass
-
-    @Printer("Formating partitions")
+    @Mount(map_only=True)
+    @Printer("Formatting partitions")
     def format(self):
-        # Mount device
-        self._map()
 
-        for device, name, cfg in self._order:
+        # Create partitions
+        for key, value in self._images['partitions'].items():
+            logger.info("Formatting partition: {}".format(key))
+
             opts = ''
-
-            if cfg['type'] == 'ext4':
+            if value['type'] == 'ext4':
                 opts = '-O ^64bit,^metadata_csum'
 
             # Make filesystem
-            Worker.run(shlex.split('mkfs.{} {} {}'.format(cfg['type'], opts, device)), logger)
-            Worker.run(shlex.split('udevadm trigger {}'.format(device)), logger)
-            Worker.run(shlex.split('udevadm settle'.format(device)), logger)
+            Worker.run(shlex.split('mkfs.{} {} {}'.format(value['type'], opts, value['device'])), logger)
+            Worker.run(shlex.split('udevadm trigger {}'.format(value['device'])), logger)
+            Worker.run(shlex.split('udevadm settle'.format(value['device'])), logger)
 
             # Generate UUID
-            cfg['fstab']['uuid'] = Worker.run(
-                shlex.split('blkid -s UUID -o value {}'.format(device)),
+            value['fstab']['uuid'] = Worker.run(
+                shlex.split('blkid -s UUID -o value {}'.format(value['device'])),
                 logger
             ).decode().splitlines()[0]
 
-        # Umount device
-        self._umap()
+        return self
 
     @Printer("Creating partitions")
     def partition(self):
@@ -444,8 +364,27 @@ class Debootstrap(object):
 
         return self
 
-    @Printer("Copying rootfs files to the image file")
+    @Mount()
+    @Printer("Copying to raw image")
     def copy(self):
-        # Copy root
-        Worker.run(shlex.split('rsync -aHWXhv --exclude="/boot/*" --exclude="/dev/*" --exclude="/proc/*" --exclude="/run/*" --exclude="/tmp/*" \
-                        --exclude="/sys/*" {}/ {}/'.format(self._path, self._images['partitions']['rootfs']['mount'])))
+        exclude = ['/dev/*', '/proc/*', '/run/*', '/tmp/*', '/sys/*']
+        order = []
+
+        for key, value in self._images['partitions'].items():
+            mount = value['fstab']['mount']
+            if mount == '/':
+                order.insert(0, mount)
+            else:
+                order.append(mount)
+                exclude.append(mount)
+
+        mnt = os.path.join(os.path.dirname(self._image), ".mnt")
+        for mount in order:
+            if mount == '/':
+                ex = ""
+                for key in exclude:
+                    ex += '--exclude="{}" '.format(key)
+                Worker.run(shlex.split('rsync -aHWXh {} {}/ {}/'.format(ex, self._rootfs, mnt)), logger)
+            else:
+                Worker.run(shlex.split('rsync -rLtWh {}/ {}/'.format(self._rootfs + mount, mnt + mount)), logger)
+

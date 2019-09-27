@@ -62,9 +62,8 @@ class Uboot(Package):
         # Some global data
         self._version = '2019.07+olimex1'
         self._arch = self._config['arch']
-        self._package_deb = os.path.join(
-            self._builder.paths['build'],
-            'u-boot-sunxi_{}_{}.deb'.format(self._version, self._arch))
+        self._binary = None
+        self._package_deb = 'u-boot-sunxi_{}_{}.deb'.format(self._version, self._arch)
 
     @staticmethod
     def alias():
@@ -157,6 +156,8 @@ class Uboot(Package):
             logger.info("Copying {} to {}".format(src, dest))
             dest = os.path.join(dest, src)
             src = os.path.join(self._builder.paths['extract'], src)
+            if 'u-boot-sunxi-with-spl.bin' in src:
+                self._binary = src
 
             shutil.copyfile(src, dest)
             size += os.path.getsize(dest)
@@ -187,17 +188,26 @@ class Uboot(Package):
         1. Copy .deb file
         2. Run chroot and install
         3. Remove .deb file
+        4. Flash binary
 
         :return: None
         """
+
         rootfs = environment.paths['rootfs']
+        image = environment.paths['image']
+        build = self._builder.paths['build']
 
         # Copy file
-        Worker.run(shlex.split('cp -vf {} {}'.format(self._package_deb, rootfs)), logger)
+        Worker.run(shlex.split('cp -vf {} {}'.format(os.path.join(build, self._package_deb), rootfs)), logger)
 
         # Install
-        Worker.chroot(shlex.split('dpkg -i {}'.format(os.path.basename(self._package_deb))), rootfs, logger)
+        Worker.chroot(shlex.split('dpkg -i {}'.format(self._package_deb)), rootfs, logger)
 
         # Remove file
-        Worker.run(shlex.split('rm -vf {}'.format(self._package_deb)), logger)
+        Worker.run(shlex.split('rm -vf {}'.format(os.path.join(rootfs, self._package_deb))), logger)
+
+        # Flash
+        if self._binary:
+            Worker.run(shlex.split('dd if={} of={} conv=notrunc,fsync bs=1k seek=8'.format(
+                self._binary, image)), logger)
 

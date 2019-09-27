@@ -3,7 +3,12 @@ import inspect
 import pkgutil
 import os
 
+import click
+
 from olimage.utils.printer import Printer
+from olimage.board import Board
+
+import olimage.environment as environment
 
 class Access(type):
 
@@ -90,9 +95,8 @@ class Package(object, metaclass=Access):
         return self
 
 
-Pool = {}
-
 # Scan for package modules
+Pool = {}
 for (path, dirs, files) in os.walk(os.path.dirname(__file__)):
     for d in dirs:
         for (_, name, _) in pkgutil.walk_packages([os.path.join(path, d)]):
@@ -108,6 +112,49 @@ for (path, dirs, files) in os.walk(os.path.dirname(__file__)):
                         pass
                     except AttributeError:
                         pass
+
+
+def _build_package(obj):
+    obj.download()
+    obj.configure()
+    obj.build()
+    obj.package()
+    obj.install()
+
+@click.command(name="package")
+# Options
+# @click.option("--step", type=click.Choice(['download', 'configure', 'build', 'package']), default='install')
+# Arguments
+@click.argument("target")
+@click.argument("package")
+def build_package(**kwargs):
+
+    # Update environment options
+    environment.options.update(kwargs)
+
+    # Generate board object
+    b = Board(kwargs['target'])
+
+    # Build board packages
+    board_packages = {}
+    for key, value in b.packages.items():
+        try:
+            obj = Pool[key]
+            board_packages[key] = obj(value)
+        except KeyError as e:
+            raise Exception("Missing package builder: {}".format(e))
+
+    # step = kwargs['step']
+
+    if kwargs['package'] == 'all':
+        for key, value in board_packages.items():
+            print("\nBuilding: \033[1m{}\033[0m".format(key))
+            _build_package(value)
+    else:
+        _build_package(board_packages[kwargs['package']])
+
+
+
 
 
 

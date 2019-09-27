@@ -53,6 +53,7 @@ class Board(object):
                             self._config = value
                             self._name = key
                             self._arch = config['arch']
+                            self._packages = config['packages']
                             break
                 except KeyError:
                     continue
@@ -84,7 +85,7 @@ class Board(object):
 
         :return: configuration dict
         """
-        return self._config['packages']
+        return self._packages
 
     @property
     def id(self):
