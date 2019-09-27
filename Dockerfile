@@ -32,6 +32,6 @@ RUN pip3 install \
     jinja2 \
     pyyaml
 
-RUN pip3 install http://git.liw.fi/cliapp/snapshot/cliapp-1.20180812.1.tar.gz
+RUN pip3 install http://deb.debian.org/debian/pool/main/p/python-cliapp/python-cliapp_1.20180812.1.orig.tar.xz
 
 ENTRYPOINT ["/bin/bash"]
