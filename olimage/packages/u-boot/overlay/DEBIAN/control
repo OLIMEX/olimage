@@ -21,8 +21,3 @@ Description: A boot loader for sunxi systems
  .
  This package includes boot loaders for various Allwinner/sunxi
  platforms.
- .
- Included platforms:
-{% for platform in platforms %}
- {{ platform }}
-{% endfor %}
