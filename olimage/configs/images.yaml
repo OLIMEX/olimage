@@ -1,7 +1,7 @@
 partitions:
   boot:
     type: 'vfat'
-    offset: '1MiB'
+    offset: '4MiB'
     size: '64MiB'
     fstab:
       mount: '/boot'
@@ -11,7 +11,7 @@ partitions:
 
   rootfs:
     type: 'ext4'
-    offset: '64MiB'
+    offset: '68MiB'
     size: ~
     fstab:
       mount: '/'

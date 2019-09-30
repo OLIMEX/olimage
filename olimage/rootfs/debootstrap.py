@@ -185,18 +185,17 @@ class Debootstrap(object):
 
         return self
 
-    @Printer("Installing overlay files")
     def _install_overlay(self):
         """
         Copying overlay directory to target
 
         :return: self
         """
+        logger.info("Installing rootfs overlay")
         Worker.run(shlex.split("rsync -aHWXhv {}/ {}/".format(environment.paths['overlay'], self._rootfs), logger))
 
         return self
 
-    @Printer("Setting-up system hostname")
     def _set_hostname(self, hostname):
         """
         Prepare /etc/hostname and /ets/hosts
@@ -205,6 +204,7 @@ class Debootstrap(object):
         :return: self
         """
 
+        logger.info("Setting hostname to \"{}\"".format(hostname))
         Templater.install(
             [
                 os.path.join(self._rootfs, f) for f in ['etc/hostname', 'etc/hosts']
@@ -214,13 +214,15 @@ class Debootstrap(object):
 
         return self
 
-    @Printer("Configuring fstab")
     def _set_fstab(self):
         """
         Prepare /etc/fstab
 
         :return: self
         """
+
+        for key, value in self._images['partitions'].items():
+            logger.debug("Adding {} as UUID={} to {}".format(key, value['fstab']['uuid'], value['fstab']['mount']))
 
         Templater.install(
             [
@@ -240,21 +242,38 @@ class Debootstrap(object):
 
         return self
 
-    @Printer("Setting-up users")
     def _set_users(self):
 
-        for user, cfg in self._images['users'].items():
+        for user, value in self._images['users'].items():
+            passwd = value['password']
+
             # Assuming root user is always present
             if user != "root":
-                passwd = cfg['password']
                 Worker.chroot(
                     shlex.split("/bin/bash -c '(echo {}; echo {};) | adduser --gecos {} {}'".format(passwd, passwd, user, user)),
                     self._rootfs,
-                    logger
+                    logger,
+                    ignore_fail = True
                 )
+            else:
+                logger.debug("Adding user {} with passwd {}".format(user, passwd))
+                Worker.chroot(
+                    shlex.split("/bin/bash -c '(echo {}; echo {};) | passwd root'".format(passwd, passwd)),
+                    self._rootfs,
+                    logger)
+
+            if "force_change" in value and value["force_change"] is True:
+                Worker.chroot(
+                    shlex.split("/bin/bash -c 'chage -d 0 {}'".format(user)),
+                    self._rootfs,
+                    logger)
 
     @Mount()
+    @Printer("Configuring")
     def configure(self):
+
+        # /etc/fstab should be always regenerated
+        self._set_fstab()
 
         if 'configured' in self._stamper.stamps:
             return self
@@ -263,7 +282,6 @@ class Debootstrap(object):
         self._stamper.remove('configured')
         self._install_overlay()
         self._set_hostname(self._board)
-        self._set_fstab()
 
         if 'users' in self._images:
             self._set_users()

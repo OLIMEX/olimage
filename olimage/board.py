@@ -96,4 +96,13 @@ class Board(object):
         """
         return self._config['id']
 
+    @property
+    def fdt(self):
+        """
+        Get board default fdt
+
+        :return: string fdt
+        """
+        return self._config['fdt']
+
 

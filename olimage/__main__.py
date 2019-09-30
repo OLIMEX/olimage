@@ -139,7 +139,8 @@ def test(**kwargs):
     environment.paths['overlay'] = os.path.join(environment.paths['root'], kwargs['overlay'])
 
     # Generate board object
-    b = Board(kwargs['target'])
+    environment.board = Board(kwargs['target'])
+    b = environment.board
 
     # Build rootfs
     d = olimage.rootfs.Debootstrap(b, kwargs['release'])

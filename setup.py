@@ -8,5 +8,5 @@ setup(
     license='MIT',
     author='Stefan Mavrodiev',
     author_email='stefan@olimex.com',
-    description='', install_requires=['PyYAML', 'click', 'halo']
+    description='', install_requires=['PyYAML', 'click', 'halo', 'jinja2']
 )

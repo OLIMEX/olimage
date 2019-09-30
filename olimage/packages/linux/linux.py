@@ -50,7 +50,7 @@ class Linux(Package):
         callbacks = {
             'download':     self._download,
             'configure':    self._configure,
-            # 'build':        self._build,
+            'build':        self._build,
             'package':      self._package,
             'install':      self._install,
         }
@@ -104,6 +104,8 @@ class Linux(Package):
         path = self._builder.paths['extract']
         script = os.path.join(path, 'scripts/kconfig/merge_config.sh')
         config = os.path.join(path, '.config')
+
+
         fragment = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'fragments/test.fragment')
 
         # First merge config files
@@ -113,11 +115,7 @@ class Linux(Package):
         self._builder.make("ARCH={} oldconfig".format(self._arch))
 
     def _build(self):
-        return
-        self._builder.make("ARCH={} CROSS_COMPILE={} {}".format(
-                self._arch,
-                self._toolchain,
-                ' '.join(self._config['targets'])))
+        self._builder.make("ARCH={} CROSS_COMPILE={} {}".format(self._arch,self._toolchain,' '.join(self._config['targets'])))
 
     def _package(self):
         """
@@ -126,7 +124,7 @@ class Linux(Package):
         :return: None
         """
         self._version = self._builder.make("kernelversion").decode().splitlines()[1]
-        self._builder.make("KDEB_PKGVERSION={}-1-olimex LOCALVERSION=-1-olimex ARCH={} CROSS_COMPILE={} deb-pkg".format(self._version, self._arch, self._toolchain))
+        self._builder.make("KDEB_PKGVERSION={}-1-olimex LOCALVERSION=-1-olimex ARCH={} CROSS_COMPILE={} bindeb-pkg".format(self._version, self._arch, self._toolchain))
 
     def _install(self):
         """

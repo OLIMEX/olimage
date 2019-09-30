@@ -135,7 +135,9 @@ class Uboot(Package):
 
         :return: None
         """
-        package_dir = os.path.join(self._builder.paths['build'], 'u-boot-sunxi')
+        build = self._builder.paths['build']
+        package_dir = os.path.join(build, 'u-boot-sunxi')
+
         logger.info("Preparing build directory: {}".format(package_dir))
 
         # Remove packaging folder is exists
@@ -178,8 +180,31 @@ class Uboot(Package):
             size=int(size // 1024)
         )
 
+        Templater.install(
+            [
+                os.path.join(package_dir, 'usr/lib/u-boot/kernel.its')
+            ],
+            arch=self._arch,
+            fdt=environment.board.fdt,
+            kernel={
+                'load': '0x40080000',
+                'entry': '0x40080000'
+            },
+            ramdisk={
+                'load': '0x4FE00000',
+                'entry': '0x4FE00000'
+            }
+        )
+
+        Templater.install(
+            [
+                os.path.join(package_dir, 'etc/kernel/postinst.d/uboot-fit')
+            ],
+            "755"
+        )
+
         # Build package
-        Worker.run(shlex.split('dpkg-deb -b {} {}'.format(package_dir, self._package_deb)), logger)
+        Worker.run(shlex.split('dpkg-deb -b {} {}'.format(package_dir, os.path.join(build, self._package_deb))), logger)
 
     def _install(self):
         """
@@ -201,7 +226,7 @@ class Uboot(Package):
         Worker.run(shlex.split('cp -vf {} {}'.format(os.path.join(build, self._package_deb), rootfs)), logger)
 
         # Install
-        Worker.chroot(shlex.split('dpkg -i {}'.format(self._package_deb)), rootfs, logger)
+        Worker.chroot(shlex.split('apt-get install -f -y ./{}'.format(self._package_deb)), rootfs, logger)
 
         # Remove file
         Worker.run(shlex.split('rm -vf {}'.format(os.path.join(rootfs, self._package_deb))), logger)

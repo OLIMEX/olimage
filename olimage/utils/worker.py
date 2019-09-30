@@ -30,8 +30,8 @@ class Worker(object):
         return cliapp.runcmd(command, **kw)
 
     @staticmethod
-    def chroot(command, directory, logger=None):
+    def chroot(command, directory, logger=None, **kwargs):
         if not isinstance(command, list):
             raise ValueError("Command should be list")
-        Worker.run(['chroot', directory] + command, logger)
+        Worker.run(['chroot', directory] + command, logger, **kwargs)
 

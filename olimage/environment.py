@@ -6,3 +6,6 @@ paths = {}
 
 # Global options
 options = {}
+
+# Board object
+board = None

@@ -4,7 +4,8 @@ Version: {{ version }}
 Architecture: {{ arch }}
 Maintainer: Olimex Dev team <support@olimex.com>
 Installed-Size: {{ size }}
-Recommends: arm-trusted-firmware, u-boot-tools
+Depends: device-tree-compiler, u-boot-tools
+Recommends: arm-trusted-firmware
 Breaks: u-boot (<< 2014.10~rc2+dfsg1-2~), u-boot-sunxi
 Replaces: u-boot (<< 2014.10~rc2+dfsg1-2~), u-boot-sunxi
 Provides: u-boot-sunxi
