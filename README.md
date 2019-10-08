@@ -5,10 +5,16 @@
 
 ### From sources
 
+Generate docker image
 ```shell script
 cd olimage
-sudo python3 -m olimage --help
+sudo docker build .
 ```
+
+Run new container
+```shell script
+sudo python3 -m olimage --help
+``` 
 
 
 ## Developer Manual

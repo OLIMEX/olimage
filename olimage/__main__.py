@@ -61,7 +61,7 @@ def generate_environment(**kwargs):
     environment.paths.update({
             'root' : root,
             'configs' : os.path.join(root, 'configs'),
-            'workdir' : os.path.join(root, kwargs['workdir'])
+            'workdir' : os.path.join(os.path.dirname(root), kwargs['workdir'])
     })
 
     # Copy command-line parameters to global env
