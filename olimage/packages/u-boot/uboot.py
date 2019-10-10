@@ -3,7 +3,7 @@ import os
 import shlex
 import shutil
 
-from olimage.packages import PackageBase
+from olimage.packages.package import PackageBase
 from olimage.utils import (Builder, Downloader, Templater, Worker)
 
 import olimage.environment as environment

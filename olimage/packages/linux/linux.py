@@ -2,8 +2,8 @@ import logging
 import shlex
 import os
 
-from olimage.packages import PackageBase
-from olimage.utils import (Builder, Downloader, Templater, Worker)
+from olimage.packages.package import PackageBase
+from olimage.utils import (Builder, Downloader, Worker)
 
 import olimage.environment as environment
 

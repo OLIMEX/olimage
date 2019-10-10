@@ -1,7 +1,7 @@
 import logging
 import os
 
-from olimage.packages import PackageBase
+from olimage.packages.package import PackageBase
 from olimage.utils import Downloader, Builder
 
 import olimage.environment as environment

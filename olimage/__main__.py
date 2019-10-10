@@ -172,7 +172,7 @@ def test(**kwargs):
             print("\nBuilding: \033[1m{}\033[0m".format(key))
             worker.run(key, 'install')
 
-    print("\nInstalling rootfs to the final image")
+    print("\nBuilding: \033[1m{Image}\033[0m")
     d.copy()
 
 
