@@ -1,7 +1,7 @@
-from .config import GenericConfig
+from .parser import GenericLoader
 
 
-class Images(GenericConfig):
+class Images(GenericLoader):
     """
     Parse available images
     """

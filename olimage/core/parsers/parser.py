@@ -6,7 +6,7 @@ import yaml
 import olimage.environment as env
 
 
-class ConfigBase(metaclass=abc.ABCMeta):
+class LoaderBase(metaclass=abc.ABCMeta):
 
     def __init__(self):
         self._objects = []
@@ -37,7 +37,7 @@ class ConfigBase(metaclass=abc.ABCMeta):
         pass
 
 
-class GenericConfig(ConfigBase):
+class GenericLoader(LoaderBase):
     config = None
 
     def load(self):
@@ -50,10 +50,10 @@ class GenericConfig(ConfigBase):
 
         # Generate objects
         for key, value in data.items():
-            self._objects.append(Config(key, value))
+            self._objects.append(Parser(key, value))
 
 
-class Config(object):
+class Parser(object):
     """
     Generic class for configuration mapping
     """
@@ -77,7 +77,7 @@ class Config(object):
 
         # If data[item] is dictionary create new ORM object
         if isinstance(self._data[item], dict):
-            return Config(item, self._data[item])
+            return Parser(item, self._data[item])
 
         # Return value
         return self._data[item]

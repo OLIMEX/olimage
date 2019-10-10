@@ -1,7 +1,7 @@
-from .config import GenericConfig
+from .parser import GenericLoader
 
 
-class Partitions(GenericConfig):
+class Partitions(GenericLoader):
     """
     Parse available partitions
     """
