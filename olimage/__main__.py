@@ -60,7 +60,7 @@ def generate_environment(**kwargs):
     root = os.path.dirname(os.path.abspath(__file__))
     environment.paths.update({
             'root' : root,
-            'configs' : os.path.join(os.path.dirname(root), 'configs'),
+            'configs' : os.path.join(os.path.dirname(root), kwargs['workdir']),
             'workdir' : os.path.join(os.path.dirname(root), kwargs['workdir'])
     })
 
@@ -112,6 +112,7 @@ def prepare_tree():
 @click.group()
 # Options
 @click.option("-w", "--workdir", default="output", help="Specify working directory.")
+@click.option("-c", "--configs", default="configs", help="Configs directory")
 @click.option("-v", "--verbose", count=True, help="Increase logging verbosity.")
 @click.option("--log", help="Logging file.")
 def cli(**kwargs):
