@@ -1,19 +1,14 @@
-packages:
-  minimal: &minimal
-    - 'initramfs-tools'
-    - 'sudo'
+images:
+  minimal:
+    packages: &minimal
+      - 'initramfs-tools'
+      - 'sudo'
 
-  base: &base
-    - *minimal
+  base:
+    packages: &base
+      - *minimal
 
   full:
-    - *base
-
-users:
-  root:
-    password: '1234'
-    force_change: yes
-
-  olimex:
-    password: 'olimex'
+    packages:
+      - *base
 

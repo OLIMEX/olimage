@@ -1,33 +1,8 @@
-# Copyright (c) 2019 Olimex Ltd.
-#
-# MIT License
-#
-# Permission is hereby granted, free of charge, to any person obtaining
-# a copy of this software and associated documentation files (the
-# "Software"), to deal in the Software without restriction, including
-# without limitation the rights to use, copy, modify, merge, publish,
-# distribute, sublicense, and/or sell copies of the Software, and to
-# permit persons to whom the Software is furnished to do so, subject to
-# the following conditions:
-#
-# The above copyright notice and this permission notice shall be
-# included in all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-# LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-# OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-# WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
 import logging
 import math
 import os
 import shlex
 import shutil
-
-import yaml
 
 from dependency_injector import containers, providers
 
@@ -52,8 +27,11 @@ class Debootstrap(object):
 
         self._board = Board(kwargs['target'])
 
+        # Initialize dependencies
         self._partitions = kwargs['partitions']
         self._distributions = kwargs['distributions']
+        self._images = kwargs['images']
+        self._users = kwargs['users']
 
         # Check if release is valid
         release = kwargs['release']
@@ -70,9 +48,6 @@ class Debootstrap(object):
 
         # Parse image configuration
         self._variant = kwargs['variant']
-        cfg = os.path.join(env.paths['configs'], 'images.yaml')
-        with open(cfg, 'r') as f:
-            self._images = yaml.full_load(f.read())
 
         # Set build path
         self._rootfs = os.path.join(
@@ -89,27 +64,6 @@ class Debootstrap(object):
     def __del__(self):
         for f in reversed(self._cleanup):
             f()
-
-    @property
-    def packages(self):
-        """
-        Get needed packages for debootstrap
-
-        :return: list
-        """
-
-        def unpack(l):
-            r = []
-            for item in l:
-                if type(item) != list:
-                    r.append(item)
-                    continue
-                else:
-                    r += unpack(item)
-
-            return r
-
-        return unpack(self._images['packages'][self._variant])
 
     @Printer("Creating base system")
     def _qemu_debootstrap(self):
@@ -131,7 +85,7 @@ class Debootstrap(object):
             shlex.split("qemu-debootstrap --arch={} --components={} --include={} {} {} {}".format(
                 self._board.arch,
                 ",".join(self._distribution.components),
-                ",".join(self.packages),
+                ",".join(self._images.get_packages(self._variant)),
                 self._release,
                 self._rootfs,
                 self._distribution.repository)),
@@ -200,8 +154,14 @@ class Debootstrap(object):
 
     def _set_users(self):
 
-        for user, value in self._images['users'].items():
-            passwd = value['password']
+        for user in self._users:
+            passwd = user.password
+
+            # force_change is not mandatory
+            try:
+                force = user.force_change
+            except AttributeError:
+                force is None
 
             # Assuming root user is always present
             if user != "root":
@@ -218,7 +178,7 @@ class Debootstrap(object):
                     self._rootfs,
                     logger)
 
-            if "force_change" in value and value["force_change"] is True:
+            if force:
                 Worker.chroot(
                     shlex.split("/bin/bash -c 'chage -d 0 {}'".format(user)),
                     self._rootfs,
@@ -237,8 +197,8 @@ class Debootstrap(object):
         if 'configured' in self._stamper.stamps:
             return self
 
-        if 'users' in self._images:
-            self._set_users()
+        # if 'users' in self._images:
+        self._set_users()
         self._stamper.stamp('configured')
 
         return self
@@ -370,5 +330,8 @@ class Debootstrap(object):
 class Builder(containers.DeclarativeContainer):
     debootstrap = providers.Factory(
         Debootstrap,
-        partitions=IocContainer.partitions,
-        distributions=IocContainer.distributions)
+        distributions = IocContainer.distributions,
+        partitions = IocContainer.partitions,
+        images = IocContainer.images,
+        users = IocContainer.users
+    )
