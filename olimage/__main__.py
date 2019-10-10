@@ -60,7 +60,7 @@ def generate_environment(**kwargs):
     root = os.path.dirname(os.path.abspath(__file__))
     environment.paths.update({
             'root' : root,
-            'configs' : os.path.join(root, 'configs'),
+            'configs' : os.path.join(os.path.dirname(root), 'configs'),
             'workdir' : os.path.join(os.path.dirname(root), kwargs['workdir'])
     })
 
