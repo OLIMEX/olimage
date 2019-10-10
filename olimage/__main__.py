@@ -32,9 +32,9 @@ import click
 
 from olimage.board import Board
 import olimage.rootfs
+import olimage.packages
 
 import olimage.environment as environment
-import olimage.packages as package
 
 
 def find_target(target):
@@ -159,14 +159,18 @@ def test(**kwargs):
     board_packages = {}
     for key, value in b.packages.items():
         try:
-            obj = package.Pool[key]
+            obj = olimage.packages.Pool[key]
             board_packages[key] = obj(value)
         except KeyError as e:
             raise Exception("Missing package builder: {}".format(e))
 
-    for key, value in board_packages.items():
-        print("\nBuilding: \033[1m{}\033[0m".format(key))
-        value.download().configure().build().package().install()
+    # Generate package worker
+    worker = olimage.packages.Package(board_packages)
+
+    for p in worker.packages:
+        for key, value in p.items():
+            print("\nBuilding: \033[1m{}\033[0m".format(key))
+            worker.run(key, 'install')
 
     print("\nInstalling rootfs to the final image")
     d.copy()
