@@ -2,7 +2,7 @@ import logging
 
 import cliapp
 
-import olimage.environment as environment
+import olimage.environment as env
 
 
 class Worker(object):
@@ -22,7 +22,7 @@ class Worker(object):
 
         kw = dict()
 
-        kw['env'] = environment.env
+        kw['env'] = env.env
         kw['stdout_callback'] = handle_output
         kw['stderr_callback'] = handle_output
         kw.update(kwargs)

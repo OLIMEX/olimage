@@ -5,10 +5,12 @@ import os
 
 import click
 
-from olimage.utils.printer import Printer
-from olimage.board import Board
 
-import olimage.environment as environment
+from olimage.board import Board
+from olimage.utils import Printer
+
+import olimage.environment as env
+
 
 class Access(type):
 
@@ -129,8 +131,8 @@ def _build_package(obj):
 @click.argument("package")
 def build_package(**kwargs):
 
-    # Update environment options
-    environment.options.update(kwargs)
+    # Update env options
+    env.options.update(kwargs)
 
     # Generate board object
     b = Board(kwargs['target'])

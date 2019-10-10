@@ -1,23 +1,13 @@
-partitions:
-  boot:
-    type: 'vfat'
-    offset: '4MiB'
-    size: '64MiB'
-    fstab:
-      mount: '/boot'
-      options: 'defaults'
-      dump: 0
-      pass: 2
+packages:
+  minimal: &minimal
+    - 'initramfs-tools'
+    - 'sudo'
 
-  rootfs:
-    type: 'ext4'
-    offset: '68MiB'
-    size: ~
-    fstab:
-      mount: '/'
-      options: 'defaults,noatime,nodiratime,commit=600,errors=remount-ro'
-      dump: 0
-      pass: 1
+  base: &base
+    - *minimal
+
+  full:
+    - *base
 
 users:
   root:

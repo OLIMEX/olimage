@@ -6,8 +6,8 @@ import git
 from git.exc import InvalidGitRepositoryError, RepositoryDirtyError, NoSuchPathError
 
 
-from olimage.utils.stamper import PackageStamper
-from olimage.utils import Util
+from .stamper import PackageStamper
+from .util import Util
 
 logger = logging.getLogger(__name__)
 

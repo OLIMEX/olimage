@@ -24,138 +24,92 @@
 import logging
 import math
 import os
-import re
 import shlex
 import shutil
 
 import yaml
 
-import olimage.environment as environment
-from olimage.utils.printer import Printer
-from olimage.utils.stamper import RootFSStamper
-from olimage.utils.worker import Worker
-from olimage.utils.templater import Templater
+from dependency_injector import containers, providers
 
-from olimage.rootfs.mount import Mount
+import olimage.environment as env
+
+from olimage.board import Board
+from olimage.container import IocContainer
+
+from olimage.utils import Printer, RootFSStamper, Worker, Templater
+from .mounter import Mounter
 
 logger = logging.getLogger(__name__)
 
 
-class Release(object):
-    def __init__(self, parent, name, config):
-        self._parent = parent
-        self._name = name
-        self._config = config
-
-    def __str__(self):
-        return self._name
-
-    @property
-    def parent(self):
-        return self._parent
-
-
-class Distribution(object):
-    def __init__(self, name, config):
-        self._name = name
-        self._config = config
-        self._releases = {}
-
-        for key, value in self._config['releases'].items():
-            self._releases[key] = Release(self, key, value)
-
-    def __str__(self):
-        """
-        Get distribution name
-        :return: string
-        """
-        return self._name
-
-    @property
-    def components(self):
-        """
-        Get distribution components, e.g. main, universe, contrib, etc.
-
-        :return: list[] with components
-        """
-        return self._config['components']
-
-    @property
-    def repository(self):
-        """
-        Get preferred repository URL
-
-        :return: string
-        """
-        return self._config['repository']
-
-    @property
-    def releases(self):
-        """
-        Return available releases
-
-        :return: dictionary holding releases
-        """
-        return self._releases
-
-
 class Debootstrap(object):
-    def __init__(self, board, target):
-        self._target = {
-            'distribution' : None,
-            'release' :  None
-        }
-        self._targets = dict()
-        self._board = board
+    def __init__(self, **kwargs):
+
+        self._distribution = None
+        self._release = None
+
         self._cleanup = []
 
-        # Parse configuration file
-        cfg = os.path.join(environment.paths['configs'], 'distributions.yaml')
-        with open(cfg, 'r') as f:
-            self._config = yaml.full_load(f.read())
+        self._board = Board(kwargs['target'])
 
-        # Generate distributions objects
-        for key, value in self._config.items():
-            if key not in ['ubuntu', 'debian']:
-                continue
-            self._targets[key] = Distribution(key, value)
+        self._partitions = kwargs['partitions']
+        self._distributions = kwargs['distributions']
 
-        # Check if target is distribution
-        if target in self._targets:
-            self._target['distribution'] = self._targets[target]
-            self._target['release'] = self._targets[target].releases[self._config[target]['recommended']]
-        else:
-            for _, value in self._targets.items():
-                if target in value.releases:
-                    self._target['distribution'] = value
-                    self._target['release'] = value.releases[target]
-                    break
+        # Check if release is valid
+        release = kwargs['release']
+        for dist in self._distributions:
+            if release == dist:
+                self._distribution = dist
+                self._release = dist.recommended
+            if release in dist.releases:
+                self._distribution = dist
+                self._release = release
 
-        for _, value in self._target.items():
-            if value is None:
-                raise Exception("Target distribution \'{}\' not found in configuration files".format(target))
+        if self._release is None:
+            raise Exception("Target distribution \'{}\' not found in configuration files".format(release))
 
         # Parse image configuration
-        cfg = os.path.join(environment.paths['configs'], 'images.yaml')
+        self._variant = kwargs['variant']
+        cfg = os.path.join(env.paths['configs'], 'images.yaml')
         with open(cfg, 'r') as f:
             self._images = yaml.full_load(f.read())
 
         # Set build path
         self._rootfs = os.path.join(
-            environment.options['workdir'], 'rootfs', "{}-{}".format(self._board.arch, self._target['release']))
-        environment.paths['rootfs'] = self._rootfs
+            env.options['workdir'], 'rootfs', "{}-{}".format(self._board.arch, self._release))
+        env.paths['rootfs'] = self._rootfs
 
         # Configure stamper
-        self._stamper = RootFSStamper(os.path.join(environment.options['workdir'], 'rootfs'))
+        self._stamper = RootFSStamper(os.path.join(env.options['workdir'], 'rootfs'))
 
         # Output image
-        self._image = os.path.join(environment.paths['workdir'], 'images', 'test.img')
-        environment.paths['image'] = self._image
-        self._order = []
+        self._image = os.path.join(env.paths['workdir'], 'images', 'test2.img')
+        env.paths['image'] = self._image
 
     def __del__(self):
         for f in reversed(self._cleanup):
             f()
+
+    @property
+    def packages(self):
+        """
+        Get needed packages for debootstrap
+
+        :return: list
+        """
+
+        def unpack(l):
+            r = []
+            for item in l:
+                if type(item) != list:
+                    r.append(item)
+                    continue
+                else:
+                    r += unpack(item)
+
+            return r
+
+        return unpack(self._images['packages'][self._variant])
 
     @Printer("Creating base system")
     def _qemu_debootstrap(self):
@@ -174,11 +128,13 @@ class Debootstrap(object):
         os.mkdir(self._rootfs)
 
         Worker.run(
-            shlex.split("qemu-debootstrap --arch={} --components={} {} {} {}".format(
+            shlex.split("qemu-debootstrap --arch={} --components={} --include={} {} {} {}".format(
                 self._board.arch,
-                ",".join(self._target['distribution'].components),
-                self._target['release'],
-                self._rootfs, self._target['distribution'].repository)),
+                ",".join(self._distribution.components),
+                ",".join(self.packages),
+                self._release,
+                self._rootfs,
+                self._distribution.repository)),
             logger
         )
         self._stamper.stamp('debootstrap')
@@ -192,7 +148,7 @@ class Debootstrap(object):
         :return: self
         """
         logger.info("Installing rootfs overlay")
-        Worker.run(shlex.split("rsync -aHWXhv {}/ {}/".format(environment.paths['overlay'], self._rootfs), logger))
+        Worker.run(shlex.split("rsync -aHWXhv {}/ {}/".format(env.paths['overlay'], self._rootfs), logger))
 
         return self
 
@@ -221,22 +177,22 @@ class Debootstrap(object):
         :return: self
         """
 
-        for key, value in self._images['partitions'].items():
-            logger.debug("Adding {} as UUID={} to {}".format(key, value['fstab']['uuid'], value['fstab']['mount']))
+        for part in self._partitions:
+            logger.debug("Adding {} as UUID={} to {}".format(part, part.fstab.uuid, part.fstab.mount))
 
         Templater.install(
             [
                 os.path.join(self._rootfs, 'etc/fstab')
             ],
-            partitions = [
+            partitions=[
                 {
-                    'uuid' : '{:41}'.format('UUID=' + p['fstab']['uuid']),
-                    'mount' : '{:15}'.format(p['fstab']['mount']),
-                    'type' : '{:7}'.format(p['type']),
-                    'options' : '{:8}'.format(p['fstab']['options']),
-                    'dump' : '{:7}'.format(p['fstab']['dump']),
-                    'pass' : '{:8}'.format(p['fstab']['pass'])
-                } for _, p in self._images['partitions'].items()
+                    'uuid' : '{:36}'.format(part.fstab.uuid),
+                    'mount' : '{:15}'.format(part.fstab.mount),
+                    'type' : '{:7}'.format(part.fstab.type),
+                    'options' : '{:8}'.format(part.fstab.options),
+                    'dump' : '{:7}'.format(part.fstab.dump),
+                    'pass' : '{:8}'.format(part.fstab.passno)
+                } for part in self._partitions
             ]
         )
 
@@ -268,20 +224,18 @@ class Debootstrap(object):
                     self._rootfs,
                     logger)
 
-    @Mount()
+    @Mounter.mount()
     @Printer("Configuring")
     def configure(self):
-
-        # /etc/fstab should be always regenerated
-        self._set_fstab()
-
-        if 'configured' in self._stamper.stamps:
-            return self
 
         # Run configure steps
         self._stamper.remove('configured')
         self._install_overlay()
+        self._set_fstab()
         self._set_hostname(self._board)
+
+        if 'configured' in self._stamper.stamps:
+            return self
 
         if 'users' in self._images:
             self._set_users()
@@ -290,10 +244,9 @@ class Debootstrap(object):
         return self
 
     def build(self):
-        print("\nBuilding: \033[1m{}\033[0m based distribution".format(self._target['release']))
+        print("\nBuilding: \033[1m{}\033[0m based distribution".format(self._release))
 
         # Run build steps
-
         return self._qemu_debootstrap()
 
     @staticmethod
@@ -328,29 +281,34 @@ class Debootstrap(object):
 
         return self
 
-    @Mount(map_only=True)
+    @Mounter.map()
     @Printer("Formatting partitions")
     def format(self):
 
         # Create partitions
-        for key, value in self._images['partitions'].items():
-            logger.info("Formatting partition: {}".format(key))
+        for part in self._partitions:
+            logger.info("Formatting partition: {}".format(part))
+
+            # Get parted related information
+            device = part.device
+            fstab = part.fstab
 
             opts = ''
-            if value['type'] == 'ext4':
+            if type == 'ext4':
                 opts = '-O ^64bit,^metadata_csum'
 
             # Make filesystem
-            Worker.run(shlex.split('mkfs.{} {} {}'.format(value['type'], opts, value['device'])), logger)
-            Worker.run(shlex.split('udevadm trigger {}'.format(value['device'])), logger)
-            Worker.run(shlex.split('udevadm settle'.format(value['device'])), logger)
+            Worker.run(shlex.split('mkfs.{} {} {}'.format(fstab.type, opts, device)), logger)
+            Worker.run(shlex.split('udevadm trigger {}'.format(device)), logger)
+            Worker.run(shlex.split('udevadm settle'.format(device)), logger)
 
             # Generate UUID
-            value['fstab']['uuid'] = Worker.run(
-                shlex.split('blkid -s UUID -o value {}'.format(value['device'])),
+            fstab.uuid = Worker.run(
+                shlex.split('blkid -s UUID -o value {}'.format(device)),
                 logger
             ).decode().splitlines()[0]
 
+            part.fstab = fstab
         return self
 
     @Printer("Creating partitions")
@@ -360,6 +318,7 @@ class Debootstrap(object):
 
         :return: self
         """
+
         # Create label
         logger.info("Creating disk label: msdos")
         Worker.run(
@@ -368,28 +327,29 @@ class Debootstrap(object):
         )
 
         # Create partitions
-        for key, value in self._images['partitions'].items():
-            logger.info("Creating partition: {}".format(key))
+        for part in self._partitions:
+            logger.info("Creating partition: {}".format(part))
             Worker.run(
                 shlex.split('parted -s {} mkpart primary {} {} {}'.format(
                     self._image,
-                    'fat32' if value['type'] == 'vfat' else value['type'],
-                    value['offset'],
-                    '100%' if value['size'] is None else value['size']
+                    part.parted.type,
+                    part.parted.start,
+                    part.parted.end
                 )),
                 logger
             )
 
         return self
 
-    @Mount()
+    @Mounter.mount()
     @Printer("Copying to raw image")
     def copy(self):
         exclude = ['/dev/*', '/proc/*', '/run/*', '/tmp/*', '/sys/*']
         order = []
 
-        for key, value in self._images['partitions'].items():
-            mount = value['fstab']['mount']
+        for part in self._partitions:
+
+            mount = part.fstab.mount
             if mount == '/':
                 order.insert(0, mount)
             else:
@@ -406,3 +366,9 @@ class Debootstrap(object):
             else:
                 Worker.run(shlex.split('rsync -rLtWh {}/ {}/'.format(self._rootfs + mount, mnt + mount)), logger)
 
+
+class Builder(containers.DeclarativeContainer):
+    debootstrap = providers.Factory(
+        Debootstrap,
+        partitions=IocContainer.partitions,
+        distributions=IocContainer.distributions)

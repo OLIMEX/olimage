@@ -27,6 +27,7 @@ RUN apt-get install -y \
 
 RUN pip3 install \
     click \
+    dependency-injector \
     GitPython \
     halo \
     jinja2 \

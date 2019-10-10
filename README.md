@@ -8,14 +8,23 @@
 Generate docker image
 ```shell script
 cd olimage
-sudo docker build .
+sudo docker build . -t olimage
 ```
 
 Run new container
 ```shell script
-sudo python3 -m olimage --help
-``` 
+docker run -it --privileged  -v $(pwd):/olimage -v /dev:/dev olimage
+```
 
+Run script
+```shell script
+sudo python3 -m olimage --help
+```
+ 
+### Running tests
+```shell script
+python3 -m unittest tests/partitions.py
+```
 
 ## Developer Manual
 ### Generating kernel fragment files

@@ -1,4 +1,7 @@
-setenv bootargs "root=/dev/mmcblk0p2 console=ttyS0,115200 panic=10 loglevel=7"
+setenv bootargs "root=/dev/mmcblk0p2 rw console=ttyS0,115200 panic=10 loglevel=7"
+setenv bootargs "root=PARTUUID=36c876d5-02 rw console=ttyS0,115200 panic=10 loglevel=7"
+setenv bootargs "root=UUID=ab579c7e-7298-4ae4-8c5b-def570449bd6 rw console=ttyS0,115200 panic=10 loglevel=7"
+
 
 dhcp ${fdt_addr_r} 192.168.0.20:test/sun50i-a64-olinuxino.dtb; dhcp ${kernel_addr_r} 192.168.0.20:test/Image; booti ${kernel_addr_r} - ${fdt_addr_r}
 dhcp ${fdt_addr_r} 192.168.0.20:test/sun50i-a64-olinuxino.dtb; dhcp 0x50000000 192.168.0.20:test/Image.gz; unzip 0x50000000 ${kernel_addr_r}; booti ${kernel_addr_r} - ${fdt_addr_r}

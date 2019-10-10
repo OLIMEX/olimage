@@ -115,7 +115,6 @@ def prepare_tree():
 @click.option("-v", "--verbose", count=True, help="Increase logging verbosity.")
 @click.option("--log", help="Logging file.")
 def cli(**kwargs):
-
     generate_environment(**kwargs)
     prepare_logging()
     prepare_tree()
@@ -130,6 +129,7 @@ cli.add_command(olimage.rootfs.build_rootfs)
 # Arguments
 @click.argument("target")
 @click.argument("release")
+@click.argument("variant", type=click.Choice(['minimal', 'base', 'full']))
 # Options
 @click.option("--overlay", default="rootfs/overlay", help="Path to overlay files")
 def test(**kwargs):
@@ -143,7 +143,7 @@ def test(**kwargs):
     b = environment.board
 
     # Build rootfs
-    d = olimage.rootfs.Debootstrap(b, kwargs['release'])
+    d = olimage.rootfs.debootstrap.Builder.debootstrap(**kwargs)
     d.build()
 
     # Generate empty target image
@@ -168,6 +168,7 @@ def test(**kwargs):
         print("\nBuilding: \033[1m{}\033[0m".format(key))
         value.download().configure().build().package().install()
 
+    print("\nInstalling rootfs to the final image")
     d.copy()
 
 

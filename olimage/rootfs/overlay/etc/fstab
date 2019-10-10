@@ -6,5 +6,5 @@
 #
 # <file system> <mount point>   <type>  <options>       <dump>  <pass>
 {% for part in partitions %}
-{{ part.uuid }} {{ part.mount }} {{ part.type }} {{ part.options }} {{ part.dump }} {{ part.pass }}
+UUID={{ part.uuid }} {{ part.mount }} {{ part.type }} {{ part.options }} {{ part.dump }} {{ part.pass }}
 {% endfor %}

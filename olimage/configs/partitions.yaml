@@ -1,0 +1,24 @@
+partitions:
+  boot:
+    fstab:
+      type: 'vfat'
+      mount: '/boot'
+      options: 'defaults'
+      dump: 0
+      passno: 2
+    parted:
+      type: 'fat32'
+      start: '4MiB'
+      end: '64MiB'
+
+  rootfs:
+    fstab:
+      type: 'ext4'
+      mount: '/'
+      options: 'defaults,noatime,nodiratime,commit=600,errors=remount-ro'
+      dump: 0
+      passno: 1
+    parted:
+      type: 'ext4'
+      start: '64MiB'
+      end: '100%'

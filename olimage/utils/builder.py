@@ -4,10 +4,10 @@ import shlex
 import shutil
 import tarfile
 
-from olimage.utils.stamper import PackageStamper
-from olimage.utils.worker import Worker
+from .stamper import PackageStamper
+from .util import Util
+from .worker import Worker
 
-from olimage.utils import Util
 
 logger = logging.getLogger(__name__)
 
