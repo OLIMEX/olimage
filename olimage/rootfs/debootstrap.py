@@ -12,7 +12,7 @@ from olimage.board import Board
 from olimage.container import IocContainer
 
 from olimage.utils import Printer, RootFSStamper, Worker, Templater
-from .mounter import Mounter
+from .utils.mount import Mounter
 
 logger = logging.getLogger(__name__)
 

@@ -59,9 +59,10 @@ def generate_environment(**kwargs):
     # Add paths
     root = os.path.dirname(os.path.abspath(__file__))
     environment.paths.update({
-            'root' : root,
-            'configs' : os.path.join(os.path.dirname(root), kwargs['configs']),
-            'workdir' : os.path.join(os.path.dirname(root), kwargs['workdir'])
+        'root' : root,
+        'configs' : os.path.join(os.path.dirname(root), kwargs['configs']),
+        'overlay': os.path.join(os.path.dirname(root), kwargs['overlay']),
+        'workdir' : os.path.join(os.path.dirname(root), kwargs['workdir'])
     })
 
     # Copy command-line parameters to global env
@@ -111,8 +112,9 @@ def prepare_tree():
 
 @click.group()
 # Options
-@click.option("-w", "--workdir", default="output", help="Specify working directory.")
-@click.option("-c", "--configs", default="configs", help="Configs directory")
+@click.option("--workdir", default="output", help="Specify working directory.")
+@click.option("--configs", default="configs", help="Configs directory")
+@click.option("--overlay", default="overlay", help="Path to overlay files")
 @click.option("-v", "--verbose", count=True, help="Increase logging verbosity.")
 @click.option("--log", help="Logging file.")
 def cli(**kwargs):
@@ -132,12 +134,11 @@ cli.add_command(olimage.rootfs.build_rootfs)
 @click.argument("release")
 @click.argument("variant", type=click.Choice(['minimal', 'base', 'full']))
 # Options
-@click.option("--overlay", default="rootfs/overlay", help="Path to overlay files")
+@click.option("--overlay", default="overlay", help="Path to overlay files")
 def test(**kwargs):
 
     # Update environment options
     environment.options.update(kwargs)
-    environment.paths['overlay'] = os.path.join(environment.paths['root'], kwargs['overlay'])
 
     # Generate board object
     environment.board = Board(kwargs['target'])
