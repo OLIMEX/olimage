@@ -1,43 +1,16 @@
-# -*- coding: utf-8 -*-
-#
-# Copyright (c) 2019 Olimex Ltd.
-#
-# MIT License
-#
-# Permission is hereby granted, free of charge, to any person obtaining
-# a copy of this software and associated documentation files (the
-# "Software"), to deal in the Software without restriction, including
-# without limitation the rights to use, copy, modify, merge, publish,
-# distribute, sublicense, and/or sell copies of the Software, and to
-# permit persons to whom the Software is furnished to do so, subject to
-# the following conditions:
-#
-# The above copyright notice and this permission notice shall be
-# included in all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-# LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-# OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-# WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
 import logging
 import shlex
 import os
 
-from olimage.packages import Package
-from olimage.utils.downloader import Downloader
-from olimage.utils.builder import Builder
-from olimage.utils.worker import Worker
+from olimage.packages import PackageBase
+from olimage.utils import (Builder, Downloader, Templater, Worker)
 
 import olimage.environment as environment
 
 logger = logging.getLogger(__name__)
 
 
-class Linux(Package):
+class Linux(PackageBase):
 
     def __init__(self, config):
 
@@ -45,16 +18,6 @@ class Linux(Package):
         self._config = config
 
         self._builder = Builder(self._name, self._config)
-
-        # Initialize callback methods
-        callbacks = {
-            'download':     self._download,
-            'configure':    self._configure,
-            'build':        self._build,
-            'package':      self._package,
-            'install':      self._install,
-        }
-        super().__init__(**callbacks)
 
         # Some global data
         self._arch = self._config['arch']
@@ -76,7 +39,7 @@ class Linux(Package):
     def __str__(self):
         return self._name
 
-    def _download(self):
+    def download(self):
         """
         Download sources. Currently only git is supported
 
@@ -85,7 +48,7 @@ class Linux(Package):
         Downloader(self._name, self._config).download()
         self._builder.extract()
 
-    def _configure(self):
+    def configure(self):
         """
         Configure sources using defconfig
 
@@ -114,10 +77,10 @@ class Linux(Package):
         # Second, regenerate config file
         self._builder.make("ARCH={} oldconfig".format(self._arch))
 
-    def _build(self):
+    def build(self):
         self._builder.make("ARCH={} CROSS_COMPILE={} {}".format(self._arch,self._toolchain,' '.join(self._config['targets'])))
 
-    def _package(self):
+    def package(self):
         """
         Package linux kernel
 
@@ -126,7 +89,7 @@ class Linux(Package):
         self._version = self._builder.make("kernelversion").decode().splitlines()[1]
         self._builder.make("KDEB_PKGVERSION={}-1-olimex LOCALVERSION=-1-olimex ARCH={} CROSS_COMPILE={} bindeb-pkg".format(self._version, self._arch, self._toolchain))
 
-    def _install(self):
+    def install(self):
         """
         Install u-boot into the target rootfs
 

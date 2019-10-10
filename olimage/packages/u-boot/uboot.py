@@ -1,45 +1,17 @@
-# -*- coding: utf-8 -*-
-#
-# Copyright (c) 2019 Olimex Ltd.
-#
-# MIT License
-#
-# Permission is hereby granted, free of charge, to any person obtaining
-# a copy of this software and associated documentation files (the
-# "Software"), to deal in the Software without restriction, including
-# without limitation the rights to use, copy, modify, merge, publish,
-# distribute, sublicense, and/or sell copies of the Software, and to
-# permit persons to whom the Software is furnished to do so, subject to
-# the following conditions:
-#
-# The above copyright notice and this permission notice shall be
-# included in all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-# LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-# OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-# WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
 import logging
 import os
 import shlex
 import shutil
 
-from olimage.utils.builder import Builder
-from olimage.utils.downloader import Downloader
-from olimage.utils.templater import Templater
-from olimage.utils.worker import Worker
-from olimage.packages import Package
+from olimage.packages import PackageBase
+from olimage.utils import (Builder, Downloader, Templater, Worker)
 
 import olimage.environment as environment
 
 logger = logging.getLogger(__name__)
 
 
-class Uboot(Package):
+class Uboot(PackageBase):
 
     def __init__(self, config):
 
@@ -48,16 +20,6 @@ class Uboot(Package):
 
         # Configure builder
         self._builder = Builder(self._name, config)
-
-        # Initialize callback methods
-        callbacks = {
-            'download':     self._download,
-            'configure':    self._configure,
-            'build':        self._build,
-            'package':      self._package,
-            'install':      self._install
-        }
-        super().__init__(**callbacks)
 
         # Some global data
         self._version = '2019.07+olimex1'
@@ -95,7 +57,7 @@ class Uboot(Package):
         """
         return self._name
 
-    def _download(self):
+    def download(self):
         """
         Download u-boot sources
 
@@ -108,7 +70,7 @@ class Uboot(Package):
         Downloader(self._name, self._config).download()
         self._builder.extract()
 
-    def _configure(self):
+    def configure(self):
         """
         Specify u-boot defconfig
 
@@ -116,7 +78,7 @@ class Uboot(Package):
         """
         self._builder.make("{}_defconfig".format(self._config['defconfig']))
 
-    def _build(self):
+    def build(self):
         """
         Build u-boot from sources
 
@@ -124,7 +86,7 @@ class Uboot(Package):
         """
         self._builder.make("CROSS_COMPILE={}".format(self._config['toolchain']['prefix']))
 
-    def _package(self):
+    def package(self):
         """
         Generate .deb file
 
@@ -206,7 +168,7 @@ class Uboot(Package):
         # Build package
         Worker.run(shlex.split('dpkg-deb -b {} {}'.format(package_dir, os.path.join(build, self._package_deb))), logger)
 
-    def _install(self):
+    def install(self):
         """
         Install u-boot into the target rootfs
 
