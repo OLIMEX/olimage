@@ -157,12 +157,6 @@ class Debootstrap(object):
         for user in self._users:
             passwd = user.password
 
-            # force_change is not mandatory
-            try:
-                force = user.force_change
-            except AttributeError:
-                force = None
-
             # Assuming root user is always present
             if user != "root":
                 Worker.chroot(
@@ -178,11 +172,26 @@ class Debootstrap(object):
                     self._rootfs,
                     logger)
 
-            if force:
-                Worker.chroot(
-                    shlex.split("/bin/bash -c 'chage -d 0 {}'".format(user)),
-                    self._rootfs,
-                    logger)
+            # Check force password change
+            try:
+                if user.force_change:
+                    Worker.chroot(
+                        shlex.split("/bin/bash -c 'chage -d 0 {}'".format(user)),
+                        self._rootfs,
+                        logger)
+            except AttributeError:
+                pass
+
+            # Add users to groups
+            try:
+                for group in user.groups:
+                    Worker.chroot(
+                        shlex.split("/bin/bash -c 'usermod -a -G {} {}'".format(group, user)),
+                        self._rootfs,
+                        logger)
+            except AttributeError:
+                pass
+
 
     @Mounter.mount()
     @Printer("Configuring")

@@ -5,4 +5,5 @@ users:
 
   olimex:
     password: 'olimex'
-    sudo: yes
+    groups:
+      - 'sudo'
