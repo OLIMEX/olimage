@@ -1,0 +1,14 @@
+#!/bin/sh -e
+
+version="$1"
+template="/usr/lib/u-boot/kernel.its"
+
+# Check if FIT template exists
+if [ ! -e ${template} ]; then
+    echo >&2 "W: uboot-fit: FIT image template file is missing"
+    exit 2
+fi
+
+sed "s/\${VERSION}/${version}/g" ${template} > /boot/kernel.its
+echo >&1 "Generating FIT image"
+mkimage -f /boot/kernel.its /boot/kernel.itb > /dev/null
