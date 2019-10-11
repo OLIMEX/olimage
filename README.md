@@ -1,6 +1,9 @@
 # Olimex Image builder
 
 ## Description
+
+## Directory structure
+### Configs
 ## Usage
 
 ### From sources

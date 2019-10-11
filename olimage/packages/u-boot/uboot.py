@@ -82,9 +82,28 @@ class Uboot(PackageBase):
         """
         Build u-boot from sources
 
+        1. Build sources
+        2. Build default env image
+
         :return: None
         """
-        self._builder.make("CROSS_COMPILE={}".format(self._config['toolchain']['prefix']))
+        toolchain = self._config['toolchain']['prefix']
+        path = self._builder.paths['extract']
+
+        # Build sources
+        self._builder.make("CROSS_COMPILE={}".format(toolchain))
+
+        # Generate env
+        Worker.run(
+            ["CROSS_COMPILE={} {}/scripts/get_default_envs.sh > {}/uboot.env.txt".format(toolchain, path, path)],
+            logger,
+            shell=True
+        )
+        Worker.run(
+            ["{}/tools/mkenvimage -s {} -o {}/uboot.env {}/uboot.env.txt".format(path, 16 << 10, path, path)],
+            logger,
+            shell=True
+        )
 
     def package(self):
         """
@@ -118,6 +137,7 @@ class Uboot(PackageBase):
                 os.makedirs(dest)
 
             logger.info("Copying {} to {}".format(src, dest))
+
             dest = os.path.join(dest, src)
             src = os.path.join(self._builder.paths['extract'], src)
             if 'u-boot-sunxi-with-spl.bin' in src:
@@ -135,11 +155,47 @@ class Uboot(PackageBase):
         # Generate template files
         Templater.install(
             [
+                os.path.join(package_dir, 'boot/boot.cmd')
+            ],
+            bootargs={
+                'console': 'ttyS0,115200',
+                'panic': 10,
+                'loglevel': 7,
+            },
+            fit={
+                'file': 'kernel.its',
+                'load': '0x60000000'
+            },
+        )
+
+        Worker.run(
+            ["mkimage -C none -A arm -T script -d {}/boot/boot.cmd {}/boot/boot.scr".format(package_dir, package_dir)],
+            logger,
+            shell=True)
+
+        Templater.install(
+            [
                 os.path.join(package_dir, 'DEBIAN/control')
             ],
             version=self._version,
             arch=self._arch,
             size=int(size // 1024)
+        )
+
+        Templater.install(
+            [
+                os.path.join(package_dir, 'usr/lib/u-boot/kernel.its')
+            ],
+            arch=self._arch,
+            fdt=environment.board.fdt,
+            kernel={
+                'load': '0x40080000',
+                'entry': '0x40080000'
+            },
+            ramdisk={
+                'load': '0x4FE00000',
+                'entry': '0x4FE00000'
+            }
         )
 
         Templater.install(
