@@ -6,7 +6,7 @@ itest.b *0x10028 == 0x03 && echo "U-boot loaded from SPI"
 echo "Boot script loaded from ${devtype}"
 
 # Get partuuid
-if test "${devtype}" = "mmc"; then part uuid mmc 0:1 partuuid; fi
+if test "${devtype}" = "mmc"; then part uuid mmc 0:2 partuuid; fi
 
 # Set bootargs
 setenv bootargs "root=PARTUUID=${partuuid} rootwait {% for key, value in bootargs.items() %} {{ key }}={{ value }}{% endfor %}"
