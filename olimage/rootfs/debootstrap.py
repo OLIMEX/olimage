@@ -161,7 +161,7 @@ class Debootstrap(object):
             try:
                 force = user.force_change
             except AttributeError:
-                force is None
+                force = None
 
             # Assuming root user is always present
             if user != "root":

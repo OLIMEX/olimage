@@ -9,7 +9,7 @@ echo "Boot script loaded from ${devtype}"
 if test "${devtype}" = "mmc"; then part uuid mmc 0:1 partuuid; fi
 
 # Set bootargs
-bootargs "root=PARTUUID=${partuuid} rootwait {% for key, value in bootargs.items() %} {{ key }}={{ value }}{% endfor %}"
+setenv bootargs "root=PARTUUID=${partuuid} rootwait {% for key, value in bootargs.items() %} {{ key }}={{ value }}{% endfor %}"
 
 # Load kernel.itb
 load mmc 0 {{ fit.load }} {{ fit.file }}

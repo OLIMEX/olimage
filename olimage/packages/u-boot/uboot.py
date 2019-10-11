@@ -100,7 +100,7 @@ class Uboot(PackageBase):
             shell=True
         )
         Worker.run(
-            ["{}/tools/mkenvimage -s {} -o {}/uboot.env {}/uboot.env.txt".format(path, 16 << 10, path, path)],
+            ["{}/tools/mkenvimage -s {} -o {}/uboot.env {}/uboot.env.txt".format(path, 0x20000, path, path)],
             logger,
             shell=True
         )
@@ -163,7 +163,7 @@ class Uboot(PackageBase):
                 'loglevel': 7,
             },
             fit={
-                'file': 'kernel.its',
+                'file': 'kernel.itb',
                 'load': '0x60000000'
             },
         )
