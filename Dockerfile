@@ -23,6 +23,7 @@ RUN apt-get install -y \
     swig \
     qemu-user-static \
     qemu-utils \
+    u-boot-tools \
     udev
 
 RUN pip3 install \
