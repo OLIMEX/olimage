@@ -10,9 +10,6 @@ from olimage.utils import Worker
 logger = logging.getLogger(__name__)
 
 
-
-
-
 class Map(object):
     def __init__(self):
         self._output_file = None
