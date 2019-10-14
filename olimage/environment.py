@@ -1,3 +1,5 @@
+import pinject
+
 # Holds global environment
 env = {}
 
@@ -9,3 +11,6 @@ options = {}
 
 # Board object
 board = None
+
+# Objects
+obj_graph: pinject.object_graph.ObjectGraph = None

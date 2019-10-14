@@ -1,7 +1,7 @@
-from .base import (build_package, Pool)
-from .package import (PackageBase, Package)
+from .base import (build_package)
+from .package import (PackageBase, Packages)
 
 __all__ = [
-    'Package', 'PackageBase', 'build_package', 'Pool'
+    'Packages', 'PackageBase', 'build_package'
 ]
 

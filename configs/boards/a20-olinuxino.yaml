@@ -1,3 +1,6 @@
-adasd:
-  - adasd
-  - asdasd
+boards:
+  variants:
+    A20-OLinuXino-MICRO:
+      id: 2323
+      fdt: 'sun7i-a20-olinuxino-micro.dtb'
+      overlays: ~

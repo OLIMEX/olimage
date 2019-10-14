@@ -1,5 +1,5 @@
-from .mount import Mounter
+from .mount import (Map)
 
 __all__ = [
-    'Mounter'
+    'Map'
 ]

@@ -4,37 +4,39 @@ import os
 import shlex
 import shutil
 
-from dependency_injector import containers, providers
+import pinject
 
 import olimage.environment as env
 
-from olimage.board import Board
-from olimage.container import IocContainer
-
 from olimage.utils import Printer, RootFSStamper, Worker, Templater
-from .utils.mount import Mounter
+from .utils.mount import Mounter, Map
+
+from olimage.core.parsers import (Boards, Board, Distributions, Images, Partitions, Users)
 
 logger = logging.getLogger(__name__)
 
 
 class Debootstrap(object):
-    def __init__(self, **kwargs):
+    def __init__(self,
+                 boards: Boards, distributions: Distributions, images: Images, partitions: Partitions, users: Users):
 
+        # Initialize dependencies
+        self._board: Board = boards.get_board(env.options['board'])
+        self._partitions = partitions
+        self._distributions = distributions
+        self._image = images.get_image(env.options['variant'])
+        self._users = users
+
+        # Initialize module attributes
         self._distribution = None
         self._release = None
 
+        # Hold cleanup
         self._cleanup = []
 
-        self._board = Board(kwargs['target'])
-
-        # Initialize dependencies
-        self._partitions = kwargs['partitions']
-        self._distributions = kwargs['distributions']
-        self._images = kwargs['images']
-        self._users = kwargs['users']
-
         # Check if release is valid
-        release = kwargs['release']
+        release: str = env.options['release']
+
         for dist in self._distributions:
             if release == dist:
                 self._distribution = dist
@@ -46,8 +48,8 @@ class Debootstrap(object):
         if self._release is None:
             raise Exception("Target distribution \'{}\' not found in configuration files".format(release))
 
-        # Parse image configuration
-        self._variant = kwargs['variant']
+        # Store variant
+        self._variant = env.options['variant']
 
         # Set build path
         self._rootfs = os.path.join(
@@ -58,12 +60,13 @@ class Debootstrap(object):
         self._stamper = RootFSStamper(os.path.join(env.options['workdir'], 'rootfs'))
 
         # Output image
-        self._image = os.path.join(env.paths['workdir'], 'images', 'test2.img')
-        env.paths['image'] = self._image
+        self._output_file = os.path.join(env.paths['workdir'], 'images', 'test2.img')
+        env.paths['output_file'] = self._output_file
 
     def __del__(self):
-        for f in reversed(self._cleanup):
-            f()
+        if hasattr(self, '_cleanup'):
+            for f in reversed(self._cleanup):
+                f()
 
     @Printer("Creating base system")
     def _qemu_debootstrap(self):
@@ -85,7 +88,7 @@ class Debootstrap(object):
             shlex.split("qemu-debootstrap --arch={} --components={} --include={} {} {} {}".format(
                 self._board.arch,
                 ",".join(self._distribution.components),
-                ",".join(self._images.get_packages(self._variant)),
+                ",".join(self._image.packages),
                 self._release,
                 self._rootfs,
                 self._distribution.repository)),
@@ -193,7 +196,7 @@ class Debootstrap(object):
                 pass
 
 
-    @Mounter.mount()
+    # @Map()
     @Printer("Configuring")
     def configure(self):
 
@@ -241,10 +244,10 @@ class Debootstrap(object):
         # Get size and add 100MiB size
         size = math.ceil(self.get_size(self._rootfs)/1024/1024) + 200
 
-        logger.info("Creating empty file: {} with size {}".format(self._image, size))
+        logger.info("Creating empty file: {} with size {}".format(self._output_file, size))
 
         Worker.run(
-            shlex.split("qemu-img create -f raw {} {}M".format(self._image, size)),
+            shlex.split("qemu-img create -f raw {} {}M".format(self._output_file, size)),
             logger
         )
 
@@ -255,12 +258,12 @@ class Debootstrap(object):
     def format(self):
 
         # Create partitions
-        for part in self._partitions:
-            logger.info("Formatting partition: {}".format(part))
+        for partition in self._partitions:
+            logger.info("Formatting partition: {}".format(partition))
 
             # Get parted related information
-            device = part.device
-            fstab = part.fstab
+            device = partition.device
+            fstab = partition.fstab
 
             opts = ''
             if type == 'ext4':
@@ -277,7 +280,6 @@ class Debootstrap(object):
                 logger
             ).decode().splitlines()[0]
 
-            part.fstab = fstab
         return self
 
     @Printer("Creating partitions")
@@ -291,7 +293,7 @@ class Debootstrap(object):
         # Create label
         logger.info("Creating disk label: msdos")
         Worker.run(
-            shlex.split('parted -s {} mklabel msdos'.format(self._image)),
+            shlex.split('parted -s {} mklabel msdos'.format(self._output_file)),
             logger
         )
 
@@ -300,7 +302,7 @@ class Debootstrap(object):
             logger.info("Creating partition: {}".format(part))
             Worker.run(
                 shlex.split('parted -s {} mkpart primary {} {} {}'.format(
-                    self._image,
+                    self._output_file,
                     part.parted.type,
                     part.parted.start,
                     part.parted.end
@@ -310,7 +312,7 @@ class Debootstrap(object):
 
         return self
 
-    @Mounter.mount()
+    # @Mounter.mount()
     @Printer("Copying to raw image")
     def copy(self):
         exclude = ['/dev/*', '/proc/*', '/run/*', '/tmp/*', '/sys/*']
@@ -325,7 +327,7 @@ class Debootstrap(object):
                 order.append(mount)
                 exclude.append(mount)
 
-        mnt = os.path.join(os.path.dirname(self._image), ".mnt")
+        mnt = os.path.join(os.path.dirname(self._output_file), ".mnt")
         for mount in order:
             if mount == '/':
                 ex = ""
@@ -334,13 +336,3 @@ class Debootstrap(object):
                 Worker.run(shlex.split('rsync -aHWXh {} {}/ {}/'.format(ex, self._rootfs, mnt)), logger)
             else:
                 Worker.run(shlex.split('rsync -rLtWh {}/ {}/'.format(self._rootfs + mount, mnt + mount)), logger)
-
-
-class Builder(containers.DeclarativeContainer):
-    debootstrap = providers.Factory(
-        Debootstrap,
-        distributions = IocContainer.distributions,
-        partitions = IocContainer.partitions,
-        images = IocContainer.images,
-        users = IocContainer.users
-    )

@@ -80,7 +80,7 @@ class PackageBase(metaclass=abc.ABCMeta):
         pass
 
 
-class Package(object):
+class Packages(object):
     def __init__(self, packages: dict):
         """
         Worker class for packages
@@ -89,7 +89,7 @@ class Package(object):
         """
 
         self._packages = packages
-        self._ordered_packages = Package.resolve_dependencies(packages)
+        self._ordered_packages = Packages.resolve_dependencies(packages)
 
     @staticmethod
     def resolve_dependencies(packages):

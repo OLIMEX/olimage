@@ -10,5 +10,6 @@ docker run -i -t \
 	-v /dev:/dev \
 	-v /proc:/proc \
 	-v $(pwd):/olimage \
+	-w /olimage \
 	olimex/test1
 

@@ -1,68 +1,71 @@
-arch: &arch 'arm64'
-
 boards:
-  A64-OLinuXino-1Ge4GW:
-    id : 8367
-    fdt: 'allwinner/sun50i-a64-olinuxino.dtb'
-    overlays: ~
+  arch: &arch 'arm64'
 
-  A64-OLinuXino-1G:
-    id: 8857
-    fdt: 'allwinner/sun50i-a64-olinuxino.dtb'
-    overlays: ~
+  # Define needed BSP
+  packages:
+    arm-trusted-firmware:
+      debug: true
+      images:
+        - 'build/sun50i_a64/debug/bl31.bin'
+      platform: 'sun50i_a64'
+      refs: 'v2.1'
+      source: 'https://github.com/ARM-software/arm-trusted-firmware.git'
+      targets:
+        - 'bl31'
+      toolchain: &toolchain
+        prefix: 'aarch64-linux-gnu-'
+        version: 7
 
-  A64-OLinuXino-2Ge8G-IND:
-    id: 8861
-    fdt: 'allwinner/sun50i-a64-olinuxino.dtb'
-    overlays: ~
+    u-boot:
+      arch: *arch
+      defconfig: 'a64-olinuxino'
+      depends:
+        - 'arm-trusted-firmware'
+      install:
+        - 'u-boot-sunxi-with-spl.bin:usr/lib/u-boot/a64-olinuxino/'
+        - 'uboot.env.txt:usr/lib/u-boot/a64-olinuxino/'
+        - 'uboot.env:boot/'
+      refs: 'v2019.07'
+      source: 'https://github.com/u-boot/u-boot.git'
+      toolchain: *toolchain
 
-  A64-OLinuXino-1Gs16M:
-    id: 9065
-    fdt: 'allwinner/sun50i-a64-olinuxino.dtb'
-    overlays: ~
+    linux:
+      arch: *arch
+      defconfig: ~
+      source: 'https://kernel.googlesource.com/pub/scm/linux/kernel/git/stable/linux-stable'
+      refs: 'v5.3.1'
+      targets:
+        - 'Image'
+        - 'dtbs'
+        - 'modules'
+      toolchain: *toolchain
 
-  A64-OLinuXino-1Ge16GW:
-    id: 9849
-    fdt: 'allwinner/sun50i-a64-olinuxino.dtb'
-    overlays: ~
+  # Define board variants
+  variants:
+    A64-OLinuXino-1Ge4GW:
+      id : 8367
+      fdt: 'allwinner/sun50i-a64-olinuxino.dtb'
+      overlays: ~
 
-packages:
-  arm-trusted-firmware:
-    debug: true
-    images:
-      - 'build/sun50i_a64/debug/bl31.bin'
-    platform: 'sun50i_a64'
-    refs: 'v2.1'
-    source: 'https://github.com/ARM-software/arm-trusted-firmware.git'
-    targets:
-      - 'bl31'
-    toolchain: &toolchain
-      prefix: 'aarch64-linux-gnu-'
-      version: 7
+    A64-OLinuXino-1G:
+      id: 8857
+      fdt: 'allwinner/sun50i-a64-olinuxino.dtb'
+      overlays: ~
 
-  u-boot:
-    arch: *arch
-    defconfig: 'a64-olinuxino'
-    depends:
-      - 'arm-trusted-firmware'
-    install:
-      - 'u-boot-sunxi-with-spl.bin:usr/lib/u-boot/a64-olinuxino/'
-      - 'uboot.env.txt:usr/lib/u-boot/a64-olinuxino/'
-      - 'uboot.env:boot/'
-    refs: 'v2019.07'
-    source: 'https://github.com/u-boot/u-boot.git'
-    toolchain: *toolchain
+    A64-OLinuXino-2Ge8G-IND:
+      id: 8861
+      fdt: 'allwinner/sun50i-a64-olinuxino.dtb'
+      overlays: ~
 
-  linux:
-    arch: *arch
-    defconfig: ~
-    source: 'https://kernel.googlesource.com/pub/scm/linux/kernel/git/stable/linux-stable'
-    refs: 'v5.3.1'
-    targets:
-      - 'Image'
-      - 'dtbs'
-      - 'modules'
-    toolchain: *toolchain
+    A64-OLinuXino-1Gs16M:
+      id: 9065
+      fdt: 'allwinner/sun50i-a64-olinuxino.dtb'
+      overlays: ~
+
+    A64-OLinuXino-1Ge16GW:
+      id: 9849
+      fdt: 'allwinner/sun50i-a64-olinuxino.dtb'
+      overlays: ~
 
 
 

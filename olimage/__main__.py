@@ -29,23 +29,12 @@ import os
 import sys
 
 import click
+import pinject
 
-from olimage.board import Board
 import olimage.rootfs
-import olimage.packages
+# import olimage.packages
 
 import olimage.environment as environment
-
-
-def find_target(target):
-    """
-    Search for target board in configurations
-
-    :param target: board name
-    :return:
-    """
-    boards = os.path.dirname(__file__)
-    print(boards)
 
 
 def generate_environment(**kwargs):
@@ -122,60 +111,62 @@ def cli(**kwargs):
     prepare_logging()
     prepare_tree()
 
+    environment.obj_graph = pinject.new_object_graph()
 
-# Add sub-commands
-cli.add_command(olimage.packages.build_package)
+
+# # Add sub-commands
+# cli.add_command(olimage.packages.build_package)
 cli.add_command(olimage.rootfs.build_rootfs)
 
 
-@cli.command()
-# Arguments
-@click.argument("target")
-@click.argument("release")
-@click.argument("variant", type=click.Choice(['minimal', 'base', 'full']))
-# Options
-@click.option("--overlay", default="overlay", help="Path to overlay files")
-def test(**kwargs):
-
-    # Update environment options
-    environment.options.update(kwargs)
-
-    # Generate board object
-    environment.board = Board(kwargs['target'])
-    b = environment.board
-
-    # Build rootfs
-    d = olimage.rootfs.debootstrap.Builder.debootstrap(**kwargs)
-    d.build()
-
-    # Generate empty target image
-    d.generate().partition()
-
-    # Create filesystems
-    d.format()
-
-    # Make final configurations
-    d.configure()
-
-    # Build board packages
-    board_packages = {}
-    for key, value in b.packages.items():
-        try:
-            obj = olimage.packages.Pool[key]
-            board_packages[key] = obj(value)
-        except KeyError as e:
-            raise Exception("Missing package builder: {}".format(e))
-
-    # Generate package worker
-    worker = olimage.packages.Package(board_packages)
-
-    for p in worker.packages:
-        for key, value in p.items():
-            print("\nBuilding: \033[1m{}\033[0m".format(key))
-            worker.run(key, 'install')
-
-    print("\nBuilding: \033[1m{Image}\033[0m")
-    d.copy()
+# @cli.command()
+# # Arguments
+# @click.argument("target")
+# @click.argument("release")
+# @click.argument("variant", type=click.Choice(['minimal', 'base', 'full']))
+# # Options
+# @click.option("--overlay", default="overlay", help="Path to overlay files")
+# def test(**kwargs):
+#
+#     # Update environment options
+#     environment.options.update(kwargs)
+#
+#     # Generate board object
+#     environment.board = Board(kwargs['target'])
+#     b = environment.board
+#
+#     # Build rootfs
+#     d = olimage.rootfs.debootstrap.Builder.debootstrap(**kwargs)
+#     d.build()
+#
+#     # Generate empty target image
+#     d.generate().partition()
+#
+#     # Create filesystems
+#     d.format()
+#
+#     # Make final configurations
+#     d.configure()
+#
+#     # Build board packages
+#     board_packages = {}
+#     for key, value in b.packages.items():
+#         try:
+#             obj = olimage.packages.Pool[key]
+#             board_packages[key] = obj(value)
+#         except KeyError as e:
+#             raise Exception("Missing package builder: {}".format(e))
+#
+#     # Generate package worker
+#     worker = olimage.packages.Package(board_packages)
+#
+#     for p in worker.packages:
+#         for key, value in p.items():
+#             print("\nBuilding: \033[1m{}\033[0m".format(key))
+#             worker.run(key, 'install')
+#
+#     print("\nBuilding: \033[1m{Image}\033[0m")
+#     d.copy()
 
 
 if __name__ == "__main__":

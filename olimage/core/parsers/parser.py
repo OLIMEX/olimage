@@ -6,14 +6,8 @@ import yaml
 import olimage.environment as env
 
 
-class LoaderBase(metaclass=abc.ABCMeta):
-
-    def __init__(self):
-        self._objects = []
-        self._loaded = False
-
+class LoaderBase(object):
     def __iter__(self):
-        self._load()
         self._iter = iter(self._objects)
         return self
 
@@ -21,36 +15,23 @@ class LoaderBase(metaclass=abc.ABCMeta):
         return next(self._iter)
 
     def __getitem__(self, item):
-        self._load()
         return self._objects[item]
-
-    def _load(self):
-        if self._loaded:
-            return
-
-        self.load()
-
-        self._loaded = True
-
-    @abc.abstractmethod
-    def load(self):
-        pass
 
 
 class GenericLoader(LoaderBase):
-    config = None
-
-    def load(self):
-        if self.config is None:
-            return
+    def __init__(self, name, holder) -> None:
+        # Hold objects
+        self._objects = []
 
         # Read configuration file
-        with open(os.path.join(env.paths['configs'], '{}.yaml'.format(self.config))) as f:
-            data = yaml.full_load(f.read())[self.config]
+        with open(os.path.join(env.paths['configs'], '{}.yaml'.format(name))) as f:
+            data = yaml.full_load(f.read())[name]
 
         # Generate objects
         for key, value in data.items():
-            self._objects.append(Parser(key, value))
+            self._objects.append(holder(key, value))
+
+
 
 
 class Parser(object):

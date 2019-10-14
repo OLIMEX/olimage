@@ -1,8 +1,10 @@
+from .boards import Board, Boards
 from .distributions import Distributions
 from .images import Images
 from .partitions import Partitions
 from .users import Users
 
+
 __all__ = [
-    'Distributions', 'Partitions', 'Images', 'Users'
+    'Board', 'Boards', 'Distributions', 'Partitions', 'Images', 'Users'
 ]
