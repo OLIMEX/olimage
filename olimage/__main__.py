@@ -119,54 +119,47 @@ cli.add_command(olimage.packages.build_packages)
 cli.add_command(olimage.rootfs.build_rootfs)
 
 
-# @cli.command()
-# # Arguments
-# @click.argument("target")
-# @click.argument("release")
-# @click.argument("variant", type=click.Choice(['minimal', 'base', 'full']))
-# # Options
-# @click.option("--overlay", default="overlay", help="Path to overlay files")
-# def test(**kwargs):
-#
-#     # Update environment options
-#     environment.options.update(kwargs)
-#
-#     # Generate board object
-#     environment.board = Board(kwargs['target'])
-#     b = environment.board
-#
-#     # Build rootfs
-#     d = olimage.rootfs.debootstrap.Builder.debootstrap(**kwargs)
-#     d.build()
-#
-#     # Generate empty target image
-#     d.generate().partition()
-#
-#     # Create filesystems
-#     d.format()
-#
-#     # Make final configurations
-#     d.configure()
-#
-#     # Build board packages
-#     board_packages = {}
-#     for key, value in b.packages.items():
-#         try:
-#             obj = olimage.packages.Pool[key]
-#             board_packages[key] = obj(value)
-#         except KeyError as e:
-#             raise Exception("Missing package builder: {}".format(e))
-#
-#     # Generate package worker
-#     worker = olimage.packages.Package(board_packages)
-#
-#     for p in worker.packages:
-#         for key, value in p.items():
-#             print("\nBuilding: \033[1m{}\033[0m".format(key))
-#             worker.run(key, 'install')
-#
-#     print("\nBuilding: \033[1m{Image}\033[0m")
-#     d.copy()
+@cli.command()
+# Arguments
+@click.argument("board")
+@click.argument("release")
+@click.argument("variant", type=click.Choice(['minimal', 'base', 'full']))
+# Options
+@click.option("--overlay", default="overlay", help="Path to overlay files")
+@click.pass_context
+def test(ctx: click.Context, **kwargs):
+
+    from olimage.core.parsers import Boards, Board
+    from olimage.rootfs import Debootstrap
+
+    # Update environment options
+    environment.options.update(kwargs)
+
+    # Generate board object
+    boards = environment.obj_graph.provide(Boards)
+    b: Board = boards.get_board(kwargs['board'])
+    b.board_packages
+
+    d = environment.obj_graph.provide(Debootstrap)
+
+    # Build rootfs
+    d.build()
+
+    # Generate empty target image
+    d.generate().partition()
+
+    # Create filesystems
+    d.format()
+
+    # Make final configurations
+    d.configure()
+
+    # Build package
+    ctx.invoke(olimage.packages.build_packages, board=kwargs['board'], package=None, command='install')
+
+    # Create image
+    print("\nBuilding: \033[1mImage\033[0m")
+    d.copy()
 
 
 if __name__ == "__main__":

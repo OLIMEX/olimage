@@ -242,7 +242,7 @@ class Uboot(AbstractPackage):
         """
 
         rootfs = env.paths['rootfs']
-        image = env.paths['image']
+        image = env.paths['output_file']
         build = self._builder.paths['build']
 
         # Copy file
