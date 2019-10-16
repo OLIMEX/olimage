@@ -18,15 +18,6 @@ class Map(object):
         self._partitions = None
         self._order = []
 
-    def __call__(self, f):
-        @functools.wraps(f)
-        def wrapper(*args, **kwargs):
-            self._output_file = args[0]._output_file # TODO: This is GSP
-            self._mount = os.path.join(os.path.dirname(self._output_file), ".mnt")
-            with self:
-                return f(*args, **kwargs)
-        return wrapper
-
     def __call__(self, *args, **kwargs):
         f = args[0]
 
