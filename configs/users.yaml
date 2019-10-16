@@ -1,7 +1,7 @@
 users:
   root:
     password: '1234'
-    force_change: yes
+#    force_change: yes
 
   olimex:
     password: 'olimex'

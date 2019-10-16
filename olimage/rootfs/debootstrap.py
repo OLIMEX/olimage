@@ -192,22 +192,20 @@ class Debootstrap(object):
             except AttributeError:
                 pass
 
-
-    # @Map()
+    @Mounter.mount()
     @Printer("Configuring")
     def configure(self):
 
         # Run configure steps
-        self._stamper.remove('configured')
         self._install_overlay()
         self._set_fstab()
-        self._set_hostname(self._board)
 
         if 'configured' in self._stamper.stamps:
             return self
 
-        # if 'users' in self._images:
         self._set_users()
+        self._set_hostname(self._board)
+
         self._stamper.stamp('configured')
 
         return self
@@ -309,7 +307,7 @@ class Debootstrap(object):
 
         return self
 
-    # @Mounter.mount()
+    @Mounter.mount()
     @Printer("Copying to raw image")
     def copy(self):
         exclude = ['/dev/*', '/proc/*', '/run/*', '/tmp/*', '/sys/*']

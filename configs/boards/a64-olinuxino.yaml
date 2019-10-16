@@ -30,6 +30,8 @@ boards:
 
     linux:
       arch: *arch
+      depends:
+        - 'u-boot'
       defconfig: ~
       source: 'https://kernel.googlesource.com/pub/scm/linux/kernel/git/stable/linux-stable'
       refs: 'v5.3.1'
