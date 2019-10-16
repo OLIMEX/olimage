@@ -4,14 +4,11 @@ import os
 import shlex
 import shutil
 
-import pinject
-
 import olimage.environment as env
 
-from olimage.utils import Printer, RootFSStamper, Worker, Templater
 from .utils.mount import Mounter, Map
-
 from olimage.core.parsers import (Boards, Board, Distributions, Images, Partitions, Users)
+from olimage.utils import Printer, RootFSStamper, Worker, Templater
 
 logger = logging.getLogger(__name__)
 

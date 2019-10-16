@@ -2,27 +2,33 @@ import logging
 import shlex
 import os
 
-from olimage.packages.package import PackageBase
+from olimage.core.parsers import Board
+from olimage.packages.package import AbstractPackage
 from olimage.utils import (Builder, Downloader, Worker)
 
-import olimage.environment as environment
+import olimage.environment as env
 
 logger = logging.getLogger(__name__)
 
 
-class Linux(PackageBase):
+class Linux(AbstractPackage):
 
-    def __init__(self, config):
+    def __init__(self, boards):
 
         self._name = 'linux'
-        self._config = config
 
-        self._builder = Builder(self._name, self._config)
+        # Initialize dependencies
+        self._board: Board = boards.get_board(env.options['board'])
+
+        # Configure utils
+        self._package = self._board.get_board_package(self._name)
+        self._data = self._package.data
+
+        self._builder = Builder(self._name, self._data)
 
         # Some global data
-        self._arch = self._config['arch']
-        self._toolchain = self._config['toolchain']['prefix']
-
+        self._arch = self._board.arch
+        self._toolchain = self._package.toolchain.prefix
         self._version = None
 
     @staticmethod
@@ -32,8 +38,8 @@ class Linux(PackageBase):
     @property
     def dependency(self):
         try:
-            return self._config['depends']
-        except KeyError:
+            return self._package.depends
+        except AttributeError:
             return []
 
     def __str__(self):
@@ -45,7 +51,7 @@ class Linux(PackageBase):
 
         :return: None
         """
-        Downloader(self._name, self._config).download()
+        Downloader(self._name, self._data).download()
         self._builder.extract()
 
     def configure(self):
@@ -57,8 +63,8 @@ class Linux(PackageBase):
 
         defconfig = 'defconfig'
 
-        if self._config['defconfig'] is not None:
-            defconfig = self._config['defconfig'] + '_defconfig'
+        if self._package.defconfig is not None:
+            defconfig = self._package.defconfig + '_defconfig'
 
         # Make defconfig
         self._builder.make("ARCH={} {}".format(self._arch, defconfig))
@@ -78,7 +84,7 @@ class Linux(PackageBase):
         self._builder.make("ARCH={} oldconfig".format(self._arch))
 
     def build(self):
-        self._builder.make("ARCH={} CROSS_COMPILE={} {}".format(self._arch,self._toolchain,' '.join(self._config['targets'])))
+        self._builder.make("ARCH={} CROSS_COMPILE={} {}".format(self._arch,self._toolchain,' '.join(self._package.targets)))
 
     def package(self):
         """
@@ -101,7 +107,7 @@ class Linux(PackageBase):
         :return: None
         """
         #
-        rootfs = environment.paths['rootfs']
+        rootfs = env.paths['rootfs']
         build = self._builder.paths['build']
 
         # Copy file

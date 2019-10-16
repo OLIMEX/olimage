@@ -7,7 +7,7 @@ class PackageException(Exception):
     pass
 
 
-class PackageBase(metaclass=abc.ABCMeta):
+class AbstractPackage(metaclass=abc.ABCMeta):
     """
     An package base class
 

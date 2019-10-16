@@ -1,8 +1,7 @@
 boards:
   arch: &arch 'arm64'
 
-  # Define needed BSP
-  packages:
+  board_packages:
     arm-trusted-firmware:
       debug: true
       images:

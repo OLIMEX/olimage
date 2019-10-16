@@ -3,7 +3,13 @@ import yaml
 
 import olimage.environment as env
 
-from .parser import LoaderBase
+from .parser import (LoaderBase, Parser)
+
+
+class BoardPackage(Parser):
+    @property
+    def data(self):
+        return self._data
 
 
 class Variant(object):
@@ -37,16 +43,32 @@ class Board(object):
         for key, value in data['variants'].items():
             self._variants.append(Variant(key, value))
 
+        # Create board packages
+        self._board_packages = []
+        for key, value in data['board_packages'].items():
+            self._board_packages.append(BoardPackage(key, value))
+
     def __str__(self) -> str:
         return self._name
+
+    def get_board_package(self, name: str) -> BoardPackage:
+        for package in self._board_packages:
+            if name == str(package):
+                return package
+
+        raise Exception("No such package: \"{}\"".format(name))
 
     @property
     def arch(self) -> str:
         return self._data['arch']
 
     @property
-    def variants(self) -> list:
+    def variants(self) -> [Variant]:
         return self._variants
+
+    @property
+    def board_packages(self) -> list:
+        return self._board_packages
 
 
 class Boards(LoaderBase):

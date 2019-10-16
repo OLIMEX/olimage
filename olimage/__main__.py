@@ -32,7 +32,7 @@ import click
 import pinject
 
 import olimage.rootfs
-# import olimage.packages
+import olimage.packages
 
 import olimage.environment as environment
 
@@ -115,7 +115,7 @@ def cli(**kwargs):
 
 
 # # Add sub-commands
-# cli.add_command(olimage.packages.build_package)
+cli.add_command(olimage.packages.build_packages)
 cli.add_command(olimage.rootfs.build_rootfs)
 
 

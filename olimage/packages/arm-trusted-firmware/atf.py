@@ -1,22 +1,29 @@
 import logging
 import os
 
-from olimage.packages.package import PackageBase
+from olimage.core.parsers import Board
+from olimage.packages.package import AbstractPackage
 from olimage.utils import Downloader, Builder
 
-import olimage.environment as environment
+import olimage.environment as env
 
 logger = logging.getLogger(__name__)
 
 
-class ATF(PackageBase):
+class ATF(AbstractPackage):
 
-    def __init__(self, config):
+    def __init__(self, boards):
 
         self._name = 'arm-trusted-firmware'
-        self._config = config
 
-        self._builder = Builder(self._name, self._config)
+        # Initialize dependencies
+        self._board: Board = boards.get_board(env.options['board'])
+
+        # Configure utils
+        self._package = self._board.get_board_package(self._name)
+        self._data = self._package.data
+
+        self._builder = Builder(self._name, self._data)
 
     @staticmethod
     def alias():
@@ -25,29 +32,29 @@ class ATF(PackageBase):
     @property
     def dependency(self):
         try:
-            return self._config['depends']
-        except KeyError:
+            return self._package.depends
+        except AttributeError:
             return []
 
     def __str__(self):
         return self._name
 
     def download(self):
-        Downloader(self._name, self._config).download()
+        Downloader(self._name, self._data).download()
 
     def configure(self):
         self._builder.extract()
 
     def build(self):
         self._builder.make("CROSS_COMPILE={} PLAT={} DEBUG={} {}".format(
-            self._config['toolchain']['prefix'],
-            self._config['platform'],
-            1 if self._config['debug'] else 0,
-            self._config['targets'][0]))
+            self._package.toolchain.prefix,
+            self._package.platform,
+            1 if self._package.debug else 0,
+            self._package.targets[0]))
 
     def package(self):
         pass
 
     def install(self):
         # BL31 is needed for u-boot compilation
-        environment.env['BL31'] = os.path.join(self._builder.paths['extract'], self._config['images'][0])
+        env.env['BL31'] = os.path.join(self._builder.paths['extract'], self._package.images[0])

@@ -32,8 +32,6 @@ class GenericLoader(LoaderBase):
             self._objects.append(holder(key, value))
 
 
-
-
 class Parser(object):
     """
     Generic class for configuration mapping
