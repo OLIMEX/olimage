@@ -42,6 +42,9 @@ class ATF(AbstractPackage):
     def download(self):
         Downloader(self._name, self._data).download()
 
+    def patch(self):
+        pass
+
     def configure(self):
         self._builder.extract()
 

@@ -39,7 +39,16 @@ class AbstractPackage(metaclass=abc.ABCMeta):
         """
         Download package
 
-        :return: self
+        :return: None
+        """
+        pass
+
+    @abc.abstractmethod
+    def patch(self):
+        """
+        Apply patches
+
+        :return: None
         """
         pass
 
@@ -48,7 +57,7 @@ class AbstractPackage(metaclass=abc.ABCMeta):
         """
         Configure package
 
-        :return: self
+        :return: None
         """
         pass
 
@@ -57,7 +66,7 @@ class AbstractPackage(metaclass=abc.ABCMeta):
         """
         Build package
 
-        :return: self
+        :return: None
         """
         pass
 
@@ -66,7 +75,7 @@ class AbstractPackage(metaclass=abc.ABCMeta):
         """
         Make debian package
 
-        :return: self
+        :return: None
         """
         pass
 
@@ -75,7 +84,7 @@ class AbstractPackage(metaclass=abc.ABCMeta):
         """
         Install package
 
-        :return: self
+        :return: None
         """
         pass
 
@@ -131,7 +140,7 @@ class Packages(object):
             raise PackageException("Unknown package \'{}\'".format(package))
 
     def run(self, package, command):
-        chain = ['download', 'configure', 'build', 'package', 'install']
+        chain = ['download', 'patch', 'configure', 'build', 'package', 'install']
 
         # Check if package exists
         self._check_package(package)
@@ -149,6 +158,10 @@ class Packages(object):
     @Printer("Downloading")
     def download(self, package):
         self._packages[package].download()
+
+    @Printer("Patching")
+    def patch(self, package):
+        self._packages[package].patch()
 
     @Printer("Configuring")
     def configure(self, package):

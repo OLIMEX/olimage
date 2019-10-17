@@ -30,6 +30,21 @@ python3 -m unittest tests/partitions.py
 ```
 
 ## Developer Manual
+### Creating BSP patches
+
+Cleanup the tree:
+```shell script
+cd output/dl/u-boot/v2019.07
+git reset --hard HEAD
+git clean -fdx
+```
+
+Create new patch:
+```shell script
+QUILT_PATCHES=/olimage/olimage/packages/u-boot/patches quilt new xxxx-something.patch
+quilt add somefile.c
+quilt refresh
+```
 ### Generating kernel fragment files
 
 Make sure the kernel tree is clean

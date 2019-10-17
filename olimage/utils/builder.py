@@ -41,6 +41,23 @@ class Builder(Util):
 
         return self
 
+    def patch(self, patches):
+        if 'patched' in self.stamper.stamps:
+            return
+
+        if not os.path.exists(patches):
+            self._builder.stamper.stamp('patched')
+            return
+
+        logger.info("Applying patches from {}".format(patches))
+        Worker.run(
+            ["cd {}; QUILT_PATCHES={} quilt push".format(self.paths['extract'], patches)],
+            logger,
+            shell=True
+        )
+
+        self.stamper.stamp('patched')
+
     def make(self, command, **kwargs):
         return Worker.run(
             shlex.split("/bin/bash -c 'make -C {} {} -j{}'".format(

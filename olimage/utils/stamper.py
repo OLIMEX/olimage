@@ -65,5 +65,6 @@ class PackageStamper(Stamper):
             'downloaded',   # Sources are downloaded
             'archived',     # Sources are archived
             'extracted',    # Sources are extracted to the build directory
+            'patched',      # Sources are patched
             'configured',   # Sources are configured
         ]

@@ -27,11 +27,16 @@ class Worker(object):
         kw['stderr_callback'] = handle_output
         kw.update(kwargs)
 
-        return cliapp.runcmd(command, **kw)
+        try:
+            return cliapp.runcmd(command, **kw)
+        except cliapp.app.AppException as e:
+            msg: str = e.msg
+            logger.error(msg)
+            raise Exception(msg.splitlines()[0])
 
     @staticmethod
     def chroot(command, directory, logger=None, **kwargs):
         if not isinstance(command, list):
             raise ValueError("Command should be list")
-        Worker.run(['chroot', directory] + command, logger, **kwargs)
+        Worker.run(['sudo', 'chroot', directory] + command, logger, **kwargs)
 

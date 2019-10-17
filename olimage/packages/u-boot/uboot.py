@@ -75,6 +75,14 @@ class Uboot(AbstractPackage):
         Downloader(self._name, self._data).download()
         self._builder.extract()
 
+    def patch(self):
+        """
+        Apply patches
+
+        :return: None
+        """
+        self._builder.patch(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'patches'))
+
     def configure(self):
         """
         Specify u-boot defconfig

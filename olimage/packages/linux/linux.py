@@ -54,6 +54,9 @@ class Linux(AbstractPackage):
         Downloader(self._name, self._data).download()
         self._builder.extract()
 
+    def patch(self):
+        pass
+
     def configure(self):
         """
         Configure sources using defconfig

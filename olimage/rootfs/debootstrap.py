@@ -82,7 +82,7 @@ class Debootstrap(object):
         os.mkdir(self._rootfs)
 
         Worker.run(
-            shlex.split("qemu-debootstrap --arch={} --components={} --include={} {} {} {}".format(
+            shlex.split("sudo qemu-debootstrap --arch={} --components={} --include={} {} {} {}".format(
                 self._board.arch,
                 ",".join(self._distribution.components),
                 ",".join(self._image.packages),
@@ -102,7 +102,7 @@ class Debootstrap(object):
         :return: self
         """
         logger.info("Installing rootfs overlay")
-        Worker.run(shlex.split("rsync -aHWXhv {}/ {}/".format(env.paths['overlay'], self._rootfs), logger))
+        Worker.run(shlex.split("sudo rsync -aHWXhv {}/ {}/".format(env.paths['overlay'], self._rootfs), logger))
 
         return self
 
@@ -265,9 +265,9 @@ class Debootstrap(object):
                 opts = '-O ^64bit,^metadata_csum'
 
             # Make filesystem
-            Worker.run(shlex.split('mkfs.{} {} {}'.format(fstab.type, opts, device)), logger)
-            Worker.run(shlex.split('udevadm trigger {}'.format(device)), logger)
-            Worker.run(shlex.split('udevadm settle'.format(device)), logger)
+            Worker.run(shlex.split('sudo mkfs.{} {} {}'.format(fstab.type, opts, device)), logger)
+            Worker.run(shlex.split('sudo udevadm trigger {}'.format(device)), logger)
+            Worker.run(shlex.split('sudo udevadm settle'.format(device)), logger)
 
             # Generate UUID
             fstab.uuid = Worker.run(
@@ -328,6 +328,6 @@ class Debootstrap(object):
                 ex = ""
                 for key in exclude:
                     ex += '--exclude="{}" '.format(key)
-                Worker.run(shlex.split('rsync -aHWXh {} {}/ {}/'.format(ex, self._rootfs, mnt)), logger)
+                Worker.run(shlex.split('sudo rsync -aHWXh {} {}/ {}/'.format(ex, self._rootfs, mnt)), logger)
             else:
-                Worker.run(shlex.split('rsync -rLtWh {}/ {}/'.format(self._rootfs + mount, mnt + mount)), logger)
+                Worker.run(shlex.split('sudo rsync -rLtWh {}/ {}/'.format(self._rootfs + mount, mnt + mount)), logger)

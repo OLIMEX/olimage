@@ -39,7 +39,7 @@ class Map(object):
     def __enter__(self):
         logger.info("Mapping image {}".format(self._output_file))
 
-        output = Worker.run(shlex.split('kpartx -avs {}'.format(self._output_file)), logger).decode('utf-8', 'ignore')
+        output = Worker.run(shlex.split('sudo kpartx -avs {}'.format(self._output_file)), logger).decode('utf-8', 'ignore')
         for line in output.splitlines():
             w = line.split()
             if w[0] == 'add':
@@ -59,7 +59,7 @@ class Map(object):
     def __exit__(self, exc_type, exc_val, exc_tb):
         logger.info("Unmapping image {}".format(self._output_file))
 
-        Worker.run(shlex.split('kpartx -dvs {}'.format(self._output_file)), logger)
+        Worker.run(shlex.split('sudo kpartx -dvs {}'.format(self._output_file)), logger)
 
 
 class Mount(Map):
@@ -85,9 +85,9 @@ class Mount(Map):
             mount = os.path.join(self._mount, mount.lstrip('/'))
 
             if not os.path.exists(mount):
-                os.mkdir(mount)
+                Worker.run(shlex.split('sudo mkdir {}'.format(mount)), logger)
 
-            Worker.run(shlex.split('mount {} {}'.format(device, mount)), logger)
+            Worker.run(shlex.split('sudo mount {} {}'.format(device, mount)), logger)
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         # First unmount
@@ -98,7 +98,7 @@ class Mount(Map):
 
             logger.debug("Unmounting {} from {}".format(part, mount))
 
-            Worker.run(shlex.split('umount {}'.format(mount)), logger)
+            Worker.run(shlex.split('sudo umount {}'.format(mount)), logger)
 
         # Then unmap
         super().__exit__(exc_type, exc_val, exc_tb)

@@ -31,7 +31,7 @@ for (path, dirs, files) in os.walk(os.path.dirname(__file__)):
 @click.argument("board")
 @click.argument("package", required=False)
 @click.argument("command", required=False, default="package",
-                type=click.Choice(['download', 'configure', 'build', 'package', 'install']))
+                type=click.Choice(['download', 'patch', 'configure', 'build', 'package', 'install']))
 def build_packages(**kwargs):
 
     # Update env options
