@@ -27,6 +27,13 @@ class User(object):
         except KeyError:
             return False
 
+    @property
+    def permit_login(self):
+        try:
+            return self._data['permit_login']
+        except KeyError:
+            return False
+
 
 class Users(GenericLoader):
     def __init__(self) -> None:

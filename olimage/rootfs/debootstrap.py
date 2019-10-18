@@ -82,7 +82,7 @@ class Debootstrap(object):
         os.mkdir(self._rootfs)
 
         Worker.run(
-            shlex.split("sudo qemu-debootstrap --arch={} --components={} --include={} {} {} {}".format(
+            shlex.split("qemu-debootstrap --arch={} --components={} --include={} {} {} {}".format(
                 self._board.arch,
                 ",".join(self._distribution.components),
                 ",".join(self._image.packages),
@@ -102,7 +102,7 @@ class Debootstrap(object):
         :return: self
         """
         logger.info("Installing rootfs overlay")
-        Worker.run(shlex.split("sudo rsync -aHWXhv {}/ {}/".format(env.paths['overlay'], self._rootfs), logger))
+        Worker.run(shlex.split("rsync -rlDHWXhv {}/ {}/".format(env.paths['overlay'], self._rootfs), logger))
 
         return self
 
@@ -158,7 +158,7 @@ class Debootstrap(object):
             passwd = user.password
 
             # Assuming root user is always present
-            if user != "root":
+            if str(user) != "root":
                 Worker.chroot(
                     shlex.split("/bin/bash -c '(echo {}; echo {};) | adduser --gecos {} {}'".format(passwd, passwd, user, user)),
                     self._rootfs,
@@ -172,15 +172,16 @@ class Debootstrap(object):
                     self._rootfs,
                     logger)
 
+                # Optionally permit root login
+                if user.permit_login:
+                    logger.debug("Permitting root login")
+
             # Check force password change
-            try:
-                if user.force_change:
-                    Worker.chroot(
-                        shlex.split("/bin/bash -c 'chage -d 0 {}'".format(user)),
-                        self._rootfs,
-                        logger)
-            except AttributeError:
-                pass
+            if user.force_change:
+                Worker.chroot(
+                    shlex.split("/bin/bash -c 'chage -d 0 {}'".format(user)),
+                    self._rootfs,
+                    logger)
 
             # Add users to groups
             try:
@@ -204,7 +205,7 @@ class Debootstrap(object):
             return self
 
         self._set_users()
-        self._set_hostname(self._board)
+        self._set_hostname(str(self._board))
 
         self._stamper.stamp('configured')
 
@@ -236,8 +237,8 @@ class Debootstrap(object):
         :return: self
         """
 
-        # Get size and add 100MiB size
-        size = math.ceil(self.get_size(self._rootfs)/1024/1024) + 200
+        # Get size and add 500MiB size
+        size = math.ceil(self.get_size(self._rootfs)/1024/1024) + 500
 
         logger.info("Creating empty file: {} with size {}".format(self._output_file, size))
 
@@ -265,15 +266,16 @@ class Debootstrap(object):
                 opts = '-O ^64bit,^metadata_csum'
 
             # Make filesystem
-            Worker.run(shlex.split('sudo mkfs.{} {} {}'.format(fstab.type, opts, device)), logger)
-            Worker.run(shlex.split('sudo udevadm trigger {}'.format(device)), logger)
-            Worker.run(shlex.split('sudo udevadm settle'.format(device)), logger)
+            Worker.run(shlex.split('mkfs.{} {} {}'.format(fstab.type, opts, device)), logger)
+            Worker.run(shlex.split('udevadm trigger {}'.format(device)), logger)
+            Worker.run(shlex.split('udevadm settle'.format(device)), logger)
 
             # Generate UUID
             fstab.uuid = Worker.run(
                 shlex.split('blkid -s UUID -o value {}'.format(device)),
                 logger
             ).decode().splitlines()[0]
+            logger.debug("UUID: {}".format(fstab.uuid))
 
         return self
 
@@ -328,6 +330,7 @@ class Debootstrap(object):
                 ex = ""
                 for key in exclude:
                     ex += '--exclude="{}" '.format(key)
-                Worker.run(shlex.split('sudo rsync -aHWXh {} {}/ {}/'.format(ex, self._rootfs, mnt)), logger)
+                Worker.run(shlex.split('rsync -aHWXh {} {}/ {}/'.format(ex, self._rootfs, mnt)), logger)
+                Worker.run(shlex.split('ls -l {}/'.format(mnt)), logger)
             else:
-                Worker.run(shlex.split('sudo rsync -rLtWh {}/ {}/'.format(self._rootfs + mount, mnt + mount)), logger)
+                Worker.run(shlex.split('rsync -rLtWh {}/ {}/'.format(self._rootfs + mount, mnt + mount)), logger)
