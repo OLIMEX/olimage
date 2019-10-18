@@ -203,7 +203,7 @@ class Uboot(AbstractPackage):
                 os.path.join(package_dir, 'usr/lib/u-boot/kernel.its')
             ],
             arch=self._arch,
-            fdt=self._board.variants[0].fdt,
+            default=self._board.default,
             kernel={
                 'load': '0x40080000',
                 'entry': '0x40080000'
@@ -211,23 +211,8 @@ class Uboot(AbstractPackage):
             ramdisk={
                 'load': '0x4FE00000',
                 'entry': '0x4FE00000'
-            }
-        )
-
-        Templater.install(
-            [
-                os.path.join(package_dir, 'usr/lib/u-boot/kernel.its')
-            ],
-            arch=self._arch,
-            fdt=self._board.variants[0].fdt,
-            kernel={
-                'load': '0x40080000',
-                'entry': '0x40080000'
             },
-            ramdisk={
-                'load': '0x4FE00000',
-                'entry': '0x4FE00000'
-            }
+            variants=self._board.variants,
         )
 
         Templater.install(

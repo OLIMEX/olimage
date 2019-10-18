@@ -39,6 +39,7 @@ class Board(object):
         self._data = data
 
         # Create variants
+        self._default = None
         self._variants = []
         for key, value in data['variants'].items():
             self._variants.append(Variant(key, value))
@@ -70,6 +71,14 @@ class Board(object):
     def board_packages(self) -> list:
         return self._board_packages
 
+    @property
+    def default(self) -> Variant:
+        return self._default
+
+    @default.setter
+    def default(self, variant):
+        self._default = variant
+
 
 class Boards(LoaderBase):
     def __init__(self) -> None:
@@ -91,7 +100,9 @@ class Boards(LoaderBase):
 
     def get_board(self, name: str) -> Board:
         for board in self._objects:
-            if name.lower() in [str(x).lower() for x in board.variants]:
-                return board
+            for variant in board.variants:
+                if name.lower() == str(variant).lower():
+                    board.default = variant
+                    return board
 
         raise Exception("No such board: \"{}\"".format(name))
