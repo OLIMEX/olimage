@@ -1,13 +1,13 @@
 partitions:
   boot:
     fstab:
-      type: 'vfat'
+      type: 'ext4'
       mount: '/boot'
       options: 'defaults'
       dump: 0
       passno: 2
     parted:
-      type: 'fat32'
+      type: 'ext4'
       start: '4MiB'
       end: '64MiB'
 
