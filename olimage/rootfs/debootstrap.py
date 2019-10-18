@@ -57,7 +57,7 @@ class Debootstrap(object):
         self._stamper = RootFSStamper(os.path.join(env.options['workdir'], 'rootfs'))
 
         # Output image
-        self._output_file = os.path.join(env.paths['workdir'], 'images', 'test2.img')
+        self._output_file = os.path.join(env.paths['workdir'], 'images', 'test3.img')
         env.paths['output_file'] = self._output_file
 
     def __del__(self):

@@ -29,7 +29,7 @@ class Linux(AbstractPackage):
         # Some global data
         self._arch = self._board.arch
         self._toolchain = self._package.toolchain.prefix
-        self._version = None
+        self._pkg_version = None
 
     @staticmethod
     def alias():
@@ -95,8 +95,8 @@ class Linux(AbstractPackage):
 
         :return: None
         """
-        self._version = self._builder.make("kernelversion").decode().splitlines()[1]
-        self._builder.make("KDEB_PKGVERSION={}-1-olimex LOCALVERSION=-1-olimex ARCH={} CROSS_COMPILE={} bindeb-pkg".format(self._version, self._arch, self._toolchain))
+        self._pkg_version = self._builder.make("kernelversion").decode().splitlines()[1] + self._package.version
+        self._builder.make("KDEB_PKGVERSION={} LOCALVERSION={} ARCH={} CROSS_COMPILE={} bindeb-pkg".format(self._pkg_version, self._package.version, self._arch, self._toolchain))
 
     def install(self):
         """
@@ -112,13 +112,14 @@ class Linux(AbstractPackage):
         #
         rootfs = env.paths['rootfs']
         build = self._builder.paths['build']
+        file='linux-image-{}_{}_arm64.deb'.format(self._pkg_version, self._pkg_version)
 
         # Copy file
-        Worker.run(shlex.split('cp -vf {} {}'.format(os.path.join(build, 'linux-image-5.3.1-1-olimex_5.3.1-1-olimex_arm64.deb'), rootfs)), logger)
+        Worker.run(shlex.split('cp -vf {} {}'.format(os.path.join(build, file), rootfs)), logger)
 
         # Install
-        Worker.chroot(shlex.split('dpkg -i {}'.format(os.path.basename('linux-image-5.3.1-1-olimex_5.3.1-1-olimex_arm64.deb'))), rootfs, logger)
+        Worker.chroot(shlex.split('dpkg -i {}'.format(os.path.basename(file))), rootfs, logger)
 
         # Remove file
-        Worker.run(shlex.split('rm -vf {}'.format(os.path.join(rootfs, 'linux-image-5.3.1-1-olimex_5.3.1-1-olimex_arm64.deb'))), logger)
+        Worker.run(shlex.split('rm -vf {}'.format(os.path.join(rootfs, file))), logger)
 

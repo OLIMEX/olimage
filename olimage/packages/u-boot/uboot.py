@@ -27,10 +27,10 @@ class Uboot(AbstractPackage):
         self._builder = Builder(self._name, self._data)
 
         # Some global data
-        self._version = '2019.07+olimex1'
+        self._pkg_version = None
         self._arch = self._board.arch
         self._binary = None
-        self._package_deb = 'u-boot-sunxi_{}_{}.deb'.format(self._version, self._arch)
+        self._package_deb = None
 
     @staticmethod
     def alias():
@@ -139,6 +139,9 @@ class Uboot(AbstractPackage):
             shutil.rmtree(package_dir)
         os.mkdir(package_dir)
 
+        # Generate package version
+        self._pkg_version = self._builder.make("ubootversion").decode().splitlines()[1] + self._package.version
+
         # Install target files
         size = 0
         for f in self._package.install:
@@ -190,7 +193,7 @@ class Uboot(AbstractPackage):
             [
                 os.path.join(package_dir, 'DEBIAN/control')
             ],
-            version=self._version,
+            version=self._pkg_version,
             arch=self._arch,
             size=int(size // 1024)
         )
@@ -235,6 +238,7 @@ class Uboot(AbstractPackage):
         )
 
         # Build package
+        self._package_deb = 'u-boot-sunxi_{}_{}.deb'.format(self._pkg_version, self._arch)
         Worker.run(shlex.split('dpkg-deb -b {} {}'.format(package_dir, os.path.join(build, self._package_deb))), logger)
 
     def install(self):

@@ -27,19 +27,21 @@ boards:
       refs: 'v2019.07'
       source: 'https://github.com/u-boot/u-boot.git'
       toolchain: *toolchain
+      version: "+olimex-1"
 
     linux:
       arch: *arch
       depends:
         - 'u-boot'
       defconfig: ~
+      refs: 'v5.3.7'
       source: 'https://kernel.googlesource.com/pub/scm/linux/kernel/git/stable/linux-stable'
-      refs: 'v5.3.1'
       targets:
         - 'Image'
         - 'dtbs'
         - 'modules'
       toolchain: *toolchain
+      version: '-1-olimex'
 
   # Define board variants
   variants:
