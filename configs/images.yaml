@@ -1,8 +1,22 @@
 images:
   minimal:
     packages: &minimal
+      - 'apt-transport-https'
+      - 'bzip2'
+      - 'ca-certificates'
+      - 'console-setup'
+      - 'crda'
+      - 'dbus'
+      - 'dmsetup'
+      - 'gnupg'
       - 'initramfs-tools'
+      - 'libpam-systemd'
+      - 'locales'
+      - 'nano'
+      - 'rng-tools'
+      - 'rsync'
       - 'sudo'
+      - 'wireless-regdb'
 
   base:
     packages: &base
