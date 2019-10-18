@@ -168,5 +168,4 @@ if __name__ == "__main__":
         sys.exit(cli())
     except Exception as e:
         print(e)
-        # print("    {}".format(e.decode))
         sys.exit(1)

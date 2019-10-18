@@ -38,5 +38,5 @@ class Worker(object):
     def chroot(command, directory, logger=None, **kwargs):
         if not isinstance(command, list):
             raise ValueError("Command should be list")
-        Worker.run(['sudo', 'chroot', directory] + command, logger, **kwargs)
+        Worker.run(['chroot', directory] + command, logger, **kwargs)
 
