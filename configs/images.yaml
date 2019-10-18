@@ -13,7 +13,6 @@ images:
       - 'libpam-systemd'
       - 'locales'
       - 'nano'
-      - 'rng-tools'
       - 'rsync'
       - 'sudo'
       - 'wireless-regdb'
