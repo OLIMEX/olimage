@@ -82,13 +82,19 @@ class Linux(AbstractPackage):
         script = os.path.join(path, 'scripts/kconfig/merge_config.sh')
         config = os.path.join(path, '.config')
 
-        fragment = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'fragments/test.fragment')
+        logger.info("Merging fragment files")
+        for root, _, fragments in os.walk(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'fragments')):
+            for fragment in fragments:
+                # Merge only .fragment files
+                if not fragment.endswith('.fragment'):
+                    continue
 
-        # First merge config files
-        Worker.run(shlex.split("/bin/bash -c '{} -m -O {} {} {}'".format(script, path, config, fragment)))
+                # First merge config files
+                logger.debug("Merging fragment file: {}".format(fragment))
+                Worker.run(shlex.split("/bin/bash -c '{} -m -O {} {} {}'".format(script, path, config, os.path.join(root, fragment))))
 
-        # Second, regenerate config file
-        self._builder.make("ARCH={} oldconfig".format(self._arch))
+                # Second, regenerate config file
+                self._builder.make("ARCH={} oldconfig".format(self._arch))
 
     def build(self):
         self._builder.make("ARCH={} CROSS_COMPILE={} {}".format(self._arch,self._toolchain,' '.join(self._package.targets)))
