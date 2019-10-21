@@ -45,8 +45,9 @@ class Builder(Util):
         if 'patched' in self.stamper.stamps:
             return
 
-        if not os.path.exists(patches):
-            self._builder.stamper.stamp('patched')
+        # Check if both patches directory and series files exists
+        if not os.path.exists(patches) or not os.path.exists(os.path.join(patches, 'series')):
+            self.stamper.stamp('patched')
             return
 
         logger.info("Applying patches from {}".format(patches))

@@ -24,7 +24,7 @@ boards:
         - 'u-boot-sunxi-with-spl.bin:usr/lib/u-boot/a64-olinuxino/'
         - 'uboot.env.txt:usr/lib/u-boot/a64-olinuxino/'
         - 'uboot.env:boot/'
-      refs: 'v2019.07'
+      refs: 'v2019.10'
       source: 'https://github.com/u-boot/u-boot.git'
       toolchain: *toolchain
       version: "+olimex-1"
