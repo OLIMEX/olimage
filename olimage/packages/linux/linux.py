@@ -77,11 +77,10 @@ class Linux(AbstractPackage):
         script = os.path.join(path, 'scripts/kconfig/merge_config.sh')
         config = os.path.join(path, '.config')
 
-
         fragment = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'fragments/test.fragment')
 
         # First merge config files
-        Worker.run(shlex.split("/bin/bash -c '{} -m {} {}'".format(script, config, fragment)))
+        Worker.run(shlex.split("/bin/bash -c '{} -m -O {} {} {}'".format(script, path, config, fragment)))
 
         # Second, regenerate config file
         self._builder.make("ARCH={} oldconfig".format(self._arch))
