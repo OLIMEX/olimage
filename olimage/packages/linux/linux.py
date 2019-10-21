@@ -55,7 +55,12 @@ class Linux(AbstractPackage):
         self._builder.extract()
 
     def patch(self):
-        pass
+        """
+        Apply patches
+
+        :return: None
+        """
+        self._builder.patch(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'patches'))
 
     def configure(self):
         """
