@@ -34,8 +34,10 @@ boards:
       depends:
         - 'u-boot'
       defconfig: ~
-      refs: 'v5.3.7'
-      source: 'https://kernel.googlesource.com/pub/scm/linux/kernel/git/stable/linux-stable'
+      #refs: 'v5.3.7'
+      refs: 'v5.4-rc4'
+      #source: 'https://kernel.googlesource.com/pub/scm/linux/kernel/git/stable/linux-stable'
+      source: 'https://kernel.googlesource.com/pub/scm/linux/kernel/git/torvalds/linux'
       targets:
         - 'Image'
         - 'dtbs'
