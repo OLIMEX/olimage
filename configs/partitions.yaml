@@ -9,7 +9,7 @@ partitions:
     parted:
       type: 'ext4'
       start: '4MiB'
-      end: '64MiB'
+      end: '100MiB'
 
   rootfs:
     fstab:
@@ -20,5 +20,5 @@ partitions:
       passno: 1
     parted:
       type: 'ext4'
-      start: '64MiB'
+      start: '100MiB'
       end: '100%'
