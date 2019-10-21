@@ -57,7 +57,7 @@ class Debootstrap(object):
         self._stamper = RootFSStamper(os.path.join(env.options['workdir'], 'rootfs'))
 
         # Output image
-        self._output_file = os.path.join(env.paths['workdir'], 'images', 'test3.img')
+        self._output_file = os.path.join(env.paths['workdir'], 'images', 'test4.img')
         env.paths['output_file'] = self._output_file
 
     def __del__(self):
@@ -200,13 +200,12 @@ class Debootstrap(object):
         # Run configure steps
         self._install_overlay()
         self._set_fstab()
+        self._set_hostname(str(self._board))
 
         if 'configured' in self._stamper.stamps:
             return self
 
         self._set_users()
-        self._set_hostname(str(self._board))
-
         self._stamper.stamp('configured')
 
         return self

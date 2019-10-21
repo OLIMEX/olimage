@@ -30,7 +30,12 @@ class Variant(object):
 
     @property
     def overlays(self) -> list:
-        return self._data['overlays']
+        overlays = self._data['overlays']
+        if overlays is None:
+            return []
+        else:
+            return overlays
+
 
 
 class Board(object):

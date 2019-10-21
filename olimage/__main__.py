@@ -163,9 +163,9 @@ def test(ctx: click.Context, **kwargs):
 
 
 if __name__ == "__main__":
-    # sys.exit(cli())
-    try:
-        sys.exit(cli())
-    except Exception as e:
-        print(e)
-        sys.exit(1)
+    sys.exit(cli())
+    # try:
+    #     sys.exit(cli())
+    # except Exception as e:
+    #     print(e)
+    #     sys.exit(1)

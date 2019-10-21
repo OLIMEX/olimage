@@ -198,21 +198,63 @@ class Uboot(AbstractPackage):
             size=int(size // 1024)
         )
 
+        # Generate fdts and overlay data
+        fdts = []
+        overlays = []
+        for variant in self._board.variants:
+            if variant.fdt not in fdts:
+                fdts.append(variant.fdt)
+
+            for overlay in variant.overlays:
+                if overlay not in overlays:
+                    overlays.append(overlay)
+
+        # Remap board fdt and overlays
+        variants = []
+        for variant in self._board.variants:
+
+            dtbo = []
+            for overlay in variant.overlays:
+                dtbo.append(overlays.index(overlay) + 1)
+
+            variants.append({
+                'name': str(variant),
+                'fdt': fdts.index(variant.fdt) + 1,
+                'id': variant.id,
+                'overlays': dtbo
+            })
+
+        # Generate load addresses for fdt files
+        temp = []
+        for fdt in fdts:
+            temp.append({fdt: {'load': '0x4FA00000'}})
+        fdts = temp
+
+        # Generate load addresses for overlays
+        addr = 0x4FA10000
+        temp = []
+        for overlay in overlays:
+            temp.append({overlay: {'load': '0x{:08X}'.format(addr)}})
+            addr += 0x10000
+        overlays = temp
+
         Templater.install(
             [
                 os.path.join(package_dir, 'usr/lib/u-boot/kernel.its')
             ],
             arch=self._arch,
             default=self._board.default,
+            fdts=fdts,
             kernel={
                 'load': '0x40080000',
                 'entry': '0x40080000'
             },
+            overlays=overlays,
             ramdisk={
                 'load': '0x4FE00000',
                 'entry': '0x4FE00000'
             },
-            variants=self._board.variants,
+            variants=variants,
         )
 
         Templater.install(
