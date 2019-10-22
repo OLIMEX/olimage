@@ -84,6 +84,7 @@
                         kernel = "kernel-1";
                         ramdisk = "ramdisk-1";
                         fdt = "fdt-{{ variant.fdt }}"{% for overlay in variant.overlays %}, "overlay-{{ overlay }}"{% endfor %};
+                        compatible = "{{ variant.compatible }}";
                 };
 {% endfor %}
         };

@@ -221,7 +221,8 @@ class Uboot(AbstractPackage):
                 'name': str(variant),
                 'fdt': fdts.index(variant.fdt) + 1,
                 'id': variant.id,
-                'overlays': dtbo
+                'overlays': dtbo,
+                'compatible': 'olimex,{}'.format(str(variant).lower())
             })
 
         # Generate load addresses for fdt files
