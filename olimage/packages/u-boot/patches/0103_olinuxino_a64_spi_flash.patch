@@ -1,0 +1,26 @@
+--- a/configs/A64-OLinuXino_defconfig
++++ b/configs/A64-OLinuXino_defconfig
+@@ -21,3 +21,13 @@
+ CONFIG_ENV_IS_IN_EXT4=y
+ CONFIG_ENV_EXT4_INTERFACE="mmc"
+ CONFIG_ENV_EXT4_DEVICE_AND_PART="0:auto"
++CONFIG_SPI=y
++CONFIG_DM_SPI=y
++CONFIG_SPI_SUNXI=y
++CONFIG_SPL_SPI_SUNXI=y
++CONFIG_CMD_SF=y
++CONFIG_CMD_SF_TEST=y
++CONFIG_DM_SPI_FLASH=y
++CONFIG_SPI_FLASH=y
++CONFIG_SPI_FLASH_WINBOND=y
++CONFIG_SPI_FLASH_MTD=y
+--- a/arch/arm/mach-sunxi/Kconfig
++++ b/arch/arm/mach-sunxi/Kconfig
+@@ -329,6 +329,7 @@
+ 
+ config TARGET_A64_OLINUXINO
+ 	bool "A64-OLinuXino board"
++	select SPL_SPI_SUNXI
+ 	---help---
+ 	Use A64-OLinuXino board
+ 

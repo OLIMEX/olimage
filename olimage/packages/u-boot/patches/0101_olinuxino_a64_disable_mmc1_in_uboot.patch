@@ -1,0 +1,63 @@
+--- a/board/olimex/a64_olinuxino/Makefile
++++ b/board/olimex/a64_olinuxino/Makefile
+@@ -6,3 +6,4 @@
+ #   Author: Stefan Mavrodiev <stefan@olimex.com>
+ 
+ obj-y	+= board.o
++obj-$(CONFIG_OF_BOARD_FIXUP)	+= fdt.o
+--- /dev/null
++++ b/board/olimex/a64_olinuxino/fdt.c
+@@ -0,0 +1,43 @@
++/*
++ * Copyright (C) 2019 Olimex Ltd.
++ *   Author: Stefan Mavrodiev <stefan@olimex.com>
++ *
++ * SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++ */
++#include <common.h>
++#include <fdt_support.h>
++
++#if defined(CONFIG_OF_BOARD_FIXUP)
++int board_fix_fdt(void *fdt)
++{
++	void *prop;
++	int nodeoffset, len, ret = 0;
++
++	/* Increase FDT blob size by 4KiB */
++	ret = fdt_increase_size(fdt, 4096);
++	if (ret)
++		return ret;
++
++	/* Make sure mmc1 is disabled */
++	nodeoffset = fdt_path_offset(fdt, "/soc/mmc@1c10000");
++	if (nodeoffset >= 0) {
++		ret = fdt_set_node_status(fdt, nodeoffset,
++					  FDT_STATUS_DISABLED, 0);
++		if (ret) {
++			debug("/soc/mmc@1c10000: failed to disable: %s (%d)",
++			fdt_strerror(ret), ret);
++			return ret;
++		}
++	}
++
++	/* Set compatible string */
++	nodeoffset = fdt_path_offset(fdt, "/");
++	fdt_setprop_string(fdt, nodeoffset, "compatible", "olimex,a64-olinuxino-1ge16gw");
++
++	// prop = fdt_getprop(fdt, nodeoffset, "compatible", &len);
++	// printf("%s\n",(char *)prop);
++	// printf("adadadasdasdasd\n\n\n\n");
++
++	return ret;
++}
++#endif
+--- a/configs/A64-OLinuXino_defconfig
++++ b/configs/A64-OLinuXino_defconfig
+@@ -11,6 +11,7 @@
+ # CONFIG_CMD_FLASH is not set
+ # CONFIG_SPL_DOS_PARTITION is not set
+ # CONFIG_SPL_EFI_PARTITION is not set
++CONFIG_OF_BOARD_FIXUP=y
+ CONFIG_DEFAULT_DEVICE_TREE="sun50i-a64-olinuxino"
+ CONFIG_SUN8I_EMAC=y
+ CONFIG_USB_EHCI_HCD=y

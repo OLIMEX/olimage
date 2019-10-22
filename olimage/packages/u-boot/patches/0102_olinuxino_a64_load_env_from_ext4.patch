@@ -1,0 +1,10 @@
+--- a/configs/A64-OLinuXino_defconfig
++++ b/configs/A64-OLinuXino_defconfig
+@@ -17,3 +17,7 @@
+ CONFIG_USB_EHCI_HCD=y
+ CONFIG_USB_OHCI_HCD=y
+ CONFIG_SYS_USB_EVENT_POLL_VIA_INT_QUEUE=y
++# CONFIG_ENV_IS_IN_FAT is not set
++CONFIG_ENV_IS_IN_EXT4=y
++CONFIG_ENV_EXT4_INTERFACE="mmc"
++CONFIG_ENV_EXT4_DEVICE_AND_PART="0:auto"

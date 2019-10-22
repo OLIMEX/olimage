@@ -1,0 +1,588 @@
+--- /dev/null
++++ b/board/olimex/a64_olinuxino/Makefile
+@@ -0,0 +1,8 @@
++# SPDX-License-Identifier: GPL-2.0+
++#
++# Makefile
++#
++# Copyright (C) 2019 Olimex Ltd.
++#   Author: Stefan Mavrodiev <stefan@olimex.com>
++
++obj-y	+= board.o
+--- /dev/null
++++ b/board/olimex/a64_olinuxino/Kconfig
+@@ -0,0 +1,10 @@
++if TARGET_A64_OLINUXINO
++config SYS_BOARD
++	default "a64_olinuxino"
++
++config SYS_VENDOR
++	default "olimex"
++
++config SYS_CONFIG_NAME
++	default "a64_olinuxino"
++endif
+--- /dev/null
++++ b/board/olimex/a64_olinuxino/MAINTAINERS
+@@ -0,0 +1,6 @@
++A20-OLinuXino
++M:      Stefan Mavrodiev <stefan@olimex.com>
++S:      Maintained
++F:      board/olimex/a64_olinuxino
++F:	include/configs/a64_olinuxino.h
++F:      configs/A64-OLinuXino_defconfig
+--- /dev/null
++++ b/configs/A64-OLinuXino_defconfig
+@@ -0,0 +1,18 @@
++CONFIG_ARM=y
++CONFIG_ARCH_SUNXI=y
++CONFIG_NR_DRAM_BANKS=1
++CONFIG_SPL=y
++CONFIG_MACH_SUN50I=y
++CONFIG_TARGET_A64_OLINUXINO=y
++CONFIG_RESERVE_ALLWINNER_BOOT0_HEADER=y
++CONFIG_MMC_SUNXI_SLOT_EXTRA=2
++# CONFIG_SYS_MALLOC_CLEAR_ON_INIT is not set
++CONFIG_USE_PREBOOT=y
++# CONFIG_CMD_FLASH is not set
++# CONFIG_SPL_DOS_PARTITION is not set
++# CONFIG_SPL_EFI_PARTITION is not set
++CONFIG_DEFAULT_DEVICE_TREE="sun50i-a64-olinuxino"
++CONFIG_SUN8I_EMAC=y
++CONFIG_USB_EHCI_HCD=y
++CONFIG_USB_OHCI_HCD=y
++CONFIG_SYS_USB_EVENT_POLL_VIA_INT_QUEUE=y
+--- /dev/null
++++ b/include/configs/a64_olinuxino.h
+@@ -0,0 +1,26 @@
++/* SPDX-License-Identifier: GPL-2.0+ */
++/*
++ * Configuration settings for the Allwinner A64 (sun50i) CPU
++ */
++
++#ifndef __CONFIG_H
++#define __CONFIG_H
++
++/*
++ * A64 specific configuration
++ */
++
++#ifndef CONFIG_MACH_SUN50I_H6
++#define GICD_BASE		0x1c81000
++#define GICC_BASE		0x1c82000
++#else
++#define GICD_BASE		0x3021000
++#define GICC_BASE		0x3022000
++#endif
++
++/*
++ * Include common sunxi configuration where most the settings are
++ */
++#include <configs/sunxi-common.h>
++
++#endif /* __CONFIG_H */
+--- /dev/null
++++ b/board/olimex/a64_olinuxino/board.c
+@@ -0,0 +1,453 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * (C) Copyright 2012-2013 Henrik Nordstrom <henrik@henriknordstrom.net>
++ * (C) Copyright 2013 Luke Kenneth Casson Leighton <lkcl@lkcl.net>
++ *
++ * (C) Copyright 2007-2011
++ * Allwinner Technology Co., Ltd. <www.allwinnertech.com>
++ * Tom Cubie <tangliang@allwinnertech.com>
++ *
++ * Some board init for the Allwinner A10-evb board.
++ */
++
++#include <common.h>
++#include <dm.h>
++#include <env.h>
++#include <mmc.h>
++#include <generic-phy.h>
++#include <phy-sun4i-usb.h>
++#include <asm/arch/clock.h>
++#include <asm/arch/cpu.h>
++#include <asm/arch/display.h>
++#include <asm/arch/dram.h>
++#include <asm/arch/gpio.h>
++#include <asm/arch/mmc.h>
++#include <asm/arch/spl.h>
++#include <asm/gpio.h>
++#include <asm/io.h>
++#include <env_internal.h>
++#include <net.h>
++#include <spl.h>
++#include <asm/setup.h>
++
++DECLARE_GLOBAL_DATA_PTR;
++
++void i2c_init_board(void)
++{
++#ifdef CONFIG_I2C0_ENABLE
++	sunxi_gpio_set_cfgpin(SUNXI_GPH(0), SUN50I_GPH_TWI0);
++	sunxi_gpio_set_cfgpin(SUNXI_GPH(1), SUN50I_GPH_TWI0);
++	clock_twi_onoff(0, 1);
++#endif
++
++#ifdef CONFIG_I2C1_ENABLE
++	sunxi_gpio_set_cfgpin(SUNXI_GPH(2), SUN50I_GPH_TWI1);
++	sunxi_gpio_set_cfgpin(SUNXI_GPH(3), SUN50I_GPH_TWI1);
++	clock_twi_onoff(1, 1);
++#endif
++
++#ifdef CONFIG_I2C2_ENABLE
++	sunxi_gpio_set_cfgpin(SUNXI_GPE(14), SUN50I_GPE_TWI2);
++	sunxi_gpio_set_cfgpin(SUNXI_GPE(15), SUN50I_GPE_TWI2);
++	clock_twi_onoff(2, 1);
++#endif
++
++#ifdef CONFIG_R_I2C_ENABLE
++	clock_twi_onoff(5, 1);
++	sunxi_gpio_set_cfgpin(SUNXI_GPL(8), SUN50I_GPL_R_TWI);
++	sunxi_gpio_set_cfgpin(SUNXI_GPL(9), SUN50I_GPL_R_TWI);
++#endif
++}
++
++#if defined(CONFIG_ENV_IS_IN_MMC) && defined(CONFIG_ENV_IS_IN_FAT)
++enum env_location env_get_location(enum env_operation op, int prio)
++{
++	switch (prio) {
++	case 0:
++		return ENVL_FAT;
++
++	case 1:
++		return ENVL_MMC;
++
++	default:
++		return ENVL_UNKNOWN;
++	}
++}
++#endif
++
++#ifdef CONFIG_DM_MMC
++static void mmc_pinmux_setup(int sdc);
++#endif
++
++/* add board specific code here */
++int board_init(void)
++{
++	__maybe_unused int id_pfr1, ret, satapwr_pin, macpwr_pin;
++
++	gd->bd->bi_boot_params = (PHYS_SDRAM_0 + 0x100);
++
++#ifdef CONFIG_DM_I2C
++	/*
++	 * Temporary workaround for enabling I2C clocks until proper sunxi DM
++	 * clk, reset and pinctrl drivers land.
++	 */
++	i2c_init_board();
++#endif
++
++#ifdef CONFIG_DM_MMC
++	/*
++	 * Temporary workaround for enabling MMC clocks until a sunxi DM
++	 * pinctrl driver lands.
++	 */
++	mmc_pinmux_setup(CONFIG_MMC_SUNXI_SLOT);
++#if CONFIG_MMC_SUNXI_SLOT_EXTRA != -1
++	mmc_pinmux_setup(CONFIG_MMC_SUNXI_SLOT_EXTRA);
++#endif
++#endif	/* CONFIG_DM_MMC */
++	return 0;
++}
++
++/*
++ * On older SoCs the SPL is actually at address zero, so using NULL as
++ * an error value does not work.
++ */
++#define INVALID_SPL_HEADER ((void *)~0UL)
++
++static struct boot_file_head * get_spl_header(uint8_t req_version)
++{
++	struct boot_file_head *spl = (void *)(ulong)SPL_ADDR;
++	uint8_t spl_header_version = spl->spl_signature[3];
++
++	/* Is there really the SPL header (still) there? */
++	if (memcmp(spl->spl_signature, SPL_SIGNATURE, 3) != 0)
++		return INVALID_SPL_HEADER;
++
++	if (spl_header_version < req_version) {
++		printf("sunxi SPL version mismatch: expected %u, got %u\n",
++		       req_version, spl_header_version);
++		return INVALID_SPL_HEADER;
++	}
++
++	return spl;
++}
++
++int dram_init(void)
++{
++	struct boot_file_head *spl = get_spl_header(SPL_DRAM_HEADER_VERSION);
++
++	if (spl == INVALID_SPL_HEADER)
++		gd->ram_size = get_ram_size((long *)PHYS_SDRAM_0,
++					    PHYS_SDRAM_0_SIZE);
++	else
++		gd->ram_size = (phys_addr_t)spl->dram_size << 20;
++
++	if (gd->ram_size > CONFIG_SUNXI_DRAM_MAX_SIZE)
++		gd->ram_size = CONFIG_SUNXI_DRAM_MAX_SIZE;
++
++	return 0;
++}
++
++#ifdef CONFIG_MMC
++static void mmc_pinmux_setup(int sdc)
++{
++	unsigned int pin;
++	__maybe_unused int pins;
++
++	switch (sdc) {
++	case 0:
++		/* SDC0: PF0-PF5 */
++		for (pin = SUNXI_GPF(0); pin <= SUNXI_GPF(5); pin++) {
++			sunxi_gpio_set_cfgpin(pin, SUNXI_GPF_SDC0);
++			sunxi_gpio_set_pull(pin, SUNXI_GPIO_PULL_UP);
++			sunxi_gpio_set_drv(pin, 2);
++		}
++		break;
++
++	case 2:
++		pins = sunxi_name_to_gpio_bank(CONFIG_MMC2_PINS);
++
++		/* SDC2: PC5-PC6, PC8-PC16 */
++		for (pin = SUNXI_GPC(5); pin <= SUNXI_GPC(6); pin++) {
++			sunxi_gpio_set_cfgpin(pin, SUNXI_GPC_SDC2);
++			sunxi_gpio_set_pull(pin, SUNXI_GPIO_PULL_UP);
++			sunxi_gpio_set_drv(pin, 2);
++		}
++
++		for (pin = SUNXI_GPC(8); pin <= SUNXI_GPC(16); pin++) {
++			sunxi_gpio_set_cfgpin(pin, SUNXI_GPC_SDC2);
++			sunxi_gpio_set_pull(pin, SUNXI_GPIO_PULL_UP);
++			sunxi_gpio_set_drv(pin, 2);
++		}
++		break;
++
++	default:
++		printf("sunxi: invalid MMC slot %d for pinmux setup\n", sdc);
++		break;
++	}
++}
++
++int board_mmc_init(bd_t *bis)
++{
++	mmc_pinmux_setup(0);
++	sunxi_mmc_init(0);
++
++	mmc_pinmux_setup(2);
++	sunxi_mmc_init(2);
++	return 0;
++}
++#endif
++
++#ifdef CONFIG_SPL_BUILD
++
++static void sunxi_spl_store_dram_size(phys_addr_t dram_size)
++{
++	struct boot_file_head *spl = get_spl_header(SPL_DT_HEADER_VERSION);
++
++	if (spl == INVALID_SPL_HEADER)
++		return;
++
++	/* Promote the header version for U-Boot proper, if needed. */
++	if (spl->spl_signature[3] < SPL_DRAM_HEADER_VERSION)
++		spl->spl_signature[3] = SPL_DRAM_HEADER_VERSION;
++
++	spl->dram_size = dram_size >> 20;
++}
++
++void sunxi_board_init(void)
++{
++	printf("DRAM:");
++	gd->ram_size = sunxi_dram_init();
++	printf(" %d MiB\n", (int)(gd->ram_size >> 20));
++	if (!gd->ram_size)
++		hang();
++
++	sunxi_spl_store_dram_size(gd->ram_size);
++	clock_set_pll1(CONFIG_SYS_CLK_FREQ);
++}
++#endif
++
++#ifdef CONFIG_USB_GADGET
++int g_dnl_board_usb_cable_connected(void)
++{
++	struct udevice *dev;
++	struct phy phy;
++	int ret;
++
++	ret = uclass_get_device(UCLASS_USB_GADGET_GENERIC, 0, &dev);
++	if (ret) {
++		pr_err("%s: Cannot find USB device\n", __func__);
++		return ret;
++	}
++
++	ret = generic_phy_get_by_name(dev, "usb", &phy);
++	if (ret) {
++		pr_err("failed to get %s USB PHY\n", dev->name);
++		return ret;
++	}
++
++	ret = generic_phy_init(&phy);
++	if (ret) {
++		pr_err("failed to init %s USB PHY\n", dev->name);
++		return ret;
++	}
++
++	ret = sun4i_usb_phy_vbus_detect(&phy);
++	if (ret == 1) {
++		pr_err("A charger is plugged into the OTG\n");
++		return -ENODEV;
++	}
++
++	return ret;
++}
++#endif
++
++#ifdef CONFIG_SERIAL_TAG
++void get_board_serial(struct tag_serialnr *serialnr)
++{
++	char *serial_string;
++	unsigned long long serial;
++
++	serial_string = env_get("serial#");
++
++	if (serial_string) {
++		serial = simple_strtoull(serial_string, NULL, 16);
++
++		serialnr->high = (unsigned int) (serial >> 32);
++		serialnr->low = (unsigned int) (serial & 0xffffffff);
++	} else {
++		serialnr->high = 0;
++		serialnr->low = 0;
++	}
++}
++#endif
++
++/*
++ * Check the SPL header for the "sunxi" variant. If found: parse values
++ * that might have been passed by the loader ("fel" utility), and update
++ * the environment accordingly.
++ */
++static void parse_spl_header(const uint32_t spl_addr)
++{
++	struct boot_file_head *spl = get_spl_header(SPL_ENV_HEADER_VERSION);
++
++	if (spl == INVALID_SPL_HEADER)
++		return;
++
++	if (!spl->fel_script_address)
++		return;
++
++	if (spl->fel_uEnv_length != 0) {
++		/*
++		 * data is expected in uEnv.txt compatible format, so "env
++		 * import -t" the string(s) at fel_script_address right away.
++		 */
++		himport_r(&env_htab, (char *)(uintptr_t)spl->fel_script_address,
++			  spl->fel_uEnv_length, '\n', H_NOCLEAR, 0, 0, NULL);
++		return;
++	}
++	/* otherwise assume .scr format (mkimage-type script) */
++	env_set_hex("fel_scriptaddr", spl->fel_script_address);
++}
++
++/*
++ * Note this function gets called multiple times.
++ * It must not make any changes to env variables which already exist.
++ */
++static void setup_environment(const void *fdt)
++{
++	char serial_string[17] = { 0 };
++	unsigned int sid[4];
++	uint8_t mac_addr[6];
++	char ethaddr[16];
++	int i, ret;
++
++	ret = sunxi_get_sid(sid);
++	if (ret == 0 && sid[0] != 0) {
++		/*
++		 * The single words 1 - 3 of the SID have quite a few bits
++		 * which are the same on many models, so we take a crc32
++		 * of all 3 words, to get a more unique value.
++		 *
++		 * Note we only do this on newer SoCs as we cannot change
++		 * the algorithm on older SoCs since those have been using
++		 * fixed mac-addresses based on only using word 3 for a
++		 * long time and changing a fixed mac-address with an
++		 * u-boot update is not good.
++		 */
++		sid[3] = crc32(0, (unsigned char *)&sid[1], 12);
++
++		/* Ensure the NIC specific bytes of the mac are not all 0 */
++		if ((sid[3] & 0xffffff) == 0)
++			sid[3] |= 0x800000;
++
++		for (i = 0; i < 4; i++) {
++			sprintf(ethaddr, "ethernet%d", i);
++			if (!fdt_get_alias(fdt, ethaddr))
++				continue;
++
++			if (i == 0)
++				strcpy(ethaddr, "ethaddr");
++			else
++				sprintf(ethaddr, "eth%daddr", i);
++
++			if (env_get(ethaddr))
++				continue;
++
++			/* Non OUI / registered MAC address */
++			mac_addr[0] = (i << 4) | 0x02;
++			mac_addr[1] = (sid[0] >>  0) & 0xff;
++			mac_addr[2] = (sid[3] >> 24) & 0xff;
++			mac_addr[3] = (sid[3] >> 16) & 0xff;
++			mac_addr[4] = (sid[3] >>  8) & 0xff;
++			mac_addr[5] = (sid[3] >>  0) & 0xff;
++
++			eth_env_set_enetaddr(ethaddr, mac_addr);
++		}
++
++		if (!env_get("serial#")) {
++			snprintf(serial_string, sizeof(serial_string),
++				"%08x%08x", sid[0], sid[3]);
++
++			env_set("serial#", serial_string);
++		}
++	}
++}
++
++int misc_init_r(void)
++{
++	uint boot;
++
++	env_set("fel_booted", NULL);
++	env_set("fel_scriptaddr", NULL);
++	env_set("mmc_bootdev", NULL);
++
++	boot = sunxi_get_boot_device();
++	/* determine if we are running in FEL mode */
++	if (boot == BOOT_DEVICE_BOARD) {
++		env_set("fel_booted", "1");
++		parse_spl_header(SPL_ADDR);
++	/* or if we booted from MMC, and which one */
++	} else if (boot == BOOT_DEVICE_MMC1) {
++		env_set("mmc_bootdev", "0");
++	} else if (boot == BOOT_DEVICE_MMC2) {
++		env_set("mmc_bootdev", "1");
++	}
++
++	setup_environment(gd->fdt_blob);
++
++#ifdef CONFIG_USB_ETHER
++	usb_ether_init();
++#endif
++
++	return 0;
++}
++
++int ft_board_setup(void *blob, bd_t *bd)
++{
++	int __maybe_unused r;
++
++	/*
++	 * Call setup_environment again in case the boot fdt has
++	 * ethernet aliases the u-boot copy does not have.
++	 */
++	setup_environment(blob);
++
++#ifdef CONFIG_VIDEO_DT_SIMPLEFB
++	r = sunxi_simplefb_setup(blob);
++	if (r)
++		return r;
++#endif
++	return 0;
++}
++
++#ifdef CONFIG_SPL_LOAD_FIT
++int board_fit_config_name_match(const char *name)
++{
++	struct boot_file_head *spl = get_spl_header(SPL_DT_HEADER_VERSION);
++	const char *cmp_str = (const char *)spl;
++
++	/* Check if there is a DT name stored in the SPL header and use that. */
++	if (spl != INVALID_SPL_HEADER && spl->dt_name_offset) {
++		cmp_str += spl->dt_name_offset;
++	} else {
++#ifdef CONFIG_DEFAULT_DEVICE_TREE
++		cmp_str = CONFIG_DEFAULT_DEVICE_TREE;
++#else
++		return 0;
++#endif
++	};
++
++#ifdef CONFIG_PINE64_DT_SELECTION
++/* Differentiate the two Pine64 board DTs by their DRAM size. */
++	if (strstr(name, "-pine64") && strstr(cmp_str, "-pine64")) {
++		if ((gd->ram_size > 512 * 1024 * 1024))
++			return !strstr(name, "plus");
++		else
++			return !!strstr(name, "plus");
++	} else {
++		return strcmp(name, cmp_str);
++	}
++#endif
++	return strcmp(name, cmp_str);
++}
++#endif
+--- a/arch/arm/mach-sunxi/Kconfig
++++ b/arch/arm/mach-sunxi/Kconfig
+@@ -318,6 +318,22 @@
+ 	default y if MACH_SUN8I_R40
+ 	default y if MACH_SUN8I_V3S
+ 
++if MACH_SUN50I
++choice
++	prompt "Sunxi profile select"
++
++config TARGET_SUN50I_DEFAULT
++	bool "Default sunxi target"
++	---help---
++	Use the default profile for sunxi boards
++
++config TARGET_A64_OLINUXINO
++	bool "A64-OLinuXino board"
++	---help---
++	Use A64-OLinuXino board
++
++endchoice
++endif
+ config RESERVE_ALLWINNER_BOOT0_HEADER
+ 	bool "reserve space for Allwinner boot0 header"
+ 	select ENABLE_ARM_SOC_BOOT0_HOOK
+@@ -539,6 +555,7 @@
+ 	default 1008000000 if MACH_SUN9I
+ 	default 888000000 if MACH_SUN50I_H6
+ 
++if !TARGET_A64_OLINUXINO
+ config SYS_CONFIG_NAME
+ 	default "sun4i" if MACH_SUN4I
+ 	default "sun5i" if MACH_SUN5I
+@@ -551,10 +568,15 @@
+ 
+ config SYS_BOARD
+ 	default "sunxi"
++endif
+ 
+ config SYS_SOC
+ 	default "sunxi"
+ 
++if TARGET_A64_OLINUXINO
++	source "board/olimex/a64_olinuxino/Kconfig"
++endif
++
+ config UART0_PORT_F
+ 	bool "UART0 on MicroSD breakout board"
+ 	default n

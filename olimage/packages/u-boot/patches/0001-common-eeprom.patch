@@ -1,0 +1,261 @@
+--- /dev/null
++++ b/board/olimex/common/board_detect.h
+@@ -0,0 +1,60 @@
++/*
++ * SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++ *
++ * Copyright (C) 2019 Olimex Ltd.
++ *   Author: Stefan Mavrodiev <stefan@olimex.com>
++ */
++#ifndef __BOARD_DETECT_H
++#define __BOARD_DETECT_H
++
++/**
++ * Location in the RAM.
++ * Content should be transfered after relocation
++ */
++#define OLIMEX_EEPROM_DATA ((struct olimex_eeprom *)CONFIG_SYS_SDRAM_BASE)
++extern struct olimex_eeprom *eeprom;
++
++/**
++ * The content of has magic header
++ */
++#define OLIMEX_EEPROM_MAGIC_HEADER	0x4f4caa55
++
++/**
++ * Define eeprom structure
++ */
++struct olimex_eeprom {
++	uint32_t header;
++	uint32_t id;
++	struct {
++		char major;
++		char minor;
++	} revision;
++	uint32_t serial;
++	struct {
++		uint8_t storage;
++		uint8_t size;
++		uint8_t ram;
++		uint8_t grade;
++	} config;
++	char mac[12];
++	uint8_t reserved[222];
++	uint32_t crc;
++} __attribute__ ((__packed__));
++
++#if defined(OLIMEX_EEPROM_BUS)
++/* I2C access functions */
++int olimex_i2c_eeprom_read(void);
++int olimex_i2c_eeprom_write(void);
++int olimex_i2c_eeprom_erase(void);
++#endif
++
++#if defined(OLIMEX_MMC_SECTOR)
++/* Raw MMC access function */
++int olimex_mmc_eeprom_read(void);
++int olimex_mmc_eeprom_write(void);
++int olimex_mmc_eeprom_erase(void);
++#endif
++
++bool olimex_eeprom_is_valid(void);
++
++#endif	/* __BOARD_DETECT_H */
+--- /dev/null
++++ b/board/olimex/common/board_detect.c
+@@ -0,0 +1,195 @@
++/*
++ * SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++ *
++ * Copyright (C) 2018 Olimex Ltd.
++ *   Author: Stefan Mavrodiev <stefan@olimex.com>
++ */
++#include <common.h>
++#include <i2c.h>
++#include <mmc.h>
++#include <spl.h>
++#include <asm/arch/spl.h>
++
++#include "board_detect.h"
++
++struct olimex_eeprom *eeprom = OLIMEX_EEPROM_DATA;
++
++#if defined(OLIMEX_EEPROM_BUS)
++static int olimex_i2c_eeprom_init(void)
++{
++	int ret;
++
++	if ((ret = i2c_set_bus_num(OLIMEX_EEPROM_BUS)))
++		return ret;
++
++	if ((ret = i2c_probe(0x50)))
++		return ret;
++
++	return 0;
++}
++
++int olimex_i2c_eeprom_read(void)
++{
++	uint32_t crc;
++	int ret;
++
++	if ((ret = olimex_i2c_eeprom_init()))
++		return ret;
++
++	if ((ret = i2c_read(OLIMEX_EEPROM_ADDRESS, 0, 1, (uint8_t *)eeprom, 256)))
++		return ret;
++
++	if (eeprom->header != OLIMEX_EEPROM_MAGIC_HEADER) {
++		memset(eeprom, 0xFF, 256);
++		return 1;
++	}
++
++	crc = crc32(0L, (uint8_t *)eeprom, 252);
++	if (eeprom->crc != crc) {
++		memset(eeprom, 0xFF, 256);
++		return 1;
++	}
++
++	return 0;
++}
++
++#ifndef CONFIG_SPL_BUILD
++int olimex_i2c_eeprom_write(void)
++{
++	uint8_t *data = (uint8_t *)eeprom;
++	uint16_t i;
++	int ret;
++
++	if ((ret = olimex_i2c_eeprom_init())) {
++		printf("ERROR: Failed to init eeprom!\n");
++		return ret;
++	}
++
++	/* Restore magic header */
++	eeprom->header = OLIMEX_EEPROM_MAGIC_HEADER;
++
++	/* Calculate new chechsum */
++	eeprom->crc = crc32(0L, data, 252);
++
++	/* Write new values */
++	for(i = 0; i < 256; i += 16) {
++		if ((ret = i2c_write(OLIMEX_EEPROM_ADDRESS, i, 1, data + i , 16))) {
++			printf("ERROR: Failed to write eeprom!\n");
++			return ret;
++		}
++		mdelay(5);
++	}
++
++	return 0;
++}
++
++int olimex_i2c_eeprom_erase(void)
++{
++	uint8_t *data = (uint8_t *)eeprom;
++	uint16_t i;
++	int ret;
++
++	/* Initialize EEPROM */
++	if ((ret = olimex_i2c_eeprom_init())) {
++		printf("ERROR: Failed to init eeprom!\n");
++		return ret;
++	}
++
++	/* Erase previous data */
++	memset((uint8_t *)eeprom, 0xFF, 256);
++
++	/* Write data */
++	for(i = 0; i < 256; i += 16) {
++		if ((ret = i2c_write(OLIMEX_EEPROM_ADDRESS, i, 1, data + i, 16))) {
++			printf("ERROR: Failed to write eeprom!\n");
++			return ret;
++		}
++		mdelay(5);
++	}
++
++	return 0;
++}
++#endif
++#endif
++
++#if defined(OLIMEX_MMC_SECTOR)
++int olimex_mmc_eeprom_read(void)
++{
++	struct mmc *mmc = NULL;
++	unsigned long count;
++	int ret = 0;
++
++	ret = mmc_initialize(NULL);
++	if (ret)
++		return ret;
++
++	mmc = find_mmc_device((sunxi_get_boot_device() == BOOT_DEVICE_MMC1) ? 0 : 1);
++	if (!mmc)
++		return -ENODEV;
++
++	ret = mmc_init(mmc);
++	if (ret)
++		return ret;
++
++	count = blk_dread(mmc_get_blk_desc(mmc), OLIMEX_MMC_SECTOR, 1, eeprom);
++	if (!count)
++		return -EIO;
++
++	return ret;
++}
++
++#ifndef CONFIG_SPL_BUILD
++int olimex_mmc_eeprom_write(void)
++{
++	struct mmc *mmc = NULL;
++	unsigned long count;
++	int ret = 0;
++
++	mmc = find_mmc_device((sunxi_get_boot_device() == BOOT_DEVICE_MMC1) ? 0 : 1);
++	if (!mmc)
++		return -ENODEV;
++
++	ret = mmc_init(mmc);
++	if (ret)
++		return ret;
++
++	count = blk_dwrite(mmc_get_blk_desc(mmc), OLIMEX_MMC_SECTOR, 1, eeprom);
++	if (!count)
++		return -EIO;
++
++	return ret;
++}
++
++int olimex_mmc_eeprom_erase(void)
++{
++	struct mmc *mmc = NULL;
++	unsigned long count;
++	int ret = 0;
++
++	mmc = find_mmc_device((sunxi_get_boot_device() == BOOT_DEVICE_MMC1) ? 0 : 1);
++	if (!mmc)
++		return -ENODEV;
++
++	ret = mmc_init(mmc);
++	if (ret)
++		return ret;
++
++	count = blk_derase(mmc_get_blk_desc(mmc), OLIMEX_MMC_SECTOR, 1);
++	if (!count)
++		return -EIO;
++
++	return ret;
++
++}
++#endif
++#endif
++
++bool olimex_eeprom_is_valid(void)
++{
++	/*
++	 * If checksum during EEPROM initalization was wrong,
++	 * then the whole memory location should be empty.
++	 * Therefore it's enough to check the magic header
++	 */
++	return (eeprom->header == OLIMEX_EEPROM_MAGIC_HEADER);
++}
