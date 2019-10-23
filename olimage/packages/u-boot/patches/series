@@ -1,5 +1,6 @@
 0000-common-board-definitions.patch
 0001-common-eeprom.patch
+0002-common-get-board-name.patch
 0100_olinuxino_a64_support.patch
 0101_olinuxino_a64_disable_mmc1_in_uboot.patch
 0102_olinuxino_a64_load_env_from_ext4.patch

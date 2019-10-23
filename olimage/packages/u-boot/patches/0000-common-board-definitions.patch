@@ -1,6 +1,6 @@
 --- /dev/null
 +++ b/board/olimex/common/boards.h
-@@ -0,0 +1,52 @@
+@@ -0,0 +1,51 @@
 +/*
 + * SPDX-License-Identifier: (GPL-2.0+ OR MIT)
 + *
@@ -50,7 +50,6 @@
 +};
 +
 +extern struct olinuxino_boards olinuxino_boards[];
-+const char *olimex_get_board_name(void);
 +
 +#endif /* __BOARDS_H */
 --- /dev/null
