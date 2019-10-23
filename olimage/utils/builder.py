@@ -52,7 +52,7 @@ class Builder(Util):
 
         logger.info("Applying patches from {}".format(patches))
         Worker.run(
-            ["cd {}; QUILT_PATCHES={} quilt push".format(self.paths['extract'], patches)],
+            ["cd {}; QUILT_PATCHES={} quilt push -a".format(self.paths['extract'], patches)],
             logger,
             shell=True
         )
