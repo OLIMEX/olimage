@@ -17,6 +17,9 @@ class LoaderBase(object):
     def __getitem__(self, item):
         return self._objects[item]
 
+    def __len__(self):
+        return len(self._objects)
+
 
 class GenericLoader(LoaderBase):
     def __init__(self, name, holder) -> None:
