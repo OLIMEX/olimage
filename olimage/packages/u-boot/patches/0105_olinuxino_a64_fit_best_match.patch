@@ -5,3 +5,48 @@
  CONFIG_SPI_FLASH_MTD=y
  CONFIG_DISPLAY_BOARDINFO=y
 +CONFIG_FIT_BEST_MATCH=y
+--- a/board/olimex/a64_olinuxino/fdt.c
++++ b/board/olimex/a64_olinuxino/fdt.c
+@@ -6,11 +6,15 @@
+  */
+ #include <common.h>
+ #include <fdt_support.h>
++#include <linux/ctype.h>
++
++#include "../common/boards.h"
+ 
+ #if defined(CONFIG_OF_BOARD_FIXUP)
+ int board_fix_fdt(void *fdt)
+ {
+ 	int nodeoffset, ret = 0;
++	char name[40], *p;
+ 
+ 	/* Increase FDT blob size by 4KiB */
+ 	ret = fdt_increase_size(fdt, 4096);
+@@ -22,11 +26,25 @@
+ 	if (nodeoffset >= 0) {
+ 		ret = fdt_set_node_status(fdt, nodeoffset,
+ 					  FDT_STATUS_DISABLED, 0);
+-		if (ret)
++		if (ret) {
+ 			debug("/soc/mmc@1c10000: failed to disable: %s (%d)",
+ 			      fdt_strerror(ret), ret);
++			return ret;
++		}
+ 	}
+ 
++	/* Set compatible string */
++	snprintf(name, 32, "olimex,%s", olimex_get_board_name());
++	p = name;
++	for (; *p; p++)
++		*p = tolower(*p);
++
++	nodeoffset = fdt_path_offset(fdt, "/");
++	ret = fdt_setprop_string(fdt, nodeoffset, "compatible", name);
++	if (ret)
++		debug("/compatible: failed to set property: %s (%d)",
++		      fdt_strerror(ret), ret);
++
+ 	return ret;
+ }
+ #endif

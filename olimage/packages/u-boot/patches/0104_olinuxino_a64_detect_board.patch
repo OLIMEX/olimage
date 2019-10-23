@@ -1,15 +1,16 @@
 --- a/board/olimex/a64_olinuxino/board.c
 +++ b/board/olimex/a64_olinuxino/board.c
-@@ -30,6 +30,8 @@
+@@ -30,6 +30,9 @@
  #include <spl.h>
  #include <asm/setup.h>
  
 +#include "../common/board_detect.h"
++#include "../common/boards.h"
 +
  DECLARE_GLOBAL_DATA_PTR;
  
  void i2c_init_board(void)
-@@ -224,6 +226,47 @@
+@@ -224,6 +227,47 @@
  	sunxi_spl_store_dram_size(gd->ram_size);
  	clock_set_pll1(CONFIG_SYS_CLK_FREQ);
  }
@@ -57,14 +58,14 @@
  #endif
  
  #ifdef CONFIG_USB_GADGET
-@@ -420,6 +463,14 @@
+@@ -420,6 +464,14 @@
  	return 0;
  }
  
 +#ifdef CONFIG_DISPLAY_BOARDINFO
 +int show_board_info(void)
 +{
-+	printf("Model: %d\n", eeprom->id);
++	printf("Model: %s\n", olimex_get_board_name());
 +	return 0;
 +}
 +#endif
