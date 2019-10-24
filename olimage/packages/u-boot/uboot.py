@@ -3,7 +3,8 @@ import os
 import shlex
 import shutil
 
-from olimage.core.parsers import Board
+from olimage.core.parsers import Board, Partitions
+from olimage.core.utils import Utils
 from olimage.packages.package import AbstractPackage
 from olimage.utils import (Builder, Downloader, Templater, Worker)
 
@@ -13,12 +14,13 @@ logger = logging.getLogger(__name__)
 
 
 class Uboot(AbstractPackage):
-    def __init__(self, boards):
+    def __init__(self, boards, partitions):
 
         self._name = 'u-boot'
 
         # Initialize dependencies
         self._board: Board = boards.get_board(env.options['board'])
+        self._partitions: Partitions = partitions
 
         # Configure utils
         self._package = self._board.get_board_package(self._name)
@@ -81,7 +83,11 @@ class Uboot(AbstractPackage):
 
         :return: None
         """
-        self._builder.patch(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'patches'))
+        patches = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'patches')
+        path = self._builder.paths['extract']
+
+        Utils.patch.apply(patches, path)
+
 
     def configure(self):
         """
@@ -168,6 +174,19 @@ class Uboot(AbstractPackage):
             logger,
             shell=True)
 
+        # The FIT image is always located in /boot directory.
+        # If there is such defined partition retrieve it's number. Do the same for /
+        partitions = {
+            'boot': 1,
+            'root': 1
+        }
+        for i in range(len(self._partitions)):
+            partition  = self._partitions[i]
+            if partition.fstab.mount == '/':
+                partitions['root'] = i + 1
+            elif partition.fstab.mount == '/boot':
+                partitions['boot'] = i + 1
+
         # Generate template files
         Templater.install(
             [
@@ -182,6 +201,7 @@ class Uboot(AbstractPackage):
                 'file': 'kernel.itb',
                 'load': '0x60000000'
             },
+            partitions=partitions,
         )
 
         Worker.run(

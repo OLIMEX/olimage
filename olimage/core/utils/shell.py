@@ -21,8 +21,13 @@ class Shell(object):
         kw['stderr_callback'] = handle_output
         kw.update(kwargs)
 
+        if 'shell' in kwargs and kwargs['shell']:
+            command = [command]
+        else:
+            command = shlex.split(command)
+
         try:
-            return cliapp.runcmd(shlex.split(command), **kw)
+            return cliapp.runcmd(command, **kw)
         except cliapp.app.AppException as e:
             msg: str = e.msg
             logger.error(msg)
