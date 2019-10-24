@@ -18,7 +18,6 @@ class AbstractPackage(metaclass=abc.ABCMeta):
 
     This class is abstract, interface like
     """
-
     def __init__(self, boards, partitions):
 
         # Initialize dependencies
@@ -31,17 +30,8 @@ class AbstractPackage(metaclass=abc.ABCMeta):
 
         self._builder = Builder(self._name, self._data)
 
-        self.stamper = PackageStamper(self._builder.paths['build'])
-
-    # def stamp(func):
-        # def wrapper(self: AbstractPackage, *args, **kwargs):
-        #     self.stamper.stamp(func.__name__)
-        #     return func(self, *args, **kwargs)
-        #
-        # return wrapper
-
-
-    @abc.abstractclassmethod
+    @classmethod
+    @abc.abstractmethod
     def alias(cls):
         """
         Get class alias
@@ -114,38 +104,6 @@ class AbstractPackage(metaclass=abc.ABCMeta):
         :return: None
         """
         pass
-
-
-# class PackageBase(AbstractPackage):
-#
-#     def __str__(self) -> str:
-#         return self._name
-#
-#     @staticmethod
-#     def alias():
-#         pass
-#
-#     @property
-#     def dependency(self):
-#         pass
-#
-#     def download(self):
-#         pass
-#
-#     def patch(self):
-#         pass
-#
-#     def configure(self):
-#         pass
-#
-#     def build(self):
-#         pass
-#
-#     def package(self):
-#         pass
-#
-#     def install(self):
-#         pass
 
 
 class Packages(object):
