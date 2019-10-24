@@ -8,12 +8,13 @@ import olimage.environment as env
 
 from .utils.mount import Mounter, Map
 from olimage.core.parsers import (Boards, Board, Distributions, Images, Partitions, Users)
+from olimage.core.utils import Utils
 from olimage.utils import Printer, RootFSStamper, Worker, Templater
 
 logger = logging.getLogger(__name__)
 
 
-class Debootstrap(object):
+class Rootfs(object):
     def __init__(self,
                  boards: Boards, distributions: Distributions, images: Images, partitions: Partitions, users: Users):
 
@@ -81,16 +82,18 @@ class Debootstrap(object):
             shutil.rmtree(self._rootfs)
         os.mkdir(self._rootfs)
 
-        Worker.run(
-            shlex.split("qemu-debootstrap --arch={} --components={} --include={} {} {} {}".format(
-                self._board.arch,
-                ",".join(self._distribution.components),
-                ",".join(self._image.packages),
-                self._release,
-                self._rootfs,
-                self._distribution.repository)),
-            logger
-        )
+        # Built fresh rootfs
+        Utils.qemu.debootstrap(
+            self._board.arch,
+            self._release,
+            self._rootfs,
+            self._distribution.components,
+            self._image.packages,
+            self._distribution.repository)
+
+        # Compress
+        Utils.archive.lzma(self._rootfs)
+
         self._stamper.stamp('debootstrap')
 
         return self
@@ -238,13 +241,7 @@ class Debootstrap(object):
 
         # Get size and add 500MiB size
         size = math.ceil(self.get_size(self._rootfs)/1024/1024) + 500
-
-        logger.info("Creating empty file: {} with size {}".format(self._output_file, size))
-
-        Worker.run(
-            shlex.split("qemu-img create -f raw {} {}M".format(self._output_file, size)),
-            logger
-        )
+        Utils.qemu.img(self._output_file, size)
 
         return self
 
@@ -288,22 +285,17 @@ class Debootstrap(object):
 
         # Create label
         logger.info("Creating disk label: msdos")
-        Worker.run(
-            shlex.split('parted -s {} mklabel msdos'.format(self._output_file)),
-            logger
-        )
+        Utils.shell.run('parted -s {} mklabel msdos'.format(self._output_file))
 
         # Create partitions
         for part in self._partitions:
             logger.info("Creating partition: {}".format(part))
-            Worker.run(
-                shlex.split('parted -s {} mkpart primary {} {} {}'.format(
+            Utils.shell.run('parted -s {} mkpart primary {} {} {}'.format(
                     self._output_file,
                     part.parted.type,
                     part.parted.start,
                     part.parted.end
-                )),
-                logger
+                )
             )
 
         return self

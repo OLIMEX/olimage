@@ -14,10 +14,10 @@ logger = logging.getLogger(__name__)
 
 class Downloader(Util):
 
-    def __init__(self, name, config):
+    def __init__(self, name, data):
 
         # Initialize parent
-        super().__init__(name, config)
+        super().__init__(name, data)
 
         # Configure stamper
         self._stamper = PackageStamper(self.paths['package'])
@@ -64,7 +64,7 @@ class Downloader(Util):
                 logger.error("Possibly changed refs. Cleaning-up.")
 
             if self._try_count > 5:
-                raise Exception("Failed to clone {}".format(self.config['source']))
+                raise Exception("Failed to clone {}".format(self._data['source']))
             self._try_count += 1
 
             # Remove package download folder and try again
@@ -74,8 +74,8 @@ class Downloader(Util):
 
     def clone(self):
 
-        logger.info("Cloning {} from {} to {}".format(self._config['refs'], self._config['source'], self.paths['clone']))
-        return git.Repo.clone_from(self._config['source'], self.paths['clone'], depth=1, branch=self._config['refs'])
+        logger.info("Cloning {} from {} to {}".format(self._data['refs'], self._data['source'], self.paths['clone']))
+        return git.Repo.clone_from(self._data['source'], self.paths['clone'], depth=1, branch=self._data['refs'])
 
     def archive(self, repo):
 

@@ -1,9 +1,8 @@
 import click
-import pinject
 
 import olimage.environment as env
 
-from .debootstrap import Debootstrap
+from .rootfs import Rootfs
 
 
 @click.command(name="rootfs")
@@ -17,7 +16,7 @@ def build_rootfs(**kwargs):
     env.options.update(kwargs)
 
     # Build rootfs
-    d: Debootstrap = env.obj_graph.provide(Debootstrap)
+    d: Rootfs = env.obj_graph.provide(Rootfs)
     d.build()
 
     # Generate empty target image

@@ -69,3 +69,6 @@ Generate fragment file:
 ```shell script
 scripts/diffconfig -m
 ```
+
+
+python3 -m olimage -v --log=/dev/pts/1 test a64-olinuxino-1G buster minimal

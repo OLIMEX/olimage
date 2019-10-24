@@ -130,7 +130,7 @@ cli.add_command(olimage.rootfs.build_rootfs)
 def test(ctx: click.Context, **kwargs):
 
     from olimage.core.parsers import Boards, Board
-    from olimage.rootfs import Debootstrap
+    from olimage.rootfs import Rootfs
 
     # Update environment options
     environment.options.update(kwargs)
@@ -140,7 +140,7 @@ def test(ctx: click.Context, **kwargs):
     b: Board = boards.get_board(kwargs['board'])
     b.board_packages
 
-    d = environment.obj_graph.provide(Debootstrap)
+    d = environment.obj_graph.provide(Rootfs)
 
     # Build rootfs
     d.build()
