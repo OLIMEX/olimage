@@ -94,7 +94,6 @@ class Uboot(AbstractPackage):
 
         self._builder.stamper.stamp('patched')
 
-
     def configure(self):
         """
         Specify u-boot defconfig
