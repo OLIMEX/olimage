@@ -1,16 +1,4 @@
 partitions:
-  boot:
-    fstab:
-      type: 'ext4'
-      mount: '/boot'
-      options: 'defaults'
-      dump: 0
-      passno: 2
-    parted:
-      type: 'ext4'
-      start: '4MiB'
-      end: '100MiB'
-
   rootfs:
     fstab:
       type: 'ext4'
@@ -20,5 +8,5 @@ partitions:
       passno: 1
     parted:
       type: 'ext4'
-      start: '100MiB'
+      start: '4MiB'
       end: '100%'
