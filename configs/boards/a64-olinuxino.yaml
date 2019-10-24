@@ -17,9 +17,11 @@ boards:
 
     u-boot:
       arch: *arch
-      defconfig: 'a64-olinuxino'
+#      defconfig: 'a64-olinuxino'
+      defconfig: 'A64-OLinuXino'
       depends:
         - 'arm-trusted-firmware'
+        - 'olimex-sunxi-overlays'
       install:
         - 'u-boot-sunxi-with-spl.bin:usr/lib/u-boot/a64-olinuxino/'
         - 'uboot.env.txt:usr/lib/u-boot/a64-olinuxino/'
@@ -44,6 +46,11 @@ boards:
         - 'modules'
       toolchain: *toolchain
       version: '-1-olimex'
+
+    olimex-sunxi-overlays:
+      arch: *arch
+      refs: 'master'
+      source: 'https://github.com/OLIMEX/OLIMEX-sunxi-overlays.git'
 
   # Define board variants
   variants:
