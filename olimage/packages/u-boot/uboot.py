@@ -83,19 +83,48 @@ class Uboot(AbstractPackage):
 
         :return: None
         """
+
+        if 'patched' in self._builder.stamper.stamps:
+            return
+
         patches = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'patches')
         path = self._builder.paths['extract']
 
         Utils.patch.apply(patches, path)
+
+        self._builder.stamper.stamp('patched')
 
 
     def configure(self):
         """
         Specify u-boot defconfig
 
+        1. Apply defconfig
+        2. Modify CONFIG_ENV_EXT4_DEVICE_AND_PART
+
         :return: None
         """
         self._builder.make("{}_defconfig".format(self._package.defconfig))
+
+        # Configure uboot.env location, depending on partition table
+        device = '0:auto'
+        file = '/boot/uboot.env'
+
+        for i in range(len(self._partitions)):
+            if self._partitions[i].fstab.mount == '/boot':
+                device = '0:{}'.format(i)
+                file = 'uboot.env'
+                break
+
+        with open(os.path.join(self._builder.paths['extract'], '.config'), 'r') as f:
+            lines = f.readlines()
+        with open(os.path.join(self._builder.paths['extract'], '.config'), 'w') as f:
+            for line in lines:
+                if 'CONFIG_ENV_EXT4_DEVICE_AND_PART' in line:
+                    line = 'CONFIG_ENV_EXT4_DEVICE_AND_PART="{}"\n'.format(device)
+                elif 'CONFIG_ENV_EXT4_FILE' in line:
+                    line = 'CONFIG_ENV_EXT4_FILE="{}"\n'.format(file)
+                f.write(line)
 
     def build(self):
         """
