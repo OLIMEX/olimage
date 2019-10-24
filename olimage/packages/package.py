@@ -1,6 +1,11 @@
 import abc
+import functools
+
+import olimage.environment as env
 
 from olimage.utils import Printer
+from olimage.core.parsers import (Board, Partitions)
+from olimage.utils import (Builder, PackageStamper)
 
 
 class PackageException(Exception):
@@ -9,10 +14,32 @@ class PackageException(Exception):
 
 class AbstractPackage(metaclass=abc.ABCMeta):
     """
-    An package base class
+    Package base class
 
     This class is abstract, interface like
     """
+
+    def __init__(self, boards, partitions):
+
+        # Initialize dependencies
+        self._board: Board = boards.get_board(env.options['board'])
+        self._partitions: Partitions = partitions
+
+        # Configure utils
+        self._package = self._board.get_board_package(self._name)
+        self._data = self._package.data
+
+        self._builder = Builder(self._name, self._data)
+
+        self.stamper = PackageStamper(self._builder.paths['build'])
+
+    # def stamp(func):
+        # def wrapper(self: AbstractPackage, *args, **kwargs):
+        #     self.stamper.stamp(func.__name__)
+        #     return func(self, *args, **kwargs)
+        #
+        # return wrapper
+
 
     @abc.abstractclassmethod
     def alias(cls):
@@ -87,6 +114,38 @@ class AbstractPackage(metaclass=abc.ABCMeta):
         :return: None
         """
         pass
+
+
+# class PackageBase(AbstractPackage):
+#
+#     def __str__(self) -> str:
+#         return self._name
+#
+#     @staticmethod
+#     def alias():
+#         pass
+#
+#     @property
+#     def dependency(self):
+#         pass
+#
+#     def download(self):
+#         pass
+#
+#     def patch(self):
+#         pass
+#
+#     def configure(self):
+#         pass
+#
+#     def build(self):
+#         pass
+#
+#     def package(self):
+#         pass
+#
+#     def install(self):
+#         pass
 
 
 class Packages(object):

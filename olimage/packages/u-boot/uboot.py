@@ -3,8 +3,8 @@ import os
 import shlex
 import shutil
 
-from olimage.core.parsers import Board, Partitions
 from olimage.core.utils import Utils
+from olimage.core.stamp import stamp
 from olimage.packages.package import AbstractPackage
 from olimage.utils import (Builder, Downloader, Templater, Worker)
 
@@ -14,19 +14,24 @@ logger = logging.getLogger(__name__)
 
 
 class Uboot(AbstractPackage):
+
     def __init__(self, boards, partitions):
 
         self._name = 'u-boot'
 
-        # Initialize dependencies
-        self._board: Board = boards.get_board(env.options['board'])
-        self._partitions: Partitions = partitions
+        super().__init__(boards, partitions)
 
-        # Configure utils
-        self._package = self._board.get_board_package(self._name)
-        self._data = self._package.data
 
-        self._builder = Builder(self._name, self._data)
+
+        # # Initialize dependencies
+        # self._board: Board = boards.get_board(env.options['board'])
+        # self._partitions: Partitions = partitions
+        #
+        # # Configure utils
+        # self._package = self._board.get_board_package(self._name)
+        # self._data = self._package.data
+        #
+        # self._builder = Builder(self._name, self._data)
 
         # Some global data
         self._pkg_version = None
@@ -64,6 +69,7 @@ class Uboot(AbstractPackage):
         """
         return self._name
 
+    @stamp
     def download(self):
         """
         Download u-boot sources
@@ -77,6 +83,7 @@ class Uboot(AbstractPackage):
         Downloader(self._name, self._data).download()
         self._builder.extract()
 
+    @stamp
     def patch(self):
         """
         Apply patches
@@ -84,16 +91,12 @@ class Uboot(AbstractPackage):
         :return: None
         """
 
-        if 'patched' in self._builder.stamper.stamps:
-            return
-
         patches = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'patches')
         path = self._builder.paths['extract']
 
         Utils.patch.apply(patches, path)
 
-        self._builder.stamper.stamp('patched')
-
+    @stamp
     def configure(self):
         """
         Specify u-boot defconfig
