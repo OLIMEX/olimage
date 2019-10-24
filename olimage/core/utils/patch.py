@@ -28,7 +28,7 @@ class Patch(object):
         # Check if file is directory
         if os.path.isdir(file):
             # Check is 'series' file exists. If so use quilt, otherwise patch -p1
-            if not os.path.exists(os.path.join(file, 'series')):
+            if os.path.exists(os.path.join(file, 'series')):
                 Patch.quilt(file, path)
 
             else:
