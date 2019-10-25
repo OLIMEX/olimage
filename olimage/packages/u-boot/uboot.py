@@ -48,27 +48,6 @@ class Uboot(AbstractPackage):
         """
         return 'u-boot'
 
-    @property
-    def dependency(self):
-        """
-        Get package dependency:
-            - arm-trusted-firmware
-
-        :return: list with dependency packages
-        """
-        try:
-            return self._package.depends
-        except AttributeError:
-            return []
-
-    def __str__(self):
-        """
-        Get package name
-
-        :return: string with name
-        """
-        return self._name
-
     @stamp
     def download(self):
         """
@@ -81,7 +60,7 @@ class Uboot(AbstractPackage):
         :return:
         """
         Downloader(self._name, self._data).download()
-        self._builder.extract()
+        Utils.archive.extract(self._path['archive'], self._path['build'])
 
     @stamp
     def patch(self):
@@ -90,11 +69,7 @@ class Uboot(AbstractPackage):
 
         :return: None
         """
-
-        patches = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'patches')
-        path = self._builder.paths['extract']
-
-        Utils.patch.apply(patches, path)
+        Utils.patch.apply(self._path['patches'], self._path['build'])
 
     @stamp
     def configure(self):

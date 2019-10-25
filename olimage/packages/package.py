@@ -1,5 +1,5 @@
 import abc
-import functools
+import os
 
 import olimage.environment as env
 
@@ -28,7 +28,31 @@ class AbstractPackage(metaclass=abc.ABCMeta):
         self._package = self._board.get_board_package(self._name)
         self._data = self._package.data
 
+        # Configure paths
+        workdir = env.paths['workdir']
+        base = os.path.join(os.path.dirname(os.path.abspath(__file__)), self._name)
+        self._path = {
+            # Package directories
+            'patches': os.path.join(base, 'patches'),
+            'fragments': os.path.join(base, 'fragments'),
+            'overlay': os.path.join(base, 'overlay'),
+
+            # Build directories
+            'download': os.path.join(workdir, 'dl', self._name),
+            'archive': os.path.join(workdir, 'dl', self._name, self._data['refs'] + '.tar.gz'),
+            'build': os.path.join(workdir, 'build', self._name, self._data['refs']),
+        }
+        print(self._path)
+
         self._builder = Builder(self._name, self._data)
+
+    def __str__(self) -> str:
+        """
+        Get package name
+
+        :return: string with name
+        """
+        return self._name
 
     @classmethod
     @abc.abstractmethod
@@ -42,14 +66,17 @@ class AbstractPackage(metaclass=abc.ABCMeta):
         """
         pass
 
-    @abc.abstractmethod
+    @property
     def dependency(self):
         """
         Get package dependency
 
-        :return: list
+        :return: list with dependency packages
         """
-        pass
+        try:
+            return self._package.depends
+        except AttributeError:
+            return []
 
     @abc.abstractmethod
     def download(self):

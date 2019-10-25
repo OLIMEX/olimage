@@ -18,14 +18,23 @@ class Archive(object):
         with tarfile.open(name=output, mode=mode) as tar:
             tar.add(input, basename)
 
-    @staticmethod
-    def gzip(input, output=None):
-        Archive._tar('w:gz', input, output)
+        return output
 
     @staticmethod
-    def bzip2(input, output=None):
-        Archive._tar('w:bz2', input, output)
+    def gzip(input, output=None) -> str:
+        return Archive._tar('w:gz', input, output)
 
     @staticmethod
-    def lzma(input, output=None):
-        Archive._tar('w:xz', input, output)
+    def bzip2(input, output=None) -> str:
+        return Archive._tar('w:bz2', input, output)
+
+    @staticmethod
+    def lzma(input, output=None) -> str:
+        return Archive._tar('w:xz', input, output)
+
+    @staticmethod
+    def extract(input: str, output):
+        logger.info("Extracting {} to {}".format(input, output))
+        with tarfile.open(name=input, mode='r:{}'.format(input.split('.')[-1])) as tar:
+            tar.extractall(path=output)
+
