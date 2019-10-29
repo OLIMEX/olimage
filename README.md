@@ -26,7 +26,7 @@ sudo python3 -m olimage --help
  
 ### Running tests
 ```shell script
-python3 -m unittest tests/partitions.py
+python3 -m unittest -v
 ```
 
 ## Developer Manual

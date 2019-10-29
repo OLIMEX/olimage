@@ -2,7 +2,9 @@ import logging
 import os
 import shlex
 
-from olimage.core.parsers import Board
+
+from olimage.core.stamp import stamp
+from olimage.core.utils import Utils
 from olimage.packages.package import AbstractPackage
 from olimage.utils import (Builder, Downloader, Worker)
 
@@ -16,14 +18,7 @@ class OlimexSunxiOverlays(AbstractPackage):
 
         self._name = 'olimex-sunxi-overlays'
 
-        # Initialize dependencies
-        self._board: Board = boards.get_board(env.options['board'])
-
-        # Configure utils
-        self._package = self._board.get_board_package(self._name)
-        self._data = self._package.data
-
-        self._builder = Builder(self._name, self._data)
+        super().__init__(boards)
 
     @staticmethod
     def alias():
@@ -34,26 +29,7 @@ class OlimexSunxiOverlays(AbstractPackage):
         """
         return 'olimex-sunxi-overlays'
 
-    @property
-    def dependency(self) -> list:
-        """
-        Get package dependency
-
-        :return: list with dependency packages
-        """
-        try:
-            return self._package.depends
-        except AttributeError:
-            return []
-
-    def __str__(self) -> str:
-        """
-        Get package name
-
-        :return: string with name
-        """
-        return self._name
-
+    @stamp
     def download(self):
         """
         Download u-boot sources
@@ -65,7 +41,7 @@ class OlimexSunxiOverlays(AbstractPackage):
         :return:
         """
         Downloader(self._name, self._data).download()
-        self._builder.extract()
+        Utils.archive.extract(self._path['archive'], self._path['build'])
 
     def patch(self):
         pass
@@ -84,8 +60,8 @@ class OlimexSunxiOverlays(AbstractPackage):
         """
 
         # Build package
-        # This command returns error since target and host arch doen't match. We are using only the generated .deb
-        # file, so for now ignore the error.
+        # This command returns error since target and host arch doesn't match. We are using only the generated .deb
+        # file, so ignore the error for now.
         Worker.run(
             ['cd {} && debuild -us -uc -a {}'.format(self._builder.paths['extract'], self._data['arch'])],
             logger,
@@ -105,7 +81,6 @@ class OlimexSunxiOverlays(AbstractPackage):
         :return: None
         """
         rootfs = env.paths['rootfs']
-        image = env.paths['output_file']
         build = self._builder.paths['build']
 
         # Copy file

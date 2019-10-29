@@ -4,8 +4,8 @@ import os
 import olimage.environment as env
 
 from olimage.utils import Printer
-from olimage.core.parsers import (Board, Partitions)
-from olimage.utils import (Builder, PackageStamper)
+from olimage.core.parsers import Board
+from olimage.utils import Builder
 
 
 class PackageException(Exception):
@@ -18,11 +18,10 @@ class AbstractPackage(metaclass=abc.ABCMeta):
 
     This class is abstract, interface like
     """
-    def __init__(self, boards, partitions):
+    def __init__(self, boards):
 
         # Initialize dependencies
         self._board: Board = boards.get_board(env.options['board'])
-        self._partitions: Partitions = partitions
 
         # Configure utils
         self._package = self._board.get_board_package(self._name)

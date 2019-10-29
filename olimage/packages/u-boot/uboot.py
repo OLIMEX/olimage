@@ -3,8 +3,9 @@ import os
 import shlex
 import shutil
 
-from olimage.core.utils import Utils
+from olimage.core.parsers import Partitions
 from olimage.core.stamp import stamp
+from olimage.core.utils import Utils
 from olimage.packages.package import AbstractPackage
 from olimage.utils import (Builder, Downloader, Templater, Worker)
 
@@ -15,23 +16,13 @@ logger = logging.getLogger(__name__)
 
 class Uboot(AbstractPackage):
 
-    def __init__(self, boards, partitions):
+    def __init__(self, boards, partitions: Partitions):
 
         self._name = 'u-boot'
 
-        super().__init__(boards, partitions)
+        super().__init__(boards)
+        self._partitions = partitions
 
-
-
-        # # Initialize dependencies
-        # self._board: Board = boards.get_board(env.options['board'])
-        # self._partitions: Partitions = partitions
-        #
-        # # Configure utils
-        # self._package = self._board.get_board_package(self._name)
-        # self._data = self._package.data
-        #
-        # self._builder = Builder(self._name, self._data)
 
         # Some global data
         self._pkg_version = None
