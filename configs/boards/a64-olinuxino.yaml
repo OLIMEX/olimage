@@ -52,6 +52,8 @@ boards:
       refs: 'master'
       source: 'https://github.com/OLIMEX/OLIMEX-sunxi-overlays.git'
 
+  family: 'sun50i-a64'
+
   # Define board variants
   variants:
     A64-OLinuXino-1Ge4GW:

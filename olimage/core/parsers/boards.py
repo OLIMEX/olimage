@@ -69,6 +69,10 @@ class Board(object):
         return self._data['arch']
 
     @property
+    def family(self) -> str:
+        return self._data['family']
+
+    @property
     def variants(self) -> [Variant]:
         return self._variants
 
