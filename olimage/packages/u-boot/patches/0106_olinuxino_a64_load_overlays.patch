@@ -1,0 +1,57 @@
+--- a/board/olimex/a64_olinuxino/board.c
++++ b/board/olimex/a64_olinuxino/board.c
+@@ -449,6 +449,9 @@
+ int ft_board_setup(void *blob, bd_t *bd)
+ {
+ 	int __maybe_unused r;
++	int ret;
++	char cmd[128];
++	char *overlay;
+ 
+ 	/*
+ 	 * Call setup_environment again in case the boot fdt has
+@@ -461,6 +464,44 @@
+ 	if (r)
+ 		return r;
+ #endif
++
++
++	overlay = strtok(env_get("overlays"), " ");
++	if (!overlay)
++		return 0;
++
++	/* Remove optional new line */
++	if (*(overlay + strlen(overlay) - 1) == '\n')
++		*(overlay + strlen(overlay) - 1) = 0;
++
++	/* Increase size */
++	ret = fdt_increase_size(blob, 0x1000);
++	if (ret) {
++		printf("Failed to increase FDT blob size.\n");
++		return 0;
++	}
++
++	while (overlay) {
++		printf("Applying overlay: \'%s\'...\n", overlay);
++
++		/* Load file */
++		sprintf(cmd, "load mmc 0 0x4fc00000 %s", overlay);
++		ret = run_command(cmd, 0);
++		if (ret) {
++			printf("Failed to load overlay.\n");
++			goto err;
++		}
++
++		/* Apply */
++		ret = run_command("fdt apply 0x4fc00000", 0);
++		if (ret) {
++			printf("Failed to apply overlay.\n");
++			goto err;
++		}
++err:
++		overlay = strtok(NULL, " ");
++	}
++
+ 	return 0;
+ }
+ 

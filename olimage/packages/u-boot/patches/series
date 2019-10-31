@@ -7,3 +7,4 @@
 0103_olinuxino_a64_spi_flash.patch
 0104_olinuxino_a64_detect_board.patch
 0105_olinuxino_a64_fit_best_match.patch
+0106_olinuxino_a64_load_overlays.patch
