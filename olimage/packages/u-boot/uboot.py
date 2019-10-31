@@ -70,6 +70,24 @@ class Uboot(AbstractPackage):
                     line = 'CONFIG_ENV_EXT4_FILE="{}"\n'.format(file)
                 f.write(line)
 
+    def _generate_environment(self) -> None:
+        """
+        Generate default u-boot environment
+
+        :return: None
+        """
+        path = self.paths['compile']
+
+        # First export defaults
+        Utils.shell.run(
+            "CROSS_COMPILE={} {}/scripts/get_default_envs.sh > {}/uboot.env.txt".format(self._package.toolchain.prefix, path, path),
+            self.logger, shell=True)
+
+        # Generate .env
+        Utils.shell.run(
+            "{}/tools/mkenvimage -s {} -o {}/uboot.env {}/uboot.env.txt".format(path, 0x20000, path, path),
+            self.logger, shell=True)
+
     def build(self):
         """
         Build u-boot from sources
@@ -79,23 +97,12 @@ class Uboot(AbstractPackage):
 
         :return: None
         """
-        toolchain = self._package.toolchain.prefix
-        path = self._builder.paths['extract']
 
         # Build sources
-        self._builder.make("CROSS_COMPILE={}".format(toolchain))
+        self._builder.make("CROSS_COMPILE={}".format(self._package.toolchain.prefix))
 
         # Generate env
-        Worker.run(
-            ["CROSS_COMPILE={} {}/scripts/get_default_envs.sh > {}/uboot.env.txt".format(toolchain, path, path)],
-            logger,
-            shell=True
-        )
-        Worker.run(
-            ["{}/tools/mkenvimage -s {} -o {}/uboot.env {}/uboot.env.txt".format(path, 0x20000, path, path)],
-            logger,
-            shell=True
-        )
+        self._generate_environment()
 
     def package(self):
         """

@@ -33,27 +33,30 @@ class AbstractPackage(metaclass=abc.ABCMeta):
         # Configure paths
         workdir = env.paths['workdir']
         base = os.path.join(os.path.dirname(os.path.abspath(__file__)), self._name)
-        self._path = {
+        self.paths = {
             # Package directories
             'patches': os.path.join(base, 'patches'),
             'fragments': os.path.join(base, 'fragments'),
             'overlay': os.path.join(base, 'overlay'),
 
-            # Build directories
+            # Download directories/files
             'download': os.path.join(workdir, 'dl', self._name),
             'archive': os.path.join(workdir, 'dl', self._name, self._data['refs'] + '.tar.gz'),
-            'build': os.path.join(workdir, 'build', self._name, self._data['refs']),
+
+            # Build directories/files
+            'build': os.path.join(workdir, 'build', self._name),
+            'compile': os.path.join(workdir, 'build', self._name, self._data['refs']),
         }
 
         # Check if paths exists
-        for path in [self._path['download'], os.path.dirname(self._path['build'])]:
-            if not os.path.exists(path):
-                os.mkdir(path)
+        for path in ['download', 'build']:
+            if not os.path.exists(self.paths[path]):
+                os.mkdir(self.paths[path])
 
         self._builder = Builder(self._name, self._data)
 
         # Initialize logger. Use "olimage.package"  + package alias
-        self._logger = logging.getLogger(".".join(str(__name__).split('.')[:-1] + [str(self)]))
+        self.logger = logging.getLogger(".".join(str(__name__).split('.')[:-1] + [str(self)]))
 
     def __str__(self) -> str:
         """
@@ -95,11 +98,11 @@ class AbstractPackage(metaclass=abc.ABCMeta):
         :return: None
         """
         # Clone and compress sources
-        dl = Utils.download.git(self._data['source'], self._path['download'], ref=self._data['refs'])
-        Utils.archive.gzip(dl + '/', self._path['archive'])
+        dl = Utils.download.git(self._data['source'], self.paths['download'], ref=self._data['refs'])
+        Utils.archive.gzip(dl, self.paths['archive'])
 
         # Extract them to build directory
-        Utils.archive.extract(self._path['archive'], self._path['build'])
+        Utils.archive.extract(self.paths['archive'], self.paths['build'])
 
     @stamp
     def patch(self) -> None:
@@ -108,7 +111,7 @@ class AbstractPackage(metaclass=abc.ABCMeta):
 
         :return: None
         """
-        Utils.patch.apply(self._path['patches'], self._path['build'])
+        Utils.patch.apply(self.paths['patches'], self.paths['compile'])
 
     def configure(self) -> None:
         """
