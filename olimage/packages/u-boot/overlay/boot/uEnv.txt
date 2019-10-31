@@ -1,0 +1,9 @@
+{% if content %}
+{% for key, value in content.items() %}
+{{ key }}={{ value }}
+{% endfor %}
+{% else %}
+# Put u-boot environment variables here. For example
+# key=value
+# foo=bar baz
+{% endif %}

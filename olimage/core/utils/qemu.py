@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 class Qemu(object):
 
     @staticmethod
-    def debootstrap(arch, release, path, components = None, include = None, mirror = None):
+    def debootstrap(arch, release, path, components=None, include=None, mirror=None):
         logger.info("Running qemu-debootstrap")
         Shell.run(
             "qemu-debootstrap --arch={} {} {} {} {} {}".format(

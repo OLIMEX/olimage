@@ -7,7 +7,7 @@ from olimage.core.parsers import Partitions
 from olimage.core.stamp import stamp
 from olimage.core.utils import Utils
 from olimage.packages.package import AbstractPackage
-from olimage.utils import (Builder, Downloader, Templater, Worker)
+from olimage.utils import (Templater, Worker)
 
 import olimage.environment as env
 
@@ -23,7 +23,6 @@ class Uboot(AbstractPackage):
         super().__init__(boards)
         self._partitions = partitions
 
-
         # Some global data
         self._pkg_version = None
         self._arch = self._board.arch
@@ -38,29 +37,6 @@ class Uboot(AbstractPackage):
         :return: string alias
         """
         return 'u-boot'
-
-    @stamp
-    def download(self):
-        """
-        Download u-boot sources
-
-        1. Clone repository
-        2. Create archive
-        3. Extract archive to the build directory
-
-        :return:
-        """
-        Downloader(self._name, self._data).download()
-        Utils.archive.extract(self._path['archive'], self._path['build'])
-
-    @stamp
-    def patch(self):
-        """
-        Apply patches
-
-        :return: None
-        """
-        Utils.patch.apply(self._path['patches'], self._path['build'])
 
     @stamp
     def configure(self):
@@ -201,6 +177,13 @@ class Uboot(AbstractPackage):
             partitions=partitions,
         )
 
+        # Generate template files
+        Templater.install(
+            [
+                os.path.join(package_dir, 'boot/uEnv.txt')
+            ]
+        )
+
         Worker.run(
             ["mkimage -C none -A arm -T script -d {}/boot/boot.cmd {}/boot/boot.scr".format(package_dir, package_dir)],
             logger,
@@ -223,7 +206,8 @@ class Uboot(AbstractPackage):
                 fdts.append(variant.fdt)
 
             for overlay in variant.overlays:
-                if overlay not in overlays:
+                if overlay not in overlays and \
+                        os.path.exists(os.path.join(env.paths['rootfs'], 'usr/lib/olimex-sunxi-overlays/{}/{}'.format(self._board.family, overlay))):
                     overlays.append(overlay)
 
         # Remap board fdt and overlays
@@ -232,7 +216,8 @@ class Uboot(AbstractPackage):
 
             dtbo = []
             for overlay in variant.overlays:
-                dtbo.append(overlays.index(overlay) + 1)
+                if overlay in overlays:
+                    dtbo.append(overlays.index(overlay) + 1)
 
             variants.append({
                 'name': str(variant),

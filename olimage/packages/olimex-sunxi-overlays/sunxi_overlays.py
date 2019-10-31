@@ -10,14 +10,11 @@ from olimage.utils import (Builder, Downloader, Worker)
 
 import olimage.environment as env
 
-logger = logging.getLogger(__name__)
-
 
 class OlimexSunxiOverlays(AbstractPackage):
     def __init__(self, boards):
 
         self._name = 'olimex-sunxi-overlays'
-
         super().__init__(boards)
 
     @staticmethod
@@ -28,29 +25,6 @@ class OlimexSunxiOverlays(AbstractPackage):
         :return: string alias
         """
         return 'olimex-sunxi-overlays'
-
-    @stamp
-    def download(self):
-        """
-        Download u-boot sources
-
-        1. Clone repository
-        2. Create archive
-        3. Extract archive to the build directory
-
-        :return:
-        """
-        Downloader(self._name, self._data).download()
-        Utils.archive.extract(self._path['archive'], self._path['build'])
-
-    def patch(self):
-        pass
-
-    def configure(self):
-        pass
-
-    def build(self):
-        pass
 
     def package(self):
         """
@@ -64,7 +38,7 @@ class OlimexSunxiOverlays(AbstractPackage):
         # file, so ignore the error for now.
         Worker.run(
             ['cd {} && debuild -us -uc -a {}'.format(self._builder.paths['extract'], self._data['arch'])],
-            logger,
+            self._logger,
             shell=True,
             ignore_fail=True,
             log_error=False
@@ -84,10 +58,10 @@ class OlimexSunxiOverlays(AbstractPackage):
         build = self._builder.paths['build']
 
         # Copy file
-        Worker.run(shlex.split('cp -vf {} {}'.format(os.path.join(build, "olimex-sunxi-overlays_1.0.0_arm64.deb"), rootfs)), logger)
+        Worker.run(shlex.split('cp -vf {} {}'.format(os.path.join(build, "olimex-sunxi-overlays_1.0.0_arm64.deb"), rootfs)), self._logger)
 
         # Install
-        Worker.chroot(shlex.split('apt-get install -f -y ./{}'.format("olimex-sunxi-overlays_1.0.0_arm64.deb")), rootfs, logger)
+        Worker.chroot(shlex.split('apt-get install -f -y ./{}'.format("olimex-sunxi-overlays_1.0.0_arm64.deb")), rootfs, self._logger)
 
         # Remove file
-        Worker.run(shlex.split('rm -vf {}'.format(os.path.join(rootfs, "olimex-sunxi-overlays_1.0.0_arm64.deb"))), logger)
+        Worker.run(shlex.split('rm -vf {}'.format(os.path.join(rootfs, "olimex-sunxi-overlays_1.0.0_arm64.deb"))), self._logger)

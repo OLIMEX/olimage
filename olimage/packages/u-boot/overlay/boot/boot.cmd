@@ -5,6 +5,16 @@ itest.b *0x10028 == 0x03 && echo "U-boot loaded from SPI"
 
 echo "Boot script loaded from ${devtype}"
 
+# Load uEnv.txt
+for prefix in ${boot_prefixes}; do
+    echo "Checking for ${prefix}uEnv.txt..."
+    if test -e mmc ${mmc_bootdev}:{{ partitions.boot }} ${prefix}uEnv.txt; then
+        load mmc ${mmc_bootdev}:1 0x44000000 ${prefix}uEnv.txt
+        echo "Loaded environment from ${prefix}uEnv.txt"
+        env import -t 0x44000000 ${filesize}
+    fi
+done
+
 # Get partuuid
 if test "${devtype}" = "mmc"; then part uuid mmc ${mmc_bootdev}:{{ partitions.root }} partuuid; fi
 
@@ -12,8 +22,10 @@ if test "${devtype}" = "mmc"; then part uuid mmc ${mmc_bootdev}:{{ partitions.ro
 setenv bootargs "root=PARTUUID=${partuuid} rootwait{% for key, value in bootargs.items() %} {{ key }}={{ value }}{% endfor %}"
 
 # Load kernel.itb
-load mmc ${mmc_bootdev}:{{ partitions.boot }} {{ fit.load }} {% if partitions.boot == partitions.root %}/boot/{% endif %}{{ fit.file }}
-bootm {{ fit.load }}
+for prefix in ${boot_prefixes}; do
+    load mmc ${mmc_bootdev}:{{ partitions.boot }} {{ fit.load }} ${prefix}{{ fit.file }}
+    bootm {{ fit.load }}
+done
 
 # Recompile with:
 # mkimage -C none -A arm -T script -d /boot/boot.cmd /boot/boot.scr

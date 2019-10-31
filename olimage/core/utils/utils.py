@@ -1,6 +1,7 @@
 import olimage.environment as env
 
 from .archive import Archive
+from .download import Download
 from .patch import Patch
 from .qemu import Qemu
 from .shell import Shell
@@ -10,6 +11,8 @@ class UtilsMeta(type):
     def __getattribute__(self, item):
         if item == 'archive':
             return env.obj_graph.provide(Archive)
+        elif item == 'download':
+            return env.obj_graph.provide(Download)
         elif item == 'patch':
             return env.obj_graph.provide(Patch)
         elif item == 'qemu':
@@ -20,7 +23,7 @@ class UtilsMeta(type):
             return type.__getattribute__(self, item)
 
     def __dir__(self):
-        return type.__dir__(self) + ['archive', 'patch', 'qemu', 'shell']
+        return type.__dir__(self) + ['archive', 'download', 'patch', 'qemu', 'shell']
 
 
 class Utils(object, metaclass=UtilsMeta):

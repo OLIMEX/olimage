@@ -28,8 +28,4 @@ def stamp(func):
 
         return ret
 
-
     return wrapper
-
-
-

@@ -1,10 +1,13 @@
 import abc
+import logging
 import os
 
 import olimage.environment as env
 
 from olimage.utils import Printer
 from olimage.core.parsers import Board
+from olimage.core.stamp import stamp
+from olimage.core.utils import Utils
 from olimage.utils import Builder
 
 
@@ -41,9 +44,16 @@ class AbstractPackage(metaclass=abc.ABCMeta):
             'archive': os.path.join(workdir, 'dl', self._name, self._data['refs'] + '.tar.gz'),
             'build': os.path.join(workdir, 'build', self._name, self._data['refs']),
         }
-        print(self._path)
+
+        # Check if paths exists
+        for path in [self._path['download'], os.path.dirname(self._path['build'])]:
+            if not os.path.exists(path):
+                os.mkdir(path)
 
         self._builder = Builder(self._name, self._data)
+
+        # Initialize logger. Use "olimage.package"  + package alias
+        self._logger = logging.getLogger(".".join(str(__name__).split('.')[:-1] + [str(self)]))
 
     def __str__(self) -> str:
         """
@@ -77,26 +87,30 @@ class AbstractPackage(metaclass=abc.ABCMeta):
         except AttributeError:
             return []
 
-    @abc.abstractmethod
-    def download(self):
+    @stamp
+    def download(self) -> None:
         """
         Download package
 
         :return: None
         """
-        pass
+        # Clone and compress sources
+        dl = Utils.download.git(self._data['source'], self._path['download'], ref=self._data['refs'])
+        Utils.archive.gzip(dl + '/', self._path['archive'])
 
-    @abc.abstractmethod
-    def patch(self):
+        # Extract them to build directory
+        Utils.archive.extract(self._path['archive'], self._path['build'])
+
+    @stamp
+    def patch(self) -> None:
         """
         Apply patches
 
         :return: None
         """
-        pass
+        Utils.patch.apply(self._path['patches'], self._path['build'])
 
-    @abc.abstractmethod
-    def configure(self):
+    def configure(self) -> None:
         """
         Configure package
 
@@ -104,8 +118,7 @@ class AbstractPackage(metaclass=abc.ABCMeta):
         """
         pass
 
-    @abc.abstractmethod
-    def build(self):
+    def build(self) -> None:
         """
         Build package
 
@@ -113,8 +126,7 @@ class AbstractPackage(metaclass=abc.ABCMeta):
         """
         pass
 
-    @abc.abstractmethod
-    def package(self):
+    def package(self) -> None:
         """
         Make debian package
 
@@ -122,8 +134,7 @@ class AbstractPackage(metaclass=abc.ABCMeta):
         """
         pass
 
-    @abc.abstractmethod
-    def install(self):
+    def install(self) -> None:
         """
         Install package
 

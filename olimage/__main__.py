@@ -51,7 +51,7 @@ def generate_environment(**kwargs):
         'root' : root,
         'configs' : os.path.join(os.path.dirname(root), kwargs['configs']),
         'overlay': os.path.join(os.path.dirname(root), kwargs['overlay']),
-        'workdir' : os.path.join(os.path.dirname(root), kwargs['workdir'])
+        'workdir' : os.path.join(os.path.dirname(root), kwargs['workdir']),
     })
 
     # Copy command-line parameters to global env
@@ -94,10 +94,15 @@ def prepare_tree():
     if not os.path.exists(workdir):
         os.mkdir(workdir)
 
-    for d in ['dl', 'build', 'rootfs', 'images']:
-        if not os.path.exists(os.path.join(workdir, d)):
-            os.mkdir(os.path.join(workdir, d))
+    for directory in ['dl', 'build', 'rootfs', 'images']:
+        path = os.path.join(workdir, directory)
 
+        # Create directory
+        if not os.path.exists(path):
+            os.mkdir(path)
+
+        # Append paths
+        environment.paths[directory] = path
 
 @click.group()
 # Options
