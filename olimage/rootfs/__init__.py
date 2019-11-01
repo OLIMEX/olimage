@@ -4,6 +4,10 @@ import olimage.environment as env
 
 from .rootfs import Rootfs
 
+__all__ = [
+    'Rootfs'
+]
+
 
 @click.command(name="rootfs")
 # Arguments
@@ -16,17 +20,8 @@ def build_rootfs(**kwargs):
     env.options.update(kwargs)
 
     # Build rootfs
-    d: Rootfs = env.obj_graph.provide(Rootfs)
-    d.build()
+    rootfs: Rootfs = env.obj_graph.provide(Rootfs)
 
-    # Generate empty target image
-    d.generate().partition()
-
-    # Create filesystems
-    d.format()
-
-    # Make final configurations
-    d.configure()
-
-    # Copy rootfs files to the image
-    d.copy()
+    print("\nBuilding: \033[1m{}\033[0m based distribution".format(kwargs['release']))
+    rootfs.build()
+    rootfs.configure()

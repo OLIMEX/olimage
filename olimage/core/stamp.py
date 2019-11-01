@@ -29,3 +29,26 @@ def stamp(func):
         return ret
 
     return wrapper
+
+def rootfs_stamp(func):
+
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+
+        file = os.path.join(env.paths['workdir'], 'rootfs', '.stamp_' + func.__name__.lstrip('_'))
+
+        # Check if stamp exists
+        if os.path.isfile(file):
+            logger.debug("Found existing stamp: {}. Skipping".format(file))
+            return
+
+        # Run function
+        ret = func(*args, **kwargs)
+
+        # Stamp
+        logger.debug("Creating stamp: {}".format(file))
+        open(file, 'x').close()
+
+        return ret
+
+    return wrapper

@@ -1,0 +1,2 @@
+class Services(object):
+    pass

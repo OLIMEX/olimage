@@ -38,7 +38,7 @@ class OlimexSunxiOverlays(AbstractPackage):
         # file, so ignore the error for now.
         Worker.run(
             ['cd {} && debuild -us -uc -a {}'.format(self._builder.paths['extract'], self._data['arch'])],
-            self._logger,
+            self.logger,
             shell=True,
             ignore_fail=True,
             log_error=False
@@ -58,10 +58,10 @@ class OlimexSunxiOverlays(AbstractPackage):
         build = self._builder.paths['build']
 
         # Copy file
-        Worker.run(shlex.split('cp -vf {} {}'.format(os.path.join(build, "olimex-sunxi-overlays_1.0.0_arm64.deb"), rootfs)), self._logger)
+        Worker.run(shlex.split('cp -vf {} {}'.format(os.path.join(build, "olimex-sunxi-overlays_1.0.0_arm64.deb"), rootfs)), self.logger)
 
         # Install
-        Worker.chroot(shlex.split('apt-get install -f -y ./{}'.format("olimex-sunxi-overlays_1.0.0_arm64.deb")), rootfs, self._logger)
+        Worker.chroot(shlex.split('apt-get install -f -y ./{}'.format("olimex-sunxi-overlays_1.0.0_arm64.deb")), rootfs, self.logger)
 
         # Remove file
-        Worker.run(shlex.split('rm -vf {}'.format(os.path.join(rootfs, "olimex-sunxi-overlays_1.0.0_arm64.deb"))), self._logger)
+        Worker.run(shlex.split('rm -vf {}'.format(os.path.join(rootfs, "olimex-sunxi-overlays_1.0.0_arm64.deb"))), self.logger)

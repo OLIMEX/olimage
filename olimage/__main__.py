@@ -5,6 +5,7 @@ import sys
 import click
 import pinject
 
+import olimage.image
 import olimage.rootfs
 import olimage.packages
 
@@ -96,6 +97,7 @@ def cli(**kwargs):
 # # Add sub-commands
 cli.add_command(olimage.packages.build_packages)
 cli.add_command(olimage.rootfs.build_rootfs)
+cli.add_command(olimage.image.build_image)
 
 
 @cli.command()
@@ -115,14 +117,20 @@ def test(ctx: click.Context, **kwargs):
     environment.options.update(kwargs)
 
     # Generate board object
-    boards = environment.obj_graph.provide(Boards)
-    b: Board = boards.get_board(kwargs['board'])
-    b.board_packages
+    # boards = environment.obj_graph.provide(Boards)
+    # b: Board = boards.get_board(kwargs['board'])
+    # b.board_packages
 
-    d = environment.obj_graph.provide(Rootfs)
+    # d = environment.obj_graph.provide(Rootfs)
+    #
+    # # Build rootfs
+    # d.build()
+    # d.configure()
 
-    # Build rootfs
-    d.build()
+    ctx.invoke(olimage.rootfs.build_rootfs, **kwargs)
+    ctx.invoke(olimage.packages.build_packages, board=kwargs['board'], package=None, command='install')
+
+    return
 
     # Generate empty target image
     d.generate().partition()

@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 class Map(object):
     def __init__(self):
-        self._output_file = None
+        self._output = None
         self._mount = None
 
         self._partitions = None
@@ -25,21 +25,22 @@ class Map(object):
         def wrapper(*args, **kwargs):
 
             # Get self
-            obj = args[0]
+            from olimage.image import Image
+            obj: Image = args[0]
 
             # Copy values
-            self._output_file = obj._output_file
+            self._output = obj._output
             self._partitions = obj._partitions
-            self._mount = os.path.join(os.path.dirname(self._output_file), ".mnt")
+            self._mount = os.path.join(os.path.dirname(self._output), ".mnt")
 
             with self:
                 return f(*args, **kwargs)
         return wrapper
 
     def __enter__(self):
-        logger.info("Mapping image {}".format(self._output_file))
+        logger.info("Mapping image {}".format(self._output))
 
-        output = Worker.run(shlex.split('kpartx -avs {}'.format(self._output_file)), logger).decode('utf-8', 'ignore')
+        output = Worker.run(shlex.split('kpartx -avs {}'.format(self._output)), logger).decode('utf-8', 'ignore')
         for line in output.splitlines():
             w = line.split()
             if w[0] == 'add':
@@ -57,9 +58,9 @@ class Map(object):
                     self._order.append(partition)
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        logger.info("Unmapping image {}".format(self._output_file))
+        logger.info("Unmapping image {}".format(self._output))
 
-        Worker.run(shlex.split('kpartx -dvs {}'.format(self._output_file)), logger)
+        Worker.run(shlex.split('kpartx -dvs {}'.format(self._output)), logger)
 
 
 class Mount(Map):
@@ -104,6 +105,6 @@ class Mount(Map):
         super().__exit__(exc_type, exc_val, exc_tb)
 
 
-class Mounter:
+class Mounter(object):
     map = Map
     mount = Mount

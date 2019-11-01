@@ -5,6 +5,7 @@ from .download import Download
 from .patch import Patch
 from .qemu import Qemu
 from .shell import Shell
+from .template import Template
 
 
 class UtilsMeta(type):
@@ -19,12 +20,16 @@ class UtilsMeta(type):
             return env.obj_graph.provide(Qemu)
         elif item == 'shell':
             return env.obj_graph.provide(Shell)
+        elif item == 'template':
+            return env.obj_graph.provide(Template)
         else:
             return type.__getattribute__(self, item)
 
-    def __dir__(self):
-        return type.__dir__(self) + ['archive', 'download', 'patch', 'qemu', 'shell']
-
 
 class Utils(object, metaclass=UtilsMeta):
-    pass
+    archive = None
+    download = None
+    patch = None
+    qemu = None
+    shell = None
+    template = None
