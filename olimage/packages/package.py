@@ -108,7 +108,7 @@ class AbstractPackage(metaclass=abc.ABCMeta):
         """
         # Clone and compress sources
         dl = Utils.download.git(self._data['source'], self.paths['download'], ref=self._data['refs'])
-        Utils.archive.gzip(dl, self.paths['archive'])
+        Utils.archive.gzip(dl, self.paths['archive'], exclude=['.git', '.gitignore'])
 
         # Extract them to build directory
         Utils.archive.extract(self.paths['archive'], self.paths['build'])
