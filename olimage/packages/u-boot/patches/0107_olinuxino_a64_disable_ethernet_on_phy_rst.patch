@@ -1,0 +1,60 @@
+--- a/board/olimex/a64_olinuxino/fdt.c
++++ b/board/olimex/a64_olinuxino/fdt.c
+@@ -6,11 +6,48 @@
+  */
+ #include <common.h>
+ #include <fdt_support.h>
++#include <asm/io.h>
++#include <asm/arch/gpio.h>
+ #include <linux/ctype.h>
+ 
+ #include "../common/boards.h"
+ 
+ #if defined(CONFIG_OF_BOARD_FIXUP)
++static int phyrst_pin_value(void)
++{
++	u32 reg;
++
++	/* Make sure PD24 is input */
++	sunxi_gpio_set_cfgpin(SUNXI_GPD(24), SUNXI_GPIO_INPUT);
++	reg = readl(0x01c2087c);
++
++	return ((reg >> 24) & 0x01);
++}
++
++static int board_fix_ethernet(void *fdt)
++{
++	int offset;
++	int ret;
++
++	/* Do nothing */
++	if (phyrst_pin_value() == 1)
++		return 0;
++
++	offset = fdt_path_offset(fdt, "/soc/ethernet@1c30000");
++	if (offset < 0) {
++		debug("/soc/ethernet@1c30000: not found: %s (%d)\n",
++		      fdt_strerror(offset), offset);
++		return offset;
++	}
++
++	ret = fdt_set_node_status(fdt, offset, FDT_STATUS_DISABLED, 0);
++	if (ret)
++		debug("/soc/ethernet@1c30000: failed to set status: %s (%d)",
++		fdt_strerror(ret), ret);
++
++	return ret;
++}
++
+ int board_fix_fdt(void *fdt)
+ {
+ 	int nodeoffset, ret = 0;
+@@ -33,6 +70,8 @@
+ 		}
+ 	}
+ 
++	board_fix_ethernet(fdt);
++
+ 	/* Set compatible string */
+ 	snprintf(name, 32, "olimex,%s", olimex_get_board_name());
+ 	p = name;

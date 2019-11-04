@@ -8,3 +8,4 @@
 0104_olinuxino_a64_detect_board.patch
 0105_olinuxino_a64_fit_best_match.patch
 0106_olinuxino_a64_load_overlays.patch
+0107_olinuxino_a64_disable_ethernet_on_phy_rst.patch
