@@ -37,11 +37,30 @@ class Variant(object):
             return overlays
 
 
+class Bootloader(object):
+    def __init__(self, data) -> None:
+        self._data = data
+
+    @property
+    def file(self) -> str:
+        return self._data['file']
+
+    @property
+    def block(self) -> int:
+        return self._data['block']
+
+    @property
+    def offset(self) -> int:
+        return self._data['offset']
+
 
 class Board(object):
     def __init__(self, name, data) -> None:
         self._name = name
         self._data = data
+
+        # Parse bootloader
+        self._bootloader = Bootloader(data['bootloader'])
 
         # Create variants
         self._default = None
@@ -67,6 +86,10 @@ class Board(object):
     @property
     def arch(self) -> str:
         return self._data['arch']
+
+    @property
+    def bootloader(self) -> Bootloader:
+        return  self._bootloader
 
     @property
     def family(self) -> str:

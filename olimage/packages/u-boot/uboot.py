@@ -1,13 +1,11 @@
 import logging
 import os
-import shlex
 import shutil
 
 from olimage.core.parsers import Partitions
 from olimage.core.stamp import stamp
 from olimage.core.utils import Utils
 from olimage.packages.package import AbstractPackage
-from olimage.utils import (Templater, Worker)
 
 import olimage.environment as env
 
@@ -25,8 +23,6 @@ class Uboot(AbstractPackage):
 
         # Some global data
         self._pkg_version = None
-        self._arch = self._board.arch
-        self._binary = None
         self._package_deb = None
 
     @staticmethod
@@ -60,14 +56,19 @@ class Uboot(AbstractPackage):
                 file = 'uboot.env'
                 break
 
+        # Modify .config
         with open(os.path.join(self._builder.paths['extract'], '.config'), 'r') as f:
             lines = f.readlines()
         with open(os.path.join(self._builder.paths['extract'], '.config'), 'w') as f:
             for line in lines:
-                if 'CONFIG_ENV_EXT4_DEVICE_AND_PART' in line:
+                if 'CONFIG_ENV_EXT4_DEVICE_AND_PART=' in line:
                     line = 'CONFIG_ENV_EXT4_DEVICE_AND_PART="{}"\n'.format(device)
-                elif 'CONFIG_ENV_EXT4_FILE' in line:
+                elif 'CONFIG_ENV_EXT4_FILE=' in line:
                     line = 'CONFIG_ENV_EXT4_FILE="{}"\n'.format(file)
+                # elif 'CONFIG_LOCALVERSION=' in line:
+                #     line = 'CONFIG_LOCALVERSION="{}"\n'.format(self._package.version)
+                # elif 'CONFIG_LOCALVERSION_AUTO=' in line:
+                #     line = '# CONFIG_LOCALVERSION_AUTO is not set\n'
                 f.write(line)
 
     def _generate_environment(self) -> None:
@@ -149,10 +150,12 @@ class Uboot(AbstractPackage):
             size += os.path.getsize(dest)
 
         # Copy overlay
-        Worker.run(
-            ["cp -rvf {}/overlay/* {}".format(os.path.dirname(os.path.abspath(__file__)), package_dir)],
-            logger,
-            shell=True)
+        Utils.shell.run(
+            "cp -rvf {}/overlay/* {}".format(
+                os.path.dirname(os.path.abspath(__file__)),package_dir
+            ),
+            shell=True
+        )
 
         # The FIT image is always located in /boot directory.
         # If there is such defined partition retrieve it's number. Do the same for /
@@ -168,10 +171,13 @@ class Uboot(AbstractPackage):
                 partitions['boot'] = i + 1
 
         # Generate template files
-        Templater.install(
+        Utils.template.install(
             [
-                os.path.join(package_dir, 'boot/boot.cmd')
+                os.path.join(package_dir, 'boot/boot.cmd'),
+                os.path.join(package_dir, 'boot/uEnv.txt'),
+                os.path.join(package_dir, 'DEBIAN/control')
             ],
+            arch=self._board.arch,
             bootargs={
                 'console': 'ttyS0,115200',
                 'panic': 10,
@@ -182,27 +188,13 @@ class Uboot(AbstractPackage):
                 'load': '0x60000000'
             },
             partitions=partitions,
-        )
-
-        # Generate template files
-        Templater.install(
-            [
-                os.path.join(package_dir, 'boot/uEnv.txt')
-            ]
-        )
-
-        Worker.run(
-            ["mkimage -C none -A arm -T script -d {}/boot/boot.cmd {}/boot/boot.scr".format(package_dir, package_dir)],
-            logger,
-            shell=True)
-
-        Templater.install(
-            [
-                os.path.join(package_dir, 'DEBIAN/control')
-            ],
+            size=int(size // 1024),
             version=self._pkg_version,
-            arch=self._arch,
-            size=int(size // 1024)
+        )
+
+        Utils.shell.run(
+            "mkimage -C none -A arm -T script -d {}/boot/boot.cmd {}/boot/boot.scr".format(package_dir, package_dir),
+            shell=True
         )
 
         # Generate fdts and overlay data
@@ -248,11 +240,11 @@ class Uboot(AbstractPackage):
             addr += 0x10000
         overlays = temp
 
-        Templater.install(
+        Utils.template.install(
             [
                 os.path.join(package_dir, 'usr/lib/u-boot/kernel.its')
             ],
-            arch=self._arch,
+            arch=self._board.arch,
             default=self._board.default,
             fdts=fdts,
             kernel={
@@ -267,16 +259,14 @@ class Uboot(AbstractPackage):
             variants=variants,
         )
 
-        Templater.install(
-            [
-                os.path.join(package_dir, 'etc/kernel/postinst.d/uboot-fit')
-            ],
+        Utils.template.install(
+            os.path.join(package_dir, 'etc/kernel/postinst.d/uboot-fit'),
             "755"
         )
 
         # Build package
-        self._package_deb = 'u-boot-sunxi_{}_{}.deb'.format(self._pkg_version, self._arch)
-        Worker.run(shlex.split('dpkg-deb -b {} {}'.format(package_dir, os.path.join(build, self._package_deb))), logger)
+        self._package_deb = 'u-boot-sunxi_{}_{}.deb'.format(self._pkg_version, self._board.arch)
+        Utils.shell.run('dpkg-deb -b {} {}'.format(package_dir, os.path.join(build, self._package_deb)))
 
     def install(self):
         """
@@ -285,25 +275,19 @@ class Uboot(AbstractPackage):
         1. Copy .deb file
         2. Run chroot and install
         3. Remove .deb file
-        4. Flash binary
 
         :return: None
         """
 
         rootfs = env.paths['rootfs']
-        image = env.paths['output_file']
+        # image = env.paths['output_file']
         build = self._builder.paths['build']
 
         # Copy file
-        Worker.run(shlex.split('cp -vf {} {}'.format(os.path.join(build, self._package_deb), rootfs)), logger)
+        Utils.shell.run('cp -vf {} {}'.format(os.path.join(build, self._package_deb), rootfs))
 
         # Install
-        Worker.chroot(shlex.split('apt-get install -f -y ./{}'.format(self._package_deb)), rootfs, logger)
+        Utils.shell.chroot('apt-get install -f -y ./{}'.format(self._package_deb), rootfs)
 
         # Remove file
-        Worker.run(shlex.split('rm -vf {}'.format(os.path.join(rootfs, self._package_deb))), logger)
-
-        # Flash
-        if self._binary:
-            Worker.run(shlex.split('dd if={} of={} conv=notrunc,fsync bs=1k seek=8'.format(
-                self._binary, image)), logger)
+        Utils.shell.run('rm -vf {}'.format(os.path.join(rootfs, self._package_deb)))

@@ -1,5 +1,6 @@
 import click
-import datetime
+# import datetime
+import os
 
 import olimage.environment as env
 
@@ -12,15 +13,16 @@ __all__ = [
 
 @click.command(name="image")
 # Arguments
-@click.argument("output", required=False)
+@click.argument("output")
 # Options
 @click.option("--size", default=500, help="Size in MiB")
 def build_image(**kwargs):
 
     # Validate name
-    if kwargs['output'] is None:
-        kwargs['output'] = "olimage_{}.img".format(datetime.datetime.now().strftime("%Y.%m.%d_%H.%M.%S"))
-    import os
+    # if kwargs['output'] is None:
+    #     #.format(datetime.datetime.now().strftime("%Y.%m.%d_%H.%M.%S"))
+    #     kwargs['output'] = "olimage_test111.img"
+    #
     kwargs['output'] = os.path.join(env.paths['workdir'], 'images', kwargs['output'])
 
     # Update env options

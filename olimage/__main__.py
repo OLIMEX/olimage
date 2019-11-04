@@ -105,48 +105,38 @@ cli.add_command(olimage.image.build_image)
 @click.argument("board")
 @click.argument("release")
 @click.argument("variant", type=click.Choice(['minimal', 'base', 'full']))
+@click.argument("output")
 # Options
 @click.option("--overlay", default="overlay", help="Path to overlay files")
 @click.pass_context
 def test(ctx: click.Context, **kwargs):
 
-    from olimage.core.parsers import Boards, Board
-    from olimage.rootfs import Rootfs
+    from olimage.core.parsers import Boards, Board, Bootloader
+    from olimage.core.utils import Utils
 
     # Update environment options
     environment.options.update(kwargs)
 
-    # Generate board object
-    # boards = environment.obj_graph.provide(Boards)
-    # b: Board = boards.get_board(kwargs['board'])
-    # b.board_packages
-
-    # d = environment.obj_graph.provide(Rootfs)
-    #
-    # # Build rootfs
-    # d.build()
-    # d.configure()
-
+    # Build rootfs
     ctx.invoke(olimage.rootfs.build_rootfs, **kwargs)
+
+    # Install packages
     ctx.invoke(olimage.packages.build_packages, board=kwargs['board'], package=None, command='install')
 
-    return
+    # Build image
+    ctx.invoke(olimage.image.build_image, output=kwargs['output'])
 
-    # Generate empty target image
-    d.generate().partition()
+    # Install bootloader
+    _boards: Boards = environment.obj_graph.provide(Boards)
+    _board: Board = _boards.get_board(kwargs['board'])
+    _bootloader: Bootloader = _board.bootloader
 
-    # Create filesystems
-    d.format()
-
-    # Make final configurations
-    d.configure()
-
-    # Build package
-    ctx.invoke(olimage.packages.build_packages, board=kwargs['board'], package=None, command='install')
-
-    # Create image
-    print("\nBuilding: \033[1mImage\033[0m")
-    d.copy()
+    Utils.shell.run(
+        'dd if={} of={} conv=notrunc,fsync bs={} seek={}'.format(
+            environment.paths['rootfs'] + _bootloader.file,
+            environment.options['output'],
+            _bootloader.block,
+            _bootloader.offset))
 
 
 if __name__ == "__main__":

@@ -17,7 +17,6 @@ boards:
 
     u-boot:
       arch: *arch
-#      defconfig: 'a64-olinuxino'
       defconfig: 'A64-OLinuXino'
       depends:
         - 'arm-trusted-firmware'
@@ -36,8 +35,7 @@ boards:
       depends:
         - 'u-boot'
       defconfig: ~
-      #refs: 'v5.3.7'
-      refs: 'v5.4-rc4'
+      refs: 'v5.4-rc5'
       #source: 'https://kernel.googlesource.com/pub/scm/linux/kernel/git/stable/linux-stable'
       source: 'https://kernel.googlesource.com/pub/scm/linux/kernel/git/torvalds/linux'
       targets:
@@ -51,6 +49,11 @@ boards:
       arch: *arch
       refs: 'master'
       source: 'https://github.com/OLIMEX/OLIMEX-sunxi-overlays.git'
+
+  bootloader:
+    file: '/usr/lib/u-boot/a64-olinuxino/u-boot-sunxi-with-spl.bin'
+    block: 512
+    offset: 16
 
   family: 'sun50i-a64'
 
@@ -81,6 +84,3 @@ boards:
       id: 9849
       fdt: 'allwinner/sun50i-a64-olinuxino-emmc.dtb'
       overlays: ~
-
-
-
