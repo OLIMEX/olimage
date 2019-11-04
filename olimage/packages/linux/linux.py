@@ -32,8 +32,14 @@ class Linux(AbstractPackage):
         self._pkg_version = None
 
     @staticmethod
-    def alias():
+    def alias() -> str:
         return 'linux'
+
+    @property
+    def deb(self) -> str:
+        if self._pkg_version is None:
+            raise Exception("Package output file is not build yet!")
+        return self._pkg_version
 
     @property
     def dependency(self):

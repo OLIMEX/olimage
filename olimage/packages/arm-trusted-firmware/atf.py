@@ -26,8 +26,12 @@ class ATF(AbstractPackage):
         self._builder = Builder(self._name, self._data)
 
     @staticmethod
-    def alias():
+    def alias() -> str:
         return "arm-trusted-firmware"
+
+    @property
+    def deb(self) -> str:
+        pass
 
     @property
     def dependency(self):

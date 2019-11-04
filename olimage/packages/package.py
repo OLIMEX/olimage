@@ -79,6 +79,15 @@ class AbstractPackage(metaclass=abc.ABCMeta):
         pass
 
     @property
+    @abc.abstractmethod
+    def deb(self) -> str:
+        """
+        Get output .deb filename
+
+        :return: str
+        """
+
+    @property
     def dependency(self):
         """
         Get package dependency
@@ -113,6 +122,7 @@ class AbstractPackage(metaclass=abc.ABCMeta):
         """
         Utils.patch.apply(self.paths['patches'], self.paths['compile'])
 
+    @stamp
     def configure(self) -> None:
         """
         Configure package
@@ -141,9 +151,22 @@ class AbstractPackage(metaclass=abc.ABCMeta):
         """
         Install package
 
+        1. Copy .deb file
+        2. Run chroot and install
+        3. Remove .deb file
+
         :return: None
         """
-        pass
+        rootfs = env.paths['rootfs']
+
+        # Copy file
+        Utils.shell.run('cp -vf {} {}'.format(os.path.join(self.paths['build'], self.deb), rootfs))
+
+        # Install
+        Utils.shell.chroot('apt-get install -f -y ./{}'.format(self.deb), rootfs)
+
+        # Remove file
+        Utils.shell.run('rm -vf {}'.format(os.path.join(rootfs, self.deb)))
 
 
 class Packages(object):

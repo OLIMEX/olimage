@@ -34,6 +34,12 @@ class Uboot(AbstractPackage):
         """
         return 'u-boot'
 
+    @property
+    def deb(self) -> str:
+        if self._package_deb is None:
+            raise Exception("Package output file is not build yet!")
+        return self._package_deb
+
     @stamp
     def configure(self):
         """
@@ -267,27 +273,3 @@ class Uboot(AbstractPackage):
         # Build package
         self._package_deb = 'u-boot-sunxi_{}_{}.deb'.format(self._pkg_version, self._board.arch)
         Utils.shell.run('dpkg-deb -b {} {}'.format(package_dir, os.path.join(build, self._package_deb)))
-
-    def install(self):
-        """
-        Install u-boot into the target rootfs
-
-        1. Copy .deb file
-        2. Run chroot and install
-        3. Remove .deb file
-
-        :return: None
-        """
-
-        rootfs = env.paths['rootfs']
-        # image = env.paths['output_file']
-        build = self._builder.paths['build']
-
-        # Copy file
-        Utils.shell.run('cp -vf {} {}'.format(os.path.join(build, self._package_deb), rootfs))
-
-        # Install
-        Utils.shell.chroot('apt-get install -f -y ./{}'.format(self._package_deb), rootfs)
-
-        # Remove file
-        Utils.shell.run('rm -vf {}'.format(os.path.join(rootfs, self._package_deb)))

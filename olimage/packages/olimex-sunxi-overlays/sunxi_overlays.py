@@ -26,6 +26,10 @@ class OlimexSunxiOverlays(AbstractPackage):
         """
         return 'olimex-sunxi-overlays'
 
+    @property
+    def deb(self) -> str:
+        return "olimex-sunxi-overlays_1.0.0_arm64.deb"
+
     def package(self):
         """
         Generate .deb file
