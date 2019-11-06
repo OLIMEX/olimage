@@ -1,0 +1,11 @@
+--- a/scripts/dtc/libfdt/fdt_overlay.c
++++ b/scripts/dtc/libfdt/fdt_overlay.c
+@@ -797,7 +797,7 @@
+ 			return -FDT_ERR_BADOVERLAY;
+ 
+ 		rel_path = s + len;
+-		rel_path_len = e - rel_path;
++		rel_path_len = e - rel_path - 1;
+ 
+ 		/* find the fragment index in which the symbol lies */
+ 		ret = fdt_subnode_offset_namelen(fdto, 0, frag_name,
