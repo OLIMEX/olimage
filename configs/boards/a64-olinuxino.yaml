@@ -46,7 +46,7 @@ boards:
       version: '-1-olimex'
 
     olimex-sunxi-overlays:
-      arch: *arch
+      arch: 'all'
       refs: 'master'
       source: 'https://github.com/OLIMEX/OLIMEX-sunxi-overlays.git'
 

@@ -46,39 +46,39 @@ class Rootfs(object):
         self._variant = env.options['variant']
 
         # Set build path
-        self._rootfs = os.path.join(
-            env.paths['workdir'], 'rootfs', "{}-{}".format(self._board.arch, self._release))
-        env.paths['rootfs'] = self._rootfs
+        self._debootstrap = os.path.join(
+            env.paths['rootfs'], "{}-{}".format(self._board.arch, self._release))
+        env.paths['debootstrap'] = self._debootstrap
 
     @Printer("Building")
     @rootfs_stamp
     def build(self):
 
         # Remove previous directory
-        if os.path.exists(self._rootfs):
-            shutil.rmtree(self._rootfs)
-        os.mkdir(self._rootfs)
+        if os.path.exists(self._debootstrap):
+            shutil.rmtree(self._debootstrap)
+        os.mkdir(self._debootstrap)
 
         # Built a new rootfs
         Utils.qemu.debootstrap(
             self._board.arch,
             self._release,
-            self._rootfs,
+            self._debootstrap,
             self._distribution.components,
             self._image.packages,
             self._distribution.repository)
 
         # Compress
-        Utils.archive.gzip(self._rootfs)
+        Utils.archive.gzip(self._debootstrap)
 
     @Printer("Configuring")
     @rootfs_stamp
     def configure(self):
 
         # Configure hostname
-        Setup.hostname(str(self._board), self._rootfs)
+        Setup.hostname(str(self._board), self._debootstrap)
 
         # Setup all provided users
         for user in self._users:
-            Setup.user(str(user), user.password, self._rootfs, groups=user.groups)
+            Setup.user(str(user), user.password, self._debootstrap, groups=user.groups)
 

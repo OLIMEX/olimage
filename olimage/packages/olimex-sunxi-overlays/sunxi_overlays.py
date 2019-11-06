@@ -28,7 +28,7 @@ class OlimexSunxiOverlays(AbstractPackage):
 
     @property
     def deb(self) -> str:
-        return "olimex-sunxi-overlays_1.0.0_arm64.deb"
+        return "olimex-sunxi-overlays_1.0.0_all.deb"
 
     def package(self):
         """
@@ -41,31 +41,9 @@ class OlimexSunxiOverlays(AbstractPackage):
         # This command returns error since target and host arch doesn't match. We are using only the generated .deb
         # file, so ignore the error for now.
         Worker.run(
-            ['cd {} && debuild -us -uc -a {}'.format(self._builder.paths['extract'], self._data['arch'])],
+            ['cd {} && debuild -us -uc'.format(self._builder.paths['extract'])],
             self.logger,
             shell=True,
             ignore_fail=True,
             log_error=False
         )
-
-    def install(self):
-        """
-        Install package into the target rootfs
-
-        1. Copy .deb file
-        2. Run chroot and install
-        3. Remove .deb file
-
-        :return: None
-        """
-        rootfs = env.paths['rootfs']
-        build = self._builder.paths['build']
-
-        # Copy file
-        Worker.run(shlex.split('cp -vf {} {}'.format(os.path.join(build, "olimex-sunxi-overlays_1.0.0_arm64.deb"), rootfs)), self.logger)
-
-        # Install
-        Worker.chroot(shlex.split('apt-get install -f -y ./{}'.format("olimex-sunxi-overlays_1.0.0_arm64.deb")), rootfs, self.logger)
-
-        # Remove file
-        Worker.run(shlex.split('rm -vf {}'.format(os.path.join(rootfs, "olimex-sunxi-overlays_1.0.0_arm64.deb"))), self.logger)

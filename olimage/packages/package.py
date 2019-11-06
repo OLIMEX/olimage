@@ -157,7 +157,7 @@ class AbstractPackage(metaclass=abc.ABCMeta):
 
         :return: None
         """
-        rootfs = env.paths['rootfs']
+        rootfs = env.paths['debootstrap']
 
         # Copy file
         Utils.shell.run('cp -vf {} {}'.format(os.path.join(self.paths['build'], self.deb), rootfs))

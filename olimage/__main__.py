@@ -124,7 +124,7 @@ def test(ctx: click.Context, **kwargs):
     ctx.invoke(olimage.packages.build_packages, board=kwargs['board'], package=None, command='install')
 
     # Build image
-    ctx.invoke(olimage.image.build_image, output=kwargs['output'])
+    ctx.invoke(olimage.image.build_image, source=environment.paths['debootstrap'], output=kwargs['output'])
 
     # Install bootloader
     _boards: Boards = environment.obj_graph.provide(Boards)
@@ -133,7 +133,7 @@ def test(ctx: click.Context, **kwargs):
 
     Utils.shell.run(
         'dd if={} of={} conv=notrunc,fsync bs={} seek={}'.format(
-            environment.paths['rootfs'] + _bootloader.file,
+            environment.paths['debootstrap'] + _bootloader.file,
             environment.options['output'],
             _bootloader.block,
             _bootloader.offset))

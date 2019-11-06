@@ -89,7 +89,7 @@ class Image(object):
 
     @Printer("Installing")
     @Mounter.mount()
-    def copy(self):
+    def copy(self, source):
         exclude = ['/dev/*', '/proc/*', '/run/*', '/tmp/*', '/sys/*']
         order = []
 
@@ -108,7 +108,6 @@ class Image(object):
                 ex = ""
                 for key in exclude:
                     ex += '--exclude="{}" '.format(key)
-                Utils.shell.run('rsync -aHWXh {} {}/ {}/'.format(ex, '/olimage/output/rootfs/arm64-buster', mnt))
-                Utils.shell.run('ls -l {}/'.format(mnt))
+                Utils.shell.run('rsync -aHWXh {} {}/ {}/'.format(ex, source, mnt))
             else:
-                Utils.shell.run('rsync -rLtWh {}/ {}/'.format('/olimage/output/rootfs/arm64-buster/' + mount, mnt + mount))
+                Utils.shell.run('rsync -rLtWh {}/ {}/'.format(os.path.join(source, mount), mnt + mount))
