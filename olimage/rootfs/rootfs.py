@@ -5,11 +5,11 @@ import shutil
 import olimage.environment as env
 
 from olimage.core.parsers import (Boards, Board, Distributions, Images, Users)
+from olimage.core.service import Service
 from olimage.core.setup import Setup
 from olimage.core.stamp import rootfs_stamp
 from olimage.core.utils import Utils
 from olimage.utils import Printer
-
 
 
 logger = logging.getLogger(__name__)
@@ -81,4 +81,8 @@ class Rootfs(object):
         # Setup all provided users
         for user in self._users:
             Setup.user(str(user), user.password, self._debootstrap, groups=user.groups)
+
+        # Install services
+        Service.resize.install(self._debootstrap)
+
 
