@@ -36,10 +36,10 @@ if test ${load_legacy} && ${load_legacy}; then
         load mmc ${mmc_bootdev}:{{ partitions.boot }} ${fdt_addr_r} ${fdtfile}
 
         # Load overlays
-        if test ${fdoverlays}; then
+        if test ${fdtoverlays}; then
             fdt addr ${fdt_addr}
             fdt resize 0x1000
-            for overlay in ${fdoverlays}; do
+            for overlay in ${fdtoverlays}; do
                 echo "Applying overlay: ${overlay}"
                 load mmc ${mmc_bootdev} 0x4fc00000 ${overlay}
                 fdt apply 0x4fc00000 || setenv fdoverlays_error true
