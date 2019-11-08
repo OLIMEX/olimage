@@ -26,7 +26,38 @@ if test "${devtype}" = "mmc"; then part uuid mmc ${mmc_bootdev}:{{ partitions.ro
 # Set bootargs
 setenv bootargs "root=PARTUUID=${partuuid} rootwait{% for key, value in bootargs.items() %} {{ key }}={{ '${' }}{{ key }}{{ '}' }}{% endfor %} ${optargs}"
 
+if test ${load_legacy} && ${load_legacy}; then
+    # Load Image and
+    echo "Loading legacy image..."
+
+    for prefix in ${boot_prefixes}; do
+    if test -e mmc ${mmc_bootdev}:{{ partitions.boot }} ${prefix}Image; then
+        load mmc ${mmc_bootdev}:{{ partitions.boot }} ${kernel_addr_r} ${prefix}{{ fit.file }}
+        load mmc ${mmc_bootdev}:{{ partitions.boot }} ${fdt_addr_r} ${fdtfile}
+
+        # Load overlays
+        if test ${fdoverlays}; then
+            fdt addr ${fdt_addr}
+            fdt resize 0x1000
+            for overlay in ${fdoverlays}; do
+                echo "Applying overlay: ${overlay}"
+                load mmc ${mmc_bootdev} 0x4fc00000 ${overlay}
+                fdt apply 0x4fc00000 || setenv fdoverlays_error true
+            done
+        fi
+
+        if ${fdoverlays_error}; then
+            echo "Recovering original fdt file..."
+            load mmc ${mmc_bootdev}:{{ partitions.boot }} ${fdt_addr_r} ${fdtfile}
+        fi
+        booti ${kernel_addr_r} - ${fdt_addr_r}
+    fi
+done
+
+fi
+
 # Load kernel.itb
+echo "Loading FIT image..."
 for prefix in ${boot_prefixes}; do
     if test -e mmc ${mmc_bootdev}:{{ partitions.boot }} ${prefix}{{ fit.file }}; then
         load mmc ${mmc_bootdev}:{{ partitions.boot }} {{ fit.load }} ${prefix}{{ fit.file }}

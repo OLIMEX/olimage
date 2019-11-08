@@ -16,7 +16,7 @@
  #endif
 +
 +
-+	overlay = strtok(env_get("overlays"), " ");
++	overlay = strtok(env_get("fdtoverlays"), " ");
 +	if (!overlay)
 +		return 0;
 +

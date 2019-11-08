@@ -1,9 +1,9 @@
-{% if content %}
+# Put u-boot environment variables here. Before boot, boot.scr script use these variables:
+#
+# fdtoverlays - List of overlay files
+# load_legacy - Load separate Image and fdt file,
+# optargs - Optional arguments passed to the kernel
+
 {% for key, value in content.items() %}
 {{ key }}={{ value }}
 {% endfor %}
-{% else %}
-# Put u-boot environment variables here. For example
-# key=value
-# foo=bar baz
-{% endif %}
