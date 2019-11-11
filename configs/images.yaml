@@ -1,6 +1,6 @@
 images:
-  minimal:
-    packages: &minimal
+  lite:
+    packages: &lite
       - 'apt-transport-https'
       - 'bzip2'
       - 'ca-certificates'
@@ -22,7 +22,7 @@ images:
 
   base:
     packages: &base
-      - *minimal
+      - *lite
       - 'build-essential'
       - 'i2c-tools'
       - 'iw'
