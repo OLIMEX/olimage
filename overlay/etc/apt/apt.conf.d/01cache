@@ -1,0 +1,2 @@
+Acquire::HTTP::Proxy "http://{{ host }}:{{ port }}";
+Acquire::HTTPS::Proxy "false";

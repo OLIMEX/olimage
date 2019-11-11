@@ -1,13 +1,49 @@
-#!/bin/bash
+#!/bin/bash -eu
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+DOCKER="docker"
+
+APT_CACHER_NAME="olimage_apt-cacher-ng_1"
+APT_CACHER_PORT=""
+
+CONTAINER_NAME="olimage_work"
+
+# Check for docker permissions
+if ! ${DOCKER} ps >/dev/null 2>&1; then
+	DOCKER="sudo docker"
+fi
+
+# Check for docker daemon
+if ! ${DOCKER} ps >/dev/null; then
+	echo "Failed to connect to docker:"
+	${DOCKER} ps
+	exit 1
+fi
+
+# Run apt-cacher
+if [[ "${DOCKER} ps -q --filter name=${APT_CACHE_NAME}" == "" ]]; then
+    if ! ${DOCKER}-compose up -d; then
+        echo "Failed to run docker-compose:"
+        ${DOCKER}-compose up
+        exit 1
+    fi
+else
+    echo "Service apt-cacher already running";
+fi
+APT_CACHER_PORT=$(${DOCKER} port ${APT_CACHER_NAME} 3142 | cut -d':' -f2)
+echo "Mapped: ${APT_CACHER_PORT}"
+
 
 # Build image
-docker build -t olimex/test1 .
+docker build -t olimage "${DIR}"
 
-docker run -i -t \
-	--privileged \
-	-v /tmp:/tmp \
-	-v /dev:/dev \
-	-v /proc:/proc \
-	-v $(pwd):/olimage \
+# Run container
+docker run --rm -it --privileged \
+    --name "${CONTAINER_NAME}" \
+	--volume /tmp:/tmp \
+	--volume /dev:/dev \
+	--volume /proc:/proc \
+	--volume $(pwd):/olimage \
 	-w /olimage \
-	olimex/test1
+	-e "GIT_HASH=$(git rev-parse HEAD)" \
+	olimage

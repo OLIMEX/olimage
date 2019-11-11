@@ -25,3 +25,4 @@ def build_rootfs(**kwargs):
     print("\nBuilding: \033[1m{}\033[0m based distribution".format(kwargs['release']))
     rootfs.build()
     rootfs.configure()
+    rootfs.cleanup()

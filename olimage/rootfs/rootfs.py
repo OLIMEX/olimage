@@ -42,6 +42,9 @@ class Rootfs(object):
         if self._release is None:
             raise Exception("Target distribution \'{}\' not found in configuration files".format(release))
 
+        # Store cleanup
+        self._cleanup = []
+
         # Store variant
         self._variant = env.options['variant']
 
@@ -65,7 +68,7 @@ class Rootfs(object):
             self._release,
             self._debootstrap,
             self._distribution.components,
-            self._image.packages,
+            None,
             self._distribution.repository)
 
         # Compress
@@ -75,6 +78,16 @@ class Rootfs(object):
     @rootfs_stamp
     def configure(self):
 
+        # Configure apt
+        if env.options['apt_cacher']:
+            Service.apt_cache.install(self._debootstrap, env.options['apt_cacher_host'], env.options['apt_cacher_port'])
+            self._cleanup.append({
+                'function': Service.apt_cache.uninstall,
+                'args': [self._debootstrap]
+            })
+
+        return
+
         # Configure hostname
         Setup.hostname(str(self._board), self._debootstrap)
 
@@ -83,6 +96,10 @@ class Rootfs(object):
             Setup.user(str(user), user.password, self._debootstrap, groups=user.groups)
 
         # Install services
-        Service.resize.install(self._debootstrap)
+        # Service.resize.install(self._debootstrap)
 
 
+    @Printer("Cleanup")
+    def cleanup(self):
+        for item in self._cleanup:
+            item['function'](*item['args'])
