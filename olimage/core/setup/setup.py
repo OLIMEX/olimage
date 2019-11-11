@@ -1,5 +1,6 @@
 import olimage.environment as env
 
+from .console import Console
 from .fstab import FSTab
 from .getty import Getty
 from .hostname import Hostname
@@ -10,7 +11,9 @@ from .user import User
 
 class SetupMeta(type):
     def __getattribute__(self, item):
-        if item == 'fstab':
+        if item == 'console':
+            return env.obj_graph.provide(Console)
+        elif item == 'fstab':
             return env.obj_graph.provide(FSTab)
         elif item == 'getty':
             return env.obj_graph.provide(Getty)
@@ -27,6 +30,7 @@ class SetupMeta(type):
 
 
 class Setup(object, metaclass=SetupMeta):
+    console = None
     fstab = None
     getty = None
     hostname = None

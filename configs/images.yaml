@@ -1,32 +1,12 @@
 images:
   lite:
     packages: &lite
-      - 'apt-transport-https'
-      - 'bzip2'
-      - 'ca-certificates'
-      - 'console-setup'
-      - 'crda'
-      - 'dbus'
-      - 'dmsetup'
-      - 'gnupg'
-      - 'initramfs-tools'
-      - 'libpam-systemd'
       - 'locales'
-      - 'nano'
-      - 'net-tools'
-      - 'openssh-server'
-      - 'rsync'
-      - 'sudo'
-      - 'usbutils'
-      - 'wireless-regdb'
+      - 'netbase'
 
   base:
     packages: &base
       - *lite
-      - 'build-essential'
-      - 'i2c-tools'
-      - 'iw'
-      - 'wpasupplicant'
 
   full:
     packages:

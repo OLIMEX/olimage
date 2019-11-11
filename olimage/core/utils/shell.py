@@ -34,5 +34,25 @@ class Shell(object):
             raise Exception(msg.splitlines()[0])
 
     @staticmethod
+    def _bind(directory):
+        Shell.run("mount -t proc proc {}/proc".format(directory))
+        Shell.run("mount --bind /dev {}/dev".format(directory))
+        Shell.run("mount --bind /dev/pts {}/dev/pts".format(directory))
+        Shell.run("mount --bind /sys {}/sys".format(directory))
+
+    @staticmethod
+    def _unbind(directory):
+        Shell.run("umount {}/sys".format(directory))
+        Shell.run("umount {}/dev/pts".format(directory))
+        Shell.run("umount {}/dev".format(directory))
+        Shell.run("umount {}/proc".format(directory))
+
+    @staticmethod
     def chroot(command, directory, logger=None, **kwargs):
-        Shell.run("chroot {} ".format(directory) + command, logger, **kwargs)
+        Shell._bind(directory)
+        try:
+            Shell.run("chroot {} ".format(directory) + command, logger, **kwargs)
+            Shell._unbind(directory)
+        except Exception as e:
+            Shell._unbind(directory)
+            raise e

@@ -51,6 +51,7 @@ class Rootfs(object):
         # Set build path
         self._debootstrap = os.path.join(
             env.paths['rootfs'], "{}-{}".format(self._board.arch, self._release))
+        self._archive = self._debootstrap + '.tar.gz'
         env.paths['debootstrap'] = self._debootstrap
 
     @Printer("Building")
@@ -78,6 +79,14 @@ class Rootfs(object):
     @rootfs_stamp
     def configure(self):
 
+        # Remove previous directory
+        if os.path.exists(self._debootstrap):
+            shutil.rmtree(self._debootstrap)
+        os.mkdir(self._debootstrap)
+
+        # Extract fresh copy
+        Utils.archive.extract(self._archive, env.paths['rootfs'])
+
         # Configure apt
         if env.options['apt_cacher']:
             Service.apt_cache.install(self._debootstrap, env.options['apt_cacher_host'], env.options['apt_cacher_port'])
@@ -104,6 +113,9 @@ class Rootfs(object):
 
         # Configure timezone
         Setup.timezone(self._debootstrap, env.options['timezone'])
+
+        # Configure console
+        Setup.console(self._debootstrap)
 
         # Install services
         # Service.resize.install(self._debootstrap)
