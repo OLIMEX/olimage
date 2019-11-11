@@ -1,6 +1,7 @@
 import olimage.environment as env
 
 from .fstab import FSTab
+from .getty import Getty
 from .hostname import Hostname
 from .locales import Locales
 from .user import User
@@ -10,6 +11,8 @@ class SetupMeta(type):
     def __getattribute__(self, item):
         if item == 'fstab':
             return env.obj_graph.provide(FSTab)
+        elif item == 'getty':
+            return env.obj_graph.provide(Getty)
         elif item == 'hostname':
             return env.obj_graph.provide(Hostname)
         elif item == 'locales':
@@ -22,6 +25,7 @@ class SetupMeta(type):
 
 class Setup(object, metaclass=SetupMeta):
     fstab = None
+    getty = None
     hostname = None
     locales = None
     user = None

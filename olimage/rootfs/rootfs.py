@@ -89,10 +89,15 @@ class Rootfs(object):
         # Configure locales
         Setup.locales(self._debootstrap, env.options['locale'])
 
+        # Configure getty
+        Setup.getty(self._debootstrap)
+
         return
 
         # Configure hostname
         Setup.hostname(str(self._board), self._debootstrap)
+
+
 
         # Setup all provided users
         for user in self._users:
