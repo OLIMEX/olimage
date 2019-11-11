@@ -17,6 +17,7 @@ __all__ = [
 # Options
 @click.option("--hostname", help="Set default system hostname")
 @click.option("--locale", default="en_GB.UTF-8", help="Set default system locale")
+@click.option("--timezone", default="Europe/London", help="Set default system timezone")
 def build_rootfs(**kwargs):
 
     # Update environment options

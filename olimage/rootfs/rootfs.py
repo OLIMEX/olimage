@@ -93,10 +93,6 @@ class Rootfs(object):
         Setup.getty(self._debootstrap)
 
         # Configure hostname
-        # If not provided via command option, use board family:
-        #  - a64-olinuxino
-        #  - a20-olinuxino
-        #  - etc...
         hostname = str(self._board)
         if env.options['hostname']:
             hostname = env.options['hostname']
@@ -105,6 +101,9 @@ class Rootfs(object):
         # Configure users
         for user in self._users:
             Setup.user(str(user), user.password, self._debootstrap, groups=user.groups)
+
+        # Configure timezone
+        Setup.timezone(self._debootstrap, env.options['timezone'])
 
         # Install services
         # Service.resize.install(self._debootstrap)
