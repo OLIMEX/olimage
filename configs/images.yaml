@@ -1,9 +1,34 @@
 images:
-  server:
-    packages: &server
-      - 'netbase'
+  minimal:
+    packages: &minimal
+      - 'apt-transport-https'
+      - 'bzip2'
+      - 'ca-certificates'
+      - 'console-setup'
+      - 'crda'
+      - 'dbus'
+      - 'dmsetup'
+      - 'gnupg'
+      - 'initramfs-tools'
+      - 'libpam-systemd'
+      - 'locales'
+      - 'nano'
+      - 'net-tools'
+      - 'openssh-server'
+      - 'rsync'
+      - 'sudo'
+      - 'usbutils'
+      - 'wireless-regdb'
 
-  desktop:
+  base:
+    packages: &base
+      - *minimal
+      - 'build-essential'
+      - 'i2c-tools'
+      - 'iw'
+      - 'wpasupplicant'
+
+  full:
     packages:
-      - *server
+      - *base
 
