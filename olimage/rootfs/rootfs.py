@@ -86,6 +86,9 @@ class Rootfs(object):
                 'args': [self._debootstrap]
             })
 
+        # Configure locales
+        Setup.locales(self._debootstrap, env.options['locale'])
+
         return
 
         # Configure hostname

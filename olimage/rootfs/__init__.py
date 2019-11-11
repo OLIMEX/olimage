@@ -14,6 +14,8 @@ __all__ = [
 @click.argument("board")
 @click.argument("release")
 @click.argument("variant", type=click.Choice(['minimal', 'base', 'full']))
+# Options
+@click.option("--locale", default="en_GB.UTF-8", help="Set default system locale")
 def build_rootfs(**kwargs):
 
     # Update environment options

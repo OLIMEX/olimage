@@ -2,6 +2,7 @@ import olimage.environment as env
 
 from .fstab import FSTab
 from .hostname import Hostname
+from .locales import Locales
 from .user import User
 
 
@@ -11,6 +12,8 @@ class SetupMeta(type):
             return env.obj_graph.provide(FSTab)
         elif item == 'hostname':
             return env.obj_graph.provide(Hostname)
+        elif item == 'locales':
+            return env.obj_graph.provide(Locales)
         elif item == 'user':
             return env.obj_graph.provide(User)
         else:
@@ -20,4 +23,5 @@ class SetupMeta(type):
 class Setup(object, metaclass=SetupMeta):
     fstab = None
     hostname = None
+    locales = None
     user = None
