@@ -92,14 +92,17 @@ class Rootfs(object):
         # Configure getty
         Setup.getty(self._debootstrap)
 
-        return
-
         # Configure hostname
-        Setup.hostname(str(self._board), self._debootstrap)
+        # If not provided via command option, use board family:
+        #  - a64-olinuxino
+        #  - a20-olinuxino
+        #  - etc...
+        hostname = str(self._board)
+        if env.options['hostname']:
+            hostname = env.options['hostname']
+        Setup.hostname(hostname, self._debootstrap)
 
-
-
-        # Setup all provided users
+        # Configure users
         for user in self._users:
             Setup.user(str(user), user.password, self._debootstrap, groups=user.groups)
 
