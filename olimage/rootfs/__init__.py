@@ -13,7 +13,7 @@ __all__ = [
 # Arguments
 @click.argument("board")
 @click.argument("release")
-@click.argument("variant", type=click.Choice(['minimal', 'base', 'full']))
+@click.argument("variant", type=click.Choice(['server', 'desktop']))
 # Options
 @click.option("--hostname", help="Set default system hostname")
 @click.option("--locale", default="en_GB.UTF-8", help="Set default system locale")
