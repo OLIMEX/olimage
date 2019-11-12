@@ -131,6 +131,7 @@ class AbstractPackage(metaclass=abc.ABCMeta):
         """
         pass
 
+    @stamp
     def build(self) -> None:
         """
         Build package
@@ -139,6 +140,7 @@ class AbstractPackage(metaclass=abc.ABCMeta):
         """
         pass
 
+    @stamp
     def package(self) -> None:
         """
         Make debian package
