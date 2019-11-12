@@ -101,7 +101,7 @@ class Rootfs(object):
 
         # Configure console
         # NOTE: This must be run before package installation
-        Setup.console(self._debootstrap, env.options['keyboard_layout'])
+        Setup.console(self._debootstrap, env.options['keyboard_keymap'], env.options['keyboard_layout'])
 
         # Install packages
         Utils.shell.chroot('apt-get install -y {}'.format(' '.join(self._image.packages)), self._debootstrap)

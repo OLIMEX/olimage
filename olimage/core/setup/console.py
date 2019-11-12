@@ -1,9 +1,15 @@
+import olimage.environment as env
+
 from olimage.core.utils import Utils
 
 
 class Console(object):
     @staticmethod
-    def __call__(path: str, layout: str):
+    def __call__(path: str, keymap: str, layout: str):
+
+        file = '/etc/default/console-setup'
+        source = env.paths['overlay'] + file
+        destination = path + file
 
         # Configure console
         Utils.shell.chroot(
@@ -24,6 +30,21 @@ class Console(object):
             echo "keyboard-configuration keyboard-configuration/compose	select No compose key" | debconf-set-selections -v; \
             echo "keyboard-configuration keyboard-configuration/ctrl_alt_bksp boolean true" | debconf-set-selections -v; \
             echo "keyboard-configuration keyboard-configuration/variant select {}" | debconf-set-selections -v\
-            \''.format(layout, layout),
+            \''.format(keymap, layout),
+            path
+        )
+
+        # Install package
+        Utils.shell.chroot(
+            'apt-get install -y console-setup keyboard-configuration',
+            path
+        )
+
+        # Install files
+        Utils.shell.run('install -v -m 644 {} {}'.format(source, destination))
+
+        # Run configuration
+        Utils.shell.chroot(
+            'setupcon --force --save-only -v',
             path
         )

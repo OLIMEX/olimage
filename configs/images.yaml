@@ -7,7 +7,7 @@ images:
       - build-essential
       - ca-certificates
       - cifs-utils
-      - console-setup
+#      - console-setup
       - crda
       - curl
       - debconf-utils
@@ -20,7 +20,8 @@ images:
       - gdb
       - hardlink
       - htop
-      - keyboard-configuration
+      - initramfs-tools
+#      - keyboard-configuration
       - less
       - libfreetype6-dev
       - libmtp-runtime
@@ -37,7 +38,6 @@ images:
       - policykit-1
       - psmisc
       - python
-      - rng-tools
       - rsync
       - ssh
       - ssh-import-id

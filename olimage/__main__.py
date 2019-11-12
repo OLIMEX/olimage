@@ -116,10 +116,8 @@ cli.add_command(olimage.image.build_image)
 # Arguments
 @click.argument("board")
 @click.argument("release")
-@click.argument("variant", type=click.Choice(['minimal', 'base', 'full']))
+@click.argument("variant", type=click.Choice(['lite', 'base', 'full']))
 @click.argument("output")
-# Options
-@click.option("--overlay", default="overlay", help="Path to overlay files")
 @click.pass_context
 def test(ctx: click.Context, **kwargs):
 
