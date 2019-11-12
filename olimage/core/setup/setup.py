@@ -7,6 +7,7 @@ from .fstab import FSTab
 from .getty import Getty
 from .hostname import Hostname
 from .locales import Locales
+from .ssh import SSH
 from .timezone import Timezone
 from .user import User
 
@@ -23,6 +24,7 @@ class SetupMeta(type):
             'getty': env.obj_graph.provide(Getty),
             'hostname': env.obj_graph.provide(Hostname),
             'locales': env.obj_graph.provide(Locales),
+            'ssh': env.obj_graph.provide(SSH),
             'timezone': env.obj_graph.provide(Timezone),
             'user': env.obj_graph.provide(User),
         }
@@ -39,6 +41,7 @@ class Setup(object, metaclass=SetupMeta):
     getty: Getty
     hostname: Hostname
     locales: Locales
+    ssh: SSH
     timezone: Timezone
     user: User
 

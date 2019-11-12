@@ -5,6 +5,7 @@ from .download import Download
 from .patch import Patch
 from .qemu import Qemu
 from .shell import Shell
+from .systemctl import Systemctl
 from .template import Template
 
 
@@ -20,6 +21,8 @@ class UtilsMeta(type):
             return env.obj_graph.provide(Qemu)
         elif item == 'shell':
             return env.obj_graph.provide(Shell)
+        elif item == 'systemctl':
+            return env.obj_graph.provide(Systemctl)
         elif item == 'template':
             return env.obj_graph.provide(Template)
         else:
@@ -27,9 +30,10 @@ class UtilsMeta(type):
 
 
 class Utils(object, metaclass=UtilsMeta):
-    archive = None
-    download = None
-    patch = None
-    qemu = None
-    shell = None
-    template = None
+    archive: Archive
+    download: Download
+    patch: Patch
+    qemu: Qemu
+    shell: Shell
+    systemctl: Systemctl
+    template: Template

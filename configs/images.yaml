@@ -11,6 +11,7 @@ images:
       - crda
       - curl
       - debconf-utils
+      - dhcpcd5
       - dosfstools
       - dphys-swapfile
       - ed
@@ -31,6 +32,7 @@ images:
       - manpages-dev
       - ncdu
       - nfs-common
+      - net-tools
       - netbase
       - ntfs-3g
       - parted

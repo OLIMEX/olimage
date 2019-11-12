@@ -122,6 +122,14 @@ class Rootfs(object):
         # Configure timezone
         Setup.timezone(self._debootstrap, env.options['timezone'])
 
+        # Disable useless services
+        Utils.systemctl.disable('hwclock.sh')
+        Utils.systemctl.disable('nfs-common')
+        Utils.systemctl.disable('rpcbind')
+
+        # Configure ssh
+        Setup.ssh(self._debootstrap, env.options['ssh'])
+
         # Install services
         # Service.resize.install(self._debootstrap)
 
