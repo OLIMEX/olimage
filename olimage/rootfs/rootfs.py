@@ -115,7 +115,7 @@ class Rootfs(object):
         Setup.timezone(self._debootstrap, env.options['timezone'])
 
         # Configure console
-        Setup.console(self._debootstrap)
+        Setup.console(self._debootstrap, env.options['keyboard_layout'])
 
         # Install services
         # Service.resize.install(self._debootstrap)
