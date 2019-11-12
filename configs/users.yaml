@@ -6,5 +6,4 @@ users:
 
   olimex:
     password: 'olimex'
-    groups:
-      - 'sudo'
+    groups: [ 'adm', 'audio', 'cdrom', 'dialout', 'games', 'netdev', 'plugdev', 'sudo', 'video', 'users' ]

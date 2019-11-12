@@ -79,16 +79,25 @@ def prepare_tree():
         # Append paths
         environment.paths[directory] = path
 
+
 @click.group()
 # Options
 @click.option("--workdir", default="output", help="Specify working directory.")
 @click.option("--configs", default="configs", help="Configs directory")
 @click.option("--overlay", default="overlay", help="Path to overlay files")
 @click.option("-v", "--verbose", count=True, help="Increase logging verbosity.")
-@click.option("--apt-cacher/--no-apt-cacher", default=True, help="Use apt-cacher service")
-@click.option("--apt-cacher-host", default="172.17.0.1", help="Specify apt-cache service host")
-@click.option("--apt-cacher-port", default=31420, type=int, help="Specify apt-cache service port")
-@click.option("--log", help="Logging file.")
+@click.option("--apt-cacher/--no-apt-cacher",
+              default=True,
+              help="Use apt-cacher service")
+@click.option("--apt-cacher-host",
+              default=lambda: os.environ.get('APT_CACHER_HOST', '172.17.0.1'),
+              help="Specify apt-cache service host")
+@click.option("--apt-cacher-port",
+              default=lambda: int(os.environ.get('APT_CACHER_PORT', '31420')),
+              type=int,
+              help="Specify apt-cache service port")
+@click.option("--log",
+              help="Logging file.")
 def cli(**kwargs):
     generate_environment(**kwargs)
     prepare_logging()

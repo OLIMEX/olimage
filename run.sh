@@ -31,8 +31,7 @@ else
     echo "Service apt-cacher already running";
 fi
 APT_CACHER_PORT=$(${DOCKER} port ${APT_CACHER_NAME} 3142 | cut -d':' -f2)
-echo "Mapped: ${APT_CACHER_PORT}"
-
+echo "APT_CACHER_PORT: ${APT_CACHER_PORT}"
 
 # Build image
 docker build -t olimage "${DIR}"
@@ -46,4 +45,6 @@ docker run --rm -it --privileged \
 	--volume $(pwd):/olimage \
 	-w /olimage \
 	-e "GIT_HASH=$(git rev-parse HEAD)" \
+	-e "APT_CACHER_HOST=172.17.0.1" \
+	-e "APT_CACHER_PORT=${APT_CACHER_PORT}" \
 	olimage

@@ -1,8 +1,52 @@
 images:
   lite:
     packages: &lite
-      - 'locales'
-      - 'netbase'
+      - apt-listchanges
+      - avahi-daemon
+      - bash-completion
+      - build-essential
+      - ca-certificates
+      - cifs-utils
+      - console-setup
+      - crda
+      - curl
+      - debconf-utils
+      - dosfstools
+      - dphys-swapfile
+      - ed
+      - ethtool
+      - fake-hwclock
+      - fbset
+      - gdb
+      - hardlink
+      - htop
+      - keyboard-configuration
+      - less
+      - libfreetype6-dev
+      - libmtp-runtime
+      - lua5.1
+      - luajit
+      - man-db
+      - manpages-dev
+      - ncdu
+      - nfs-common
+      - netbase
+      - ntfs-3g
+      - parted
+      - pkg-config
+      - policykit-1
+      - psmisc
+      - python
+      - rng-tools
+      - rsync
+      - ssh
+      - ssh-import-id
+      - strace
+      - sudo
+      - unzip
+      - usb-modeswitch
+      - usbutils
+      - v4l-utils
 
   base:
     packages: &base

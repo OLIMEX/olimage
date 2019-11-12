@@ -18,7 +18,7 @@ class Images(GenericLoader):
     def __init__(self) -> None:
         super().__init__("images", Image)
 
-    def get_image(self, name: str) -> object:
+    def get_image(self, name: str) -> Image:
         for image in self._objects:
             if name.lower() == str(image).lower():
                 return image

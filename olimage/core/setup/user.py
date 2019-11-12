@@ -2,9 +2,6 @@ import logging
 
 from olimage.core.utils import Utils
 
-logger = logging.getLogger(__name__)
-
-
 class User(object):
     @staticmethod
     def __call__(username, password, path, groups=None):
@@ -12,7 +9,7 @@ class User(object):
         if username == 'root':
             Utils.shell.chroot(
                 "/bin/bash -c '(echo {}; echo {};) | passwd root'".format(password, password),
-                path, logger,
+                path,
                 ignore_fail=True
             )
         else:
@@ -20,7 +17,7 @@ class User(object):
                 "/bin/bash -c '(echo {}; echo {};) | adduser --gecos {} {}'".format(
                     password, password, username, username
                 ),
-                path, logger,
+                path,
                 ignore_fail=True
             )
 
@@ -30,6 +27,6 @@ class User(object):
             for group in groups:
                 Utils.shell.chroot(
                     "/bin/bash -c 'usermod -a -G {} {}'".format(group, username),
-                    path, logger,
+                    path,
                     ignore_fail=True
                 )

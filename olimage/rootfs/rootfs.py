@@ -96,7 +96,15 @@ class Rootfs(object):
             })
 
         # Configure locales
+        # NOTE: This must be run before package installation
         Setup.locales(self._debootstrap, env.options['locale'])
+
+        # Configure console
+        # NOTE: This must be run before package installation
+        Setup.console(self._debootstrap, env.options['keyboard_layout'])
+
+        # Install packages
+        Utils.shell.chroot('apt-get install -y {}'.format(' '.join(self._image.packages)), self._debootstrap)
 
         # Configure getty
         Setup.getty(self._debootstrap)
@@ -113,9 +121,6 @@ class Rootfs(object):
 
         # Configure timezone
         Setup.timezone(self._debootstrap, env.options['timezone'])
-
-        # Configure console
-        Setup.console(self._debootstrap, env.options['keyboard_layout'])
 
         # Install services
         # Service.resize.install(self._debootstrap)
