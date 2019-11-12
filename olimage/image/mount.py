@@ -2,10 +2,9 @@ import functools
 import logging
 import os
 import re
-import shlex
 import shutil
 
-from olimage.utils import Worker
+from olimage.core.utils import Utils
 
 logger = logging.getLogger(__name__)
 
@@ -40,7 +39,7 @@ class Map(object):
     def __enter__(self):
         logger.info("Mapping image {}".format(self._output))
 
-        output = Worker.run(shlex.split('kpartx -avs {}'.format(self._output)), logger).decode('utf-8', 'ignore')
+        output = Utils.shell.run('kpartx -avs {}'.format(self._output)).decode('utf-8', 'ignore')
         for line in output.splitlines():
             w = line.split()
             if w[0] == 'add':
@@ -60,7 +59,7 @@ class Map(object):
     def __exit__(self, exc_type, exc_val, exc_tb):
         logger.info("Unmapping image {}".format(self._output))
 
-        Worker.run(shlex.split('kpartx -dvs {}'.format(self._output)), logger)
+        Utils.shell.run('kpartx -dvs {}'.format(self._output))
 
 
 class Mount(Map):
@@ -86,9 +85,9 @@ class Mount(Map):
             mount = os.path.join(self._mount, mount.lstrip('/'))
 
             if not os.path.exists(mount):
-                Worker.run(shlex.split('mkdir {}'.format(mount)), logger)
+                Utils.shell.run('mkdir {}'.format(mount))
 
-            Worker.run(shlex.split('mount {} {}'.format(device, mount)), logger)
+            Utils.shell.run('mount {} {}'.format(device, mount))
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         # First unmount
@@ -99,7 +98,7 @@ class Mount(Map):
 
             logger.debug("Unmounting {} from {}".format(part, mount))
 
-            Worker.run(shlex.split('umount {}'.format(mount)), logger)
+            Utils.shell.run('umount {}'.format(mount))
 
         # Then unmap
         super().__exit__(exc_type, exc_val, exc_tb)

@@ -1,12 +1,12 @@
 import logging
 import os
-import shlex
 import shutil
 import tarfile
 
 from .stamper import PackageStamper
 from .util import Util
-from .worker import Worker
+
+from olimage.core.utils import Utils
 
 
 logger = logging.getLogger(__name__)
@@ -51,20 +51,18 @@ class Builder(Util):
             return
 
         logger.info("Applying patches from {}".format(patches))
-        Worker.run(
-            ["cd {}; QUILT_PATCHES={} quilt push -a".format(self.paths['extract'], patches)],
-            logger,
+        Utils.shell.run(
+            "cd {}; QUILT_PATCHES={} quilt push -a".format(self.paths['extract'], patches),
             shell=True
         )
 
         self.stamper.stamp('patched')
 
     def make(self, command, **kwargs):
-        return Worker.run(
-            shlex.split("/bin/bash -c 'make -C {} {} -j{}'".format(
+        return Utils.shell.run(
+            "/bin/bash -c 'make -C {} {} -j{}'".format(
                 self.paths['extract'],
                 command,
-                1 if os.cpu_count() is None else os.cpu_count())
-            ),
-            logger
+                1 if os.cpu_count() is None else os.cpu_count()
+            )
         )

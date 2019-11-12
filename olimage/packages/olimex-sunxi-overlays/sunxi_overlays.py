@@ -1,14 +1,5 @@
-import logging
-import os
-import shlex
-
-
-from olimage.core.stamp import stamp
 from olimage.core.utils import Utils
 from olimage.packages.package import AbstractPackage
-from olimage.utils import (Builder, Downloader, Worker)
-
-import olimage.environment as env
 
 
 class OlimexSunxiOverlays(AbstractPackage):
@@ -40,9 +31,8 @@ class OlimexSunxiOverlays(AbstractPackage):
         # Build package
         # This command returns error since target and host arch doesn't match. We are using only the generated .deb
         # file, so ignore the error for now.
-        Worker.run(
-            ['cd {} && debuild -us -uc'.format(self._builder.paths['extract'])],
-            self.logger,
+        Utils.shell.run(
+            'cd {} && debuild -us -uc'.format(self._builder.paths['extract']),
             shell=True,
             ignore_fail=True,
             log_error=False
