@@ -187,7 +187,7 @@ class Uboot(AbstractPackage):
             bootargs={
                 'console': 'ttyS0,115200',
                 'panic': 10,
-                'loglevel': 7,
+                'loglevel': 4,
             },
             fit={
                 'file': 'kernel.itb',
