@@ -23,7 +23,7 @@ class Template(object):
 
         # If files is not a list, convert it to such
         if not isinstance(files, list):
-            files = [ files ]
+            files = [files]
 
         for file in files:
             logger.debug("Generating template file : {}".format(file))

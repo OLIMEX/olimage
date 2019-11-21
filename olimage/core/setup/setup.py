@@ -2,6 +2,7 @@ from typing import Iterable
 
 import olimage.environment as env
 
+from .apt import Apt
 from .console import Console
 from .fstab import FSTab
 from .getty import Getty
@@ -19,6 +20,7 @@ class SetupMeta(type):
             return type.__getattribute__(self, item)
 
         mapping = {
+            'apt': env.obj_graph.provide(Apt),
             'console': env.obj_graph.provide(Console),
             'fstab': env.obj_graph.provide(FSTab),
             'getty': env.obj_graph.provide(Getty),
@@ -36,6 +38,7 @@ class SetupMeta(type):
 
 
 class Setup(object, metaclass=SetupMeta):
+    apt: Apt
     console: Console
     fstab: FSTab
     getty: Getty
@@ -44,7 +47,3 @@ class Setup(object, metaclass=SetupMeta):
     ssh: SSH
     timezone: Timezone
     user: User
-
-    @staticmethod
-    def all():
-        print("adadadasd")

@@ -8,10 +8,13 @@ TODO
 
 ## Usage
 
-### User apt-cacher
+### Use apt-cacher
 ```shell script
 docker-compose up -d
+docker exec -it olimage_apt-cacher-ng_1 tail -f /var/log/apt-cacher-ng/apt-cacher.log
 ```
+
+
 
 
 

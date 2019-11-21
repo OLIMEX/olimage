@@ -65,12 +65,12 @@ class Rootfs(object):
 
         # Built a new rootfs
         Utils.qemu.debootstrap(
-            self._board.arch,
-            self._release,
-            self._debootstrap,
-            self._distribution.components,
-            None,
-            self._distribution.repository)
+            arch=self._board.arch,
+            release=self._release,
+            path=self._debootstrap,
+            components=self._distribution.components,
+            include=None,
+            mirror=self._distribution.repository)
 
         # Compress
         Utils.archive.gzip(self._debootstrap)
@@ -94,6 +94,7 @@ class Rootfs(object):
                 'function': Service.apt_cache.uninstall,
                 'args': [self._debootstrap]
             })
+        Setup.apt(self._release)
 
         # Configure locales
         # NOTE: This must be run before package installation

@@ -49,6 +49,7 @@ class Shell(object):
 
     @staticmethod
     def chroot(command, directory, logger=None, **kwargs):
+        # TODO: User env.paths['debootstrap'] instead of directory
         Shell._bind(directory)
         try:
             Shell.run("chroot {} ".format(directory) + command, logger, **kwargs)

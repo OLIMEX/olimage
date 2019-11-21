@@ -90,10 +90,10 @@ def prepare_tree():
               default=True,
               help="Use apt-cacher service")
 @click.option("--apt-cacher-host",
-              default=lambda: os.environ.get('APT_CACHER_HOST', '172.17.0.1'),
+              default=lambda: os.environ.get('APT_CACHER_HOST', '127.0.0.1'),
               help="Specify apt-cache service host")
 @click.option("--apt-cacher-port",
-              default=lambda: int(os.environ.get('APT_CACHER_PORT', '31420')),
+              default=lambda: int(os.environ.get('APT_CACHER_PORT', '3142')),
               type=int,
               help="Specify apt-cache service port")
 @click.option("--log",
@@ -131,7 +131,7 @@ def test(ctx: click.Context, **kwargs):
     ctx.invoke(olimage.rootfs.build_rootfs, **kwargs)
 
     # Install packages
-    ctx.invoke(olimage.packages.build_packages, board=kwargs['board'], package=None, command='install')
+    # ctx.invoke(olimage.packages.build_packages, board=kwargs['board'], package=None, command='install')
 
     # Build image
     ctx.invoke(olimage.image.build_image, source=environment.paths['debootstrap'], output=kwargs['output'])
