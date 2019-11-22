@@ -131,23 +131,44 @@ def test(ctx: click.Context, **kwargs):
     ctx.invoke(olimage.rootfs.build_rootfs, **kwargs)
 
     # Install packages
-    #ctx.invoke(olimage.packages.build_packages, board=kwargs['board'], package=None, command='install')
+    # ctx.invoke(olimage.packages.build_packages, board=kwargs['board'], package=None, command='install')
 
     # Build image
-    #ctx.invoke(olimage.image.build_image, source=environment.paths['debootstrap'], output=kwargs['output'])
-
+    ctx.invoke(olimage.image.build_image, source=environment.paths['debootstrap'], output=kwargs['output'])
 
     # Install bootloader
-    # _boards: Boards = environment.obj_graph.provide(Boards)
-    # _board: Board = _boards.get_board(kwargs['board'])
-    # _bootloader: Bootloader = _board.bootloader
+    _boards: Boards = environment.obj_graph.provide(Boards)
+    _board: Board = _boards.get_board(kwargs['board'])
 
-    # Utils.shell.run(
-    #     'dd if={} of={} conv=notrunc,fsync bs={} seek={}'.format(
-    #         environment.paths['debootstrap'] + _bootloader.file,
-    #         environment.options['output'],
-    #         _bootloader.block,
-    #         _bootloader.offset))
+    # Install SPL
+    spl: Bootloader
+    spl = _board._data['bootloaders']['spl']
+    Utils.shell.run(
+            'dd if={} of={} conv=notrunc,fsync bs={} seek={}'.format(
+                environment.paths['debootstrap'] + spl['file'], environment.options['output'], spl['block'], spl['offset'])
+    )
+
+
+    # Install u-boot
+    u_boot: Bootloader
+    u_boot = _board._data['bootloaders']['u-boot']
+    temp = Utils.shell.run('mktemp -d').decode().strip()
+    Utils.shell.run('cp -vf {}/usr/lib/arm-trusted-firmware/sun50i_a64/bl31.bin {}/'.format(environment.paths['debootstrap'], temp))
+    Utils.shell.run('cp -vf {}/usr/lib/u-boot/a64-olinuxino/sun50i-a64-olinuxino.dtb {}/'.format(environment.paths['debootstrap'], temp))
+    Utils.shell.run('cp -vf {}/usr/lib/u-boot/a64-olinuxino/u-boot-nodtb.bin {}/'.format(environment.paths['debootstrap'], temp))
+    Utils.shell.run('cp -vf {}/usr/lib/u-boot/a64-olinuxino/u-boot.bin {}/'.format(environment.paths['debootstrap'], temp))
+    Utils.shell.run('cp -vf {}/usr/bin/mksunxi_fit_atf {}/'.format(environment.paths['debootstrap'], temp))
+    Utils.shell.run(
+        'cd {} && bash mksunxi_fit_atf *.dtb > u-boot.its && mkimage -f u-boot.its u-boot.itb'.format(temp),
+        shell=True
+    )
+
+    Utils.shell.run(
+        'dd if={} of={} conv=notrunc,fsync bs={} seek={}'.format(
+            os.path.join(temp, u_boot['file']), environment.options['output'], u_boot['block'], u_boot['offset'])
+    )
+
+    Utils.shell.run('rm -rvf {}'.format(temp))
 
 
 if __name__ == "__main__":

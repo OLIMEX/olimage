@@ -22,13 +22,22 @@ boards:
       refs: 'master'
       source: 'https://github.com/OLIMEX/OLIMEX-sunxi-overlays.git'
 
-  bootloader:
+  bootloaders:
     spl:
       file: '/usr/lib/u-boot/a64-olinuxino/sunxi-spl.bin'
       block: 1024
       offset: 8
     u-boot:
-      file: '/usr/lib/u-boot/a64-olinuxino/u-boot.itb'
+      file: 'u-boot.itb'
+      prepare:
+        requires:
+          - '/usr/lib/arm-trusted-firmware/sun50i_a64/bl31.bin'
+          - '/usr/lib/u-boot/a64-olinuxino/sun50i-a64-olinuxino.dtb'
+          - '/usr/lib/u-boot/a64-olinuxino/u-boot-nodtb.bin'
+          - '/usr/lib/u-boot/a64-olinuxino/u-boot.bin'
+          - '/usr/bin/mksunxi_fit_atf'
+        commands:
+          - '/usr/lib'
       block: 1024
       offset: 40
 

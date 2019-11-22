@@ -38,8 +38,12 @@ class Variant(object):
 
 
 class Bootloader(object):
-    def __init__(self, data) -> None:
+    def __init__(self, name, data) -> None:
+        self._name = name
         self._data = data
+
+    def __str__(self) -> str:
+        return self._name
 
     @property
     def file(self) -> str:
@@ -60,7 +64,9 @@ class Board(object):
         self._data = data
 
         # Parse bootloader
-        self._bootloader = Bootloader(data['bootloader'])
+        self._bootloaders = []
+        for key, value in data['bootloaders'].items():
+            self._bootloaders.append(Bootloader(key, value))
 
         # Create variants
         self._default = None
@@ -88,8 +94,8 @@ class Board(object):
         return self._data['arch']
 
     @property
-    def bootloader(self) -> Bootloader:
-        return  self._bootloader
+    def bootloaders(self):
+        return self._bootloaders
 
     @property
     def family(self) -> str:

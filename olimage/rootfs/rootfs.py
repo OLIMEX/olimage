@@ -137,7 +137,7 @@ class Rootfs(object):
         Setup.ssh(self._debootstrap, env.options['ssh'])
 
         # Install services
-        # Service.resize.install(self._debootstrap)
+        Service.resize.install(self._debootstrap)
 
 
     @Printer("Cleanup")

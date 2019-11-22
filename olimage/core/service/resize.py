@@ -9,7 +9,7 @@ class Resize(object):
     @staticmethod
     def install(path: str) -> None:
         files = [
-            'usr/lib/olinuxino/olimex-expand',
+            'usr/lib/olinuxino/olinuxino-expand',
             'etc/systemd/system/olinuxino-expand.service'
         ]
 
