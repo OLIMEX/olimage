@@ -4,7 +4,7 @@ import shutil
 
 import olimage.environment as env
 
-from olimage.core.parsers import (Boards, Board, Distributions, Images, Users)
+from olimage.core.parsers import (Boards, Board, Distributions, Images, Partitions, Users)
 from olimage.core.service import Service
 from olimage.core.setup import Setup
 from olimage.core.stamp import rootfs_stamp
@@ -16,12 +16,13 @@ logger = logging.getLogger(__name__)
 
 
 class Rootfs(object):
-    def __init__(self, boards: Boards, distributions: Distributions, images: Images, users: Users):
+    def __init__(self, boards: Boards, distributions: Distributions, images: Images, users: Users, partitions: Partitions):
 
         # Initialize dependencies
         self._board: Board = boards.get_board(env.options['board'])
         self._distributions = distributions
         self._image = images.get_image(env.options['variant'])
+        self._partitions = partitions
         self._users = users
 
         # Initialize module attributes
@@ -75,9 +76,13 @@ class Rootfs(object):
         # Compress
         Utils.archive.gzip(self._debootstrap)
 
+
+    # @rootfs_stamp
     @Printer("Configuring")
-    @rootfs_stamp
     def configure(self):
+
+        Setup.boot(self._board, self._partitions)
+        return
 
         # Remove previous directory
         if os.path.exists(self._debootstrap):

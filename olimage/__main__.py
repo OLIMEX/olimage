@@ -131,22 +131,23 @@ def test(ctx: click.Context, **kwargs):
     ctx.invoke(olimage.rootfs.build_rootfs, **kwargs)
 
     # Install packages
-    # ctx.invoke(olimage.packages.build_packages, board=kwargs['board'], package=None, command='install')
+    #ctx.invoke(olimage.packages.build_packages, board=kwargs['board'], package=None, command='install')
 
     # Build image
-    ctx.invoke(olimage.image.build_image, source=environment.paths['debootstrap'], output=kwargs['output'])
+    #ctx.invoke(olimage.image.build_image, source=environment.paths['debootstrap'], output=kwargs['output'])
+
 
     # Install bootloader
-    _boards: Boards = environment.obj_graph.provide(Boards)
-    _board: Board = _boards.get_board(kwargs['board'])
-    _bootloader: Bootloader = _board.bootloader
+    # _boards: Boards = environment.obj_graph.provide(Boards)
+    # _board: Board = _boards.get_board(kwargs['board'])
+    # _bootloader: Bootloader = _board.bootloader
 
-    Utils.shell.run(
-        'dd if={} of={} conv=notrunc,fsync bs={} seek={}'.format(
-            environment.paths['debootstrap'] + _bootloader.file,
-            environment.options['output'],
-            _bootloader.block,
-            _bootloader.offset))
+    # Utils.shell.run(
+    #     'dd if={} of={} conv=notrunc,fsync bs={} seek={}'.format(
+    #         environment.paths['debootstrap'] + _bootloader.file,
+    #         environment.options['output'],
+    #         _bootloader.block,
+    #         _bootloader.offset))
 
 
 if __name__ == "__main__":

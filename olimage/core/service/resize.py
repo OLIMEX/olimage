@@ -9,8 +9,8 @@ class Resize(object):
     @staticmethod
     def install(path: str) -> None:
         files = [
-            'usr/lib/olimex/olimex-expand',
-            'etc/systemd/system/olimex-expand.service'
+            'usr/lib/olinuxino/olimex-expand',
+            'etc/systemd/system/olinuxino-expand.service'
         ]
 
         for file in files:
@@ -21,10 +21,12 @@ class Resize(object):
                 os.mkdir(os.path.dirname(destination))
 
             # Copy file
+            # TODO: User install -m
             Utils.shell.run("rsync -rlDHWXhv {} {}".format(source, destination))
 
         # Make executable
-        Utils.shell.chroot("chmod +x /usr/lib/olimex/olimex-expand", path)
+        # TODO: Remove this
+        Utils.shell.chroot("chmod +x /usr/lib/olinuxino/olinuxino-expand", path)
 
         # Enable service
-        Utils.shell.chroot("systemctl enable olimex-expand.service", path)
+        Utils.shell.chroot("systemctl enable olinuxino-expand.service", path)

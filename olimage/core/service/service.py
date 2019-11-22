@@ -6,14 +6,18 @@ from .resize import Resize
 
 class ServiceMeta(type):
     def __getattribute__(self, item):
-        if item == 'resize':
-            return env.obj_graph.provide(Resize)
+        if env.obj_graph is None:
+            return type.__getattribute__(self, item)
+
         if item == 'apt_cache':
             return env.obj_graph.provide(AptCache)
-        else:
-            return type.__getattribute__(self, item)
+        elif item == 'resize':
+            return env.obj_graph.provide(Resize)
+
+        return type.__getattribute__(self, item)
 
 
 class Service(metaclass=ServiceMeta):
-    resize = None
-    apt_cache = None
+    apt_cache: AptCache
+    resize: Resize
+

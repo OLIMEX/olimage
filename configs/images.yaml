@@ -1,6 +1,7 @@
 images:
   lite:
     packages: &lite
+      - arm-trusted-firmware
       - apt-listchanges
       - avahi-daemon
       - bash-completion
@@ -45,6 +46,7 @@ images:
       - ssh-import-id
       - strace
       - sudo
+      - u-boot-olinuxino
       - unzip
       - usb-modeswitch
       - usbutils

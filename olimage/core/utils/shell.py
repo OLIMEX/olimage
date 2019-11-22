@@ -54,6 +54,9 @@ class Shell(object):
         try:
             Shell.run("chroot {} ".format(directory) + command, logger, **kwargs)
             Shell._unbind(directory)
+        except KeyboardInterrupt:
+            Shell._unbind(directory)
+            raise KeyboardInterrupt
         except Exception as e:
             Shell._unbind(directory)
             raise e

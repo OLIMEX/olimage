@@ -83,4 +83,4 @@ scripts/diffconfig -m
 ```
 
 
-python3 -m olimage -v --log=/dev/pts/1 test a64-olinuxino-1G buster minimal
+python3 -m olimage -v --log=/dev/pts/2 rootfs a64-olinuxino-1G buster lite
