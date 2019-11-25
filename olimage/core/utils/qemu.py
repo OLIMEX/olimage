@@ -7,7 +7,6 @@ logger = logging.getLogger(__name__)
 
 
 class Qemu(object):
-
     @staticmethod
     def debootstrap(arch, release, path, components=None, include=None, mirror=None):
         logger.info("Running qemu-debootstrap")
@@ -17,14 +16,12 @@ class Qemu(object):
                 "" if components is None else "--components=" + ",".join(components),
                 "" if include is None else "--include=" + ",".join(include),
                 release, path,
-                "" if mirror is None else mirror),
-            logger
+                "" if mirror is None else mirror)
         )
 
     @staticmethod
     def img(file, size):
         logger.info("Creating {}".format(file))
         Shell.run(
-            "qemu-img create -f raw {} {}M".format(file, size),
-            logger
+            "qemu-img create -f raw {} {}M".format(file, size)
         )

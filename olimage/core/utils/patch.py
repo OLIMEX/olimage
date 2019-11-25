@@ -1,9 +1,6 @@
-import logging
 import os
 
 from .shell import Shell
-
-logger = logging.getLogger(__name__)
 
 
 class Patch(object):
@@ -11,7 +8,6 @@ class Patch(object):
     def quilt(patches, path):
         Shell.run(
             "cd {} && QUILT_PATCHES={} quilt push -a".format(path, patches),
-            logger,
             shell=True
         )
 
@@ -19,7 +15,6 @@ class Patch(object):
     def patch(file, path):
         Shell.run(
             "cd {} && patch -p1 < {}".format(path, file),
-            logger,
             shell=True
         )
 
