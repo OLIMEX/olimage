@@ -1,6 +1,7 @@
 import logging
 import os
 
+from olimage.core.stamp import stamp
 from olimage.core.utils import Utils
 from olimage.packages.package import AbstractPackage
 
@@ -19,7 +20,6 @@ class Linux(AbstractPackage):
         # Some global data
         self._arch = self._board.arch
         self._toolchain = self._package.toolchain.prefix
-        self._pkg_version = None
 
     @staticmethod
     def alias() -> str:
@@ -27,7 +27,7 @@ class Linux(AbstractPackage):
 
     @property
     def deb(self) -> str:
-        return self._output_package
+        return 'linux-image-{version}_{version}_arm64.deb'.format(version=self._package.version)
 
     def _merge_fragments(self):
         path = self.paths['compile']
@@ -47,8 +47,9 @@ class Linux(AbstractPackage):
                     "/bin/bash -c '{} -m -O {} {} {}'".format(script, path, config, os.path.join(root, fragment)))
 
                 # Second, regenerate config file
-                self._builder.make("ARCH={} oldconfig".format(self._arch))
+                Utils.shell.run("make -C {} ARCH={} oldconfig".format(self.paths['compile'], self._arch))
 
+    @stamp
     def configure(self):
         """
         Configure sources using defconfig
@@ -63,21 +64,35 @@ class Linux(AbstractPackage):
             defconfig = 'defconfig'
 
         # Make defconfig
-        self._builder.make("ARCH={} {}".format(self._arch, defconfig))
+        Utils.shell.run("make -C {} ARCH={} {}".format(
+            self.paths['compile'],
+            self._arch,
+            defconfig))
 
         # Merge fragments
         self._merge_fragments()
 
+    @stamp
     def build(self):
-        self._builder.make("ARCH={} CROSS_COMPILE={} {}".format(self._arch,self._toolchain,' '.join(self._package.targets)))
+        Utils.shell.run("make -C {} ARCH={} CROSS_COMPILE={} -j {}".format(
+            self.paths['compile'],
+            self._arch,
+            self._toolchain,
+            1 if os.cpu_count() is None else os.cpu_count(),
+            ' '.join(self._package.targets))
+        )
 
+    @stamp
     def package(self):
         """
         Package linux kernel
 
         :return: None
         """
-        self._pkg_version = self._builder.make("kernelversion").decode().splitlines()[1] + self._package.version
-        self._builder.make("KDEB_PKGVERSION={} LOCALVERSION={} ARCH={} CROSS_COMPILE={} bindeb-pkg".format(self._pkg_version, self._package.version, self._arch, self._toolchain))
-
-        self._output_package = 'linux-image-{}_{}_arm64.deb'.format(self._pkg_version, self._pkg_version)
+        Utils.shell.run("make -C {} KDEB_PKGVERSION={} LOCALVERSION={} ARCH={} CROSS_COMPILE={} bindeb-pkg".format(
+            self.paths['compile'],
+            self._package.version,
+            self._package.localversion,
+            self._arch,
+            self._toolchain)
+        )

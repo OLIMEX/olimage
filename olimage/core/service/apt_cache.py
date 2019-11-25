@@ -10,27 +10,23 @@ class AptCache(object):
     def install(host: str, port: int) -> None:
         file = '/etc/apt/apt.conf.d/01cache'
 
-        source = env.paths['overlay'] + file
-        destination = env.paths['debootstrap'] + file
-
-        # Install file
-        Utils.install(source, destination)
+        # Install the file
+        Utils.install(file)
 
         # Generate template
         Utils.template.install(
-            destination,
+            env.paths['debootstrap'] + file,
             host=host,
             port=port
         )
 
     @staticmethod
     def uninstall() -> None:
-        file = '/etc/apt/apt.conf.d/01cache'
-        path = env.paths['debootstrap'] + file
+        file = env.paths['debootstrap'] + '/etc/apt/apt.conf.d/01cache'
 
         # Check if file exists
-        if not os.path.exists(path):
+        if not os.path.exists(file):
             return
 
         # Remove configuration file
-        Utils.shell.run("rm -vf {}".format(path))
+        Utils.shell.run("rm -vf {}".format(file))

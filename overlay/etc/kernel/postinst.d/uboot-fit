@@ -1,14 +1,21 @@
-#!/bin/sh -e
+#!/bin/bash -e
 
 version="$1"
 template="/usr/lib/olinuxino/kernel.its"
 
 # Check if FIT template exists
-if [ ! -e ${template} ]; then
+if [[ ! -e ${template} ]]; then
     echo >&2 "W: uboot-fit: FIT image template file is missing"
     exit 2
 fi
 
-sed "s/\${VERSION}/${version}/g" ${template} > /boot/kernel.its
+# Check if UUID is the same
+current_uuid=$(cat /boot/kernel.its | grep "Generated UUID" | awk -F': ' '{print $2}')
+new_uuid=$(cat ${template} | grep "Generated UUID" | awk -F': ' '{print $2}')
+if [[ "${current_uuid}" != "${new_uuid}" ]]; then
+    echo >&1 "Generating FIT source"
+    sed "s/\${VERSION}/${version}/g" ${template} > /boot/kernel.its
+fi
+
 echo >&1 "Generating FIT image"
 mkimage -f /boot/kernel.its /boot/kernel.itb > /dev/null

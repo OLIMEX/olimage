@@ -4,11 +4,10 @@ import os
 
 import olimage.environment as env
 
-from olimage.utils import Printer
+from olimage.core.printer import Printer
 from olimage.core.parsers import Board
 from olimage.core.stamp import stamp
 from olimage.core.utils import Utils
-from olimage.utils import Builder
 
 
 class PackageException(Exception):
@@ -53,7 +52,7 @@ class AbstractPackage(metaclass=abc.ABCMeta):
             if not os.path.exists(self.paths[path]):
                 os.mkdir(self.paths[path])
 
-        self._builder = Builder(self._name, self._data)
+        # self._builder = Builder(self._name, self._data)
 
         # Initialize logger. Use "olimage.package"  + package alias
         self.logger = logging.getLogger(".".join(str(__name__).split('.')[:-1] + [str(self)]))

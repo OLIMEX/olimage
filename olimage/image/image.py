@@ -7,7 +7,7 @@ from olimage.core.parsers import Partitions
 from olimage.core.setup import Setup
 from olimage.core.utils import Utils
 
-from olimage.utils.printer import Printer
+from olimage.core.printer import Printer
 
 from .mount import Mounter
 

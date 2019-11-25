@@ -1,4 +1,6 @@
+import datetime
 import os
+import uuid
 
 import olimage.environment as env
 
@@ -11,8 +13,13 @@ class Boot(object):
     def __call__(board: Board, partitions: Partitions):
 
         # Install source list
-        Utils.install(['/boot/boot.cmd', '/boot/uEnv.txt', '/usr/lib/olinuxino/kernel.its'])
+        Utils.install([
+            '/boot/boot.cmd',
+            '/boot/uEnv.txt',
+            '/usr/lib/olinuxino/kernel.its'
+        ])
         Utils.install('/etc/kernel/postinst.d/uboot-fit', mode='755')
+        Utils.template('/boot/uEnv.txt', configs=None)
 
         # The FIT image is always located in /boot directory.
         # If there is such defined partition retrieve it's number. Do the same for /
@@ -56,7 +63,7 @@ class Boot(object):
                 fdts.append(variant.fdt)
 
             for overlay in variant.overlays:
-                file = os.path.join(env.paths['debootstrap'],'usr/lib/olimex-sunxi-overlays/{}/{}'.format(board.family, overlay))
+                file = env.paths['debootstrap'] + '/usr/lib/olimex-sunxi-overlays/{}/{}'.format(board.family, overlay)
                 if overlay not in overlays and os.path.exists(file):
                     overlays.append(overlay)
 
@@ -92,8 +99,7 @@ class Boot(object):
 
         Utils.template.install(
             env.paths['debootstrap'] + '/usr/lib/olinuxino/kernel.its',
-            arch=board.arch,
-            default=board.default,
+            board=board,
             fdts=fdts,
             kernel={
                 'load': '0x40080000',
@@ -104,5 +110,10 @@ class Boot(object):
                 'load': '0x4FE00000',
                 'entry': '0x4FE00000'
             },
+            stamp={
+                'date': str(datetime.datetime.now()),
+                'uuid': str(uuid.uuid4()),
+            },
             variants=variants,
+
         )

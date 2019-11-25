@@ -15,12 +15,8 @@ boards:
       toolchain:
         prefix: 'aarch64-linux-gnu-'
         version: 7
-      version: '-1-olimex'
-
-    olimex-sunxi-overlays:
-      arch: 'all'
-      refs: 'master'
-      source: 'https://github.com/OLIMEX/OLIMEX-sunxi-overlays.git'
+      version: '5.4.0-rc5-1-olimex'
+      localversion: '-1-olimex'
 
   bootloaders:
     spl:
@@ -64,7 +60,7 @@ boards:
       id: 9065
       fdt: 'allwinner/sun50i-a64-olinuxino.dtb'
       overlays:
-        - 'sun50i-a64-spiflash.dtbo'
+        - 'spi0-spiflash.dtbo'
 
     A64-OLinuXino-1Ge16GW:
       id: 9849

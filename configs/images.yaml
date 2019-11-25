@@ -36,6 +36,7 @@ images:
       - net-tools
       - netbase
       - ntfs-3g
+      - olimex-sunxi-overlays
       - parted
       - pkg-config
       - policykit-1

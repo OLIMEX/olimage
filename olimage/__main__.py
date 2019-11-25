@@ -131,7 +131,7 @@ def test(ctx: click.Context, **kwargs):
     ctx.invoke(olimage.rootfs.build_rootfs, **kwargs)
 
     # Install packages
-    # ctx.invoke(olimage.packages.build_packages, board=kwargs['board'], package=None, command='install')
+    ctx.invoke(olimage.packages.build_packages, board=kwargs['board'], package=None, command='install')
 
     # Build image
     ctx.invoke(olimage.image.build_image, source=environment.paths['debootstrap'], output=kwargs['output'])
@@ -147,7 +147,6 @@ def test(ctx: click.Context, **kwargs):
             'dd if={} of={} conv=notrunc,fsync bs={} seek={}'.format(
                 environment.paths['debootstrap'] + spl['file'], environment.options['output'], spl['block'], spl['offset'])
     )
-
 
     # Install u-boot
     u_boot: Bootloader

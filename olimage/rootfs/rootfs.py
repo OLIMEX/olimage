@@ -9,7 +9,7 @@ from olimage.core.service import Service
 from olimage.core.setup import Setup
 from olimage.core.stamp import rootfs_stamp
 from olimage.core.utils import Utils
-from olimage.utils import Printer
+from olimage.core.printer import Printer
 
 
 logger = logging.getLogger(__name__)
@@ -76,13 +76,9 @@ class Rootfs(object):
         # Compress
         Utils.archive.gzip(self._debootstrap)
 
-
-    # @rootfs_stamp
     @Printer("Configuring")
+    @rootfs_stamp
     def configure(self):
-
-        Setup.boot(self._board, self._partitions)
-        return
 
         # Remove previous directory
         if os.path.exists(self._debootstrap):
@@ -94,12 +90,10 @@ class Rootfs(object):
 
         # Configure apt
         if env.options['apt_cacher']:
-            Service.apt_cache.install(self._debootstrap, env.options['apt_cacher_host'], env.options['apt_cacher_port'])
-            self._cleanup.append({
-                'function': Service.apt_cache.uninstall,
-                'args': [self._debootstrap]
-            })
+            Service.apt_cache.install(env.options['apt_cacher_host'], env.options['apt_cacher_port'])
+            self._cleanup.append(Service.apt_cache.uninstall)
         Setup.apt(self._release)
+        self._cleanup.append(Setup.apt.clean)
 
         # Configure locales
         # NOTE: This must be run before package installation
@@ -136,11 +130,25 @@ class Rootfs(object):
         # Configure ssh
         Setup.ssh(self._debootstrap, env.options['ssh'])
 
-        # Install services
-        Service.resize.install(self._debootstrap)
+        # # Install services
+        # Service.resize.install()
+        #
+        # # Setup boot
+        # # Note: This depends on olimex-sunxi-overlays
+        # Setup.boot(self._board, self._partitions)
 
+    @Printer("Installing services")
+    @rootfs_stamp
+    def services(self):
+        # Install services
+        Service.resize.install()
+
+        # Setup boot
+        # Note: This depends on olimex-sunxi-overlays
+        Setup.boot(self._board, self._partitions)
 
     @Printer("Cleanup")
     def cleanup(self):
+        # Cleanup registered functions
         for item in self._cleanup:
-            item['function'](*item['args'])
+            item()

@@ -12,15 +12,11 @@ class Apt(object):
         destination = env.paths['debootstrap'] + file
 
         # Install gnupg
-        Utils.shell.chroot(
-            'apt-get install -y gnupg',
-            env.paths['debootstrap']
-        )
+        Utils.shell.chroot('apt-get install -y gnupg')
 
         # Import gpg key
         Utils.shell.chroot(
-            'apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 2BE33123120C50F2666530ED09271DCFB6350689',
-            env.paths['debootstrap']
+            'apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 2BE33123120C50F2666530ED09271DCFB6350689'
         )
 
         # Install source list
@@ -28,7 +24,9 @@ class Apt(object):
         Utils.template.install(destination, release=release)
 
         # Update sources
-        Utils.shell.chroot(
-            'apt-get update',
-            env.paths['debootstrap']
-        )
+        Utils.shell.chroot('apt-get update')
+
+    @staticmethod
+    def clean():
+        Utils.shell.chroot('apt-get clean')
+
