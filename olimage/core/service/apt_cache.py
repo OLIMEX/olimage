@@ -7,17 +7,14 @@ from olimage.core.utils import Utils
 
 class AptCache(object):
     @staticmethod
-    def install(path: str, host: str, port: int) -> None:
+    def install(host: str, port: int) -> None:
         file = '/etc/apt/apt.conf.d/01cache'
 
         source = env.paths['overlay'] + file
-        destination = path + file
+        destination = env.paths['debootstrap'] + file
 
-        # Create destination path
-        Utils.shell.chroot("mkdir -p {}".format(os.path.dirname(file)), path)
-
-        # Copy file
-        Utils.shell.run("rsync -rlDHWXhv {} {}".format(source, destination))
+        # Install file
+        Utils.install(source, destination)
 
         # Generate template
         Utils.template.install(
@@ -27,8 +24,13 @@ class AptCache(object):
         )
 
     @staticmethod
-    def uninstall(path: str) -> None:
-        file = 'etc/apt/apt.conf.d/01cache'
+    def uninstall() -> None:
+        file = '/etc/apt/apt.conf.d/01cache'
+        path = env.paths['debootstrap'] + file
+
+        # Check if file exists
+        if not os.path.exists(path):
+            return
 
         # Remove configuration file
-        Utils.shell.run("rm -vf {}".format(os.path.join(path, file)))
+        Utils.shell.run("rm -vf {}".format(path))

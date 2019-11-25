@@ -48,8 +48,11 @@ class Shell(object):
         Shell.run("umount {}/proc".format(directory))
 
     @staticmethod
-    def chroot(command, directory, logger=None, **kwargs):
-        # TODO: User env.paths['debootstrap'] instead of directory
+    def chroot(command, directory=None, logger=None, **kwargs):
+        # This should use env
+        if directory is None:
+            directory = env.paths['debootstrap']
+
         Shell._bind(directory)
         try:
             Shell.run("chroot {} ".format(directory) + command, logger, **kwargs)
