@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+  nginx:
+    command: [nginx-debug, '-g', 'daemon off;']
+    image: nginx:latest
+    restart: always
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - reprepro:/var/www/reprepro
+
+  reprepro:
+    build:
+      context: ./reprepro
+    command: /data/ENTRYPOINT.sh
+    depends_on:
+      - nginx
+    volumes:
+      - reprepro:/var/reprepro/debian
+      - ./reprepro/debian/conf:/var/reprepro/debian/conf:ro
+      - ./reprepro/data:/data
+
+volumes:
+  reprepro:
+

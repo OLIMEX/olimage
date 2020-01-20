@@ -19,7 +19,7 @@ class Boot(object):
             '/usr/lib/olinuxino/kernel.its'
         ])
         Utils.install('/etc/kernel/postinst.d/uboot-fit', mode='755')
-        Utils.template('/boot/uEnv.txt', configs=None)
+        Utils.template.install(env.paths['debootstrap'] + '/boot/uEnv.txt', configs=None)
 
         # The FIT image is always located in /boot directory.
         # If there is such defined partition retrieve it's number. Do the same for /

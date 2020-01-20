@@ -5,7 +5,7 @@ boards:
     linux:
       arch: *arch
       defconfig: ~
-      refs: 'v5.4-rc5'
+      refs: 'v5.4'
       #source: 'https://kernel.googlesource.com/pub/scm/linux/kernel/git/stable/linux-stable'
       source: 'https://kernel.googlesource.com/pub/scm/linux/kernel/git/torvalds/linux'
       targets:
@@ -15,7 +15,7 @@ boards:
       toolchain:
         prefix: 'aarch64-linux-gnu-'
         version: 7
-      version: '5.4.0-rc5-1-olimex'
+      version: '5.4.0-1-olimex'
       localversion: '-1-olimex'
 
   bootloaders:

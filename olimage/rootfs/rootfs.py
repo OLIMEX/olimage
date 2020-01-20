@@ -130,13 +130,6 @@ class Rootfs(object):
         # Configure ssh
         Setup.ssh(self._debootstrap, env.options['ssh'])
 
-        # # Install services
-        # Service.resize.install()
-        #
-        # # Setup boot
-        # # Note: This depends on olimex-sunxi-overlays
-        # Setup.boot(self._board, self._partitions)
-
     @Printer("Installing services")
     @rootfs_stamp
     def services(self):

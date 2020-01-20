@@ -5,4 +5,8 @@ services:
     image: sameersbn/apt-cacher-ng:latest
     restart: unless-stopped
     volumes:
-    - ./apt-cacher-ng:/var/cache/apt-cacher-ng
+    - apt-cacher-ng:/var/cache/apt-cacher-ng
+
+volumes:
+  apt-cacher-ng:
+

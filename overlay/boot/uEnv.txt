@@ -1,5 +1,6 @@
 # Put u-boot environment variables here. Before boot, boot.scr will use these variables:
 #
+# boot_config - Explicitly specify the boot configuration
 # fdtoverlays - List of overlay files
 # load_legacy - Load separate Image and fdt file,
 # optargs - Optional arguments passed to the kernel

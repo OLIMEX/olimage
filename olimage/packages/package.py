@@ -119,6 +119,9 @@ class AbstractPackage(metaclass=abc.ABCMeta):
 
         :return: None
         """
+        if not os.path.exists(self.paths['compile']):
+            Utils.archive.extract(self.paths['archive'], self.paths['build'])
+
         Utils.patch.apply(self.paths['patches'], self.paths['compile'])
 
     @stamp

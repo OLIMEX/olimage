@@ -7,6 +7,10 @@ APT_CACHER_NAME="olimage_apt-cacher-ng_1"
 APT_CACHER_HOST=""
 APT_CACHER_PORT="3142"
 
+NGINX_NAME="olimage_nginx_1"
+NGINX_HOST=""
+NGINX_PORT="80"
+
 CONTAINER_NAME="olimage_work"
 
 # Check for docker permissions
@@ -21,20 +25,19 @@ if ! ${DOCKER} ps >/dev/null; then
 	exit 1
 fi
 
-# Run apt-cacher
-if [[ "$(${DOCKER} ps -q --filter name=${APT_CACHER_NAME})" == "" ]]; then
-    if ! ${DOCKER}-compose up -d; then
-        echo "Failed to run docker-compose:"
-        ${DOCKER}-compose up
-        exit 1
-    fi
-else
-    echo "Service apt-cacher already running";
-fi
-
-#APT_CACHER_PORT=$(${DOCKER} port ${APT_CACHER_NAME} 3142 | cut -d':' -f2)
-APT_CACHER_HOST=$(${DOCKER} inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' ${APT_CACHER_NAME})
-echo "apt-cacher listening on: ${APT_CACHER_HOST}:${APT_CACHER_PORT}"
+## Run apt-cacher
+#if [[ "$(${DOCKER} ps -q --filter name=${APT_CACHER_NAME})" == "" ]]; then
+#    if ! ${DOCKER}-compose up -d; then
+#        echo "Failed to run docker-compose:"
+#        ${DOCKER}-compose up
+#        exit 1
+#    fi
+#else
+#    echo "Service apt-cacher already running";
+#fi
+#
+#APT_CACHER_HOST=$(${DOCKER} inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' ${APT_CACHER_NAME})
+#echo "apt-cacher listening on: ${APT_CACHER_HOST}:${APT_CACHER_PORT}"
 
 # Build image
 docker build -t olimage "${DIR}"
@@ -46,9 +49,9 @@ docker run --rm -it --privileged \
 	--volume /dev:/dev \
 	--volume /proc:/proc \
 	--volume $(pwd):/olimage \
-	--net "bf90bacc29204111f9d68872c46566d9ef2f3385a767911678cea5bce6f1d4f1" \
-	-w /olimage \
-	-e "GIT_HASH=$(git rev-parse HEAD)" \
-	-e "APT_CACHER_HOST=${APT_CACHER_HOST}" \
-	-e "APT_CACHER_PORT=${APT_CACHER_PORT}" \
-	olimage
+	--net 'host' \
+	-w /olimage olimage
+#	-e "GIT_HASH=$(git rev-parse HEAD)" \
+#	-e "APT_CACHER_HOST=${APT_CACHER_HOST}" \
+#	-e "APT_CACHER_PORT=${APT_CACHER_PORT}" \
+#	olimage

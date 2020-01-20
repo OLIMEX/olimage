@@ -7,7 +7,6 @@ import pinject
 
 import olimage.image
 import olimage.rootfs
-import olimage.packages
 
 import olimage.environment as environment
 
@@ -107,7 +106,7 @@ def cli(**kwargs):
 
 
 # # Add sub-commands
-cli.add_command(olimage.packages.build_packages)
+# cli.add_command(olimage.packages.build_packages)
 cli.add_command(olimage.rootfs.build_rootfs)
 cli.add_command(olimage.image.build_image)
 
@@ -131,7 +130,7 @@ def test(ctx: click.Context, **kwargs):
     ctx.invoke(olimage.rootfs.build_rootfs, **kwargs)
 
     # Install packages
-    ctx.invoke(olimage.packages.build_packages, board=kwargs['board'], package=None, command='install')
+    # ctx.invoke(olimage.packages.build_packages, board=kwargs['board'], package=None, command='install')
 
     # Build image
     ctx.invoke(olimage.image.build_image, source=environment.paths['debootstrap'], output=kwargs['output'])

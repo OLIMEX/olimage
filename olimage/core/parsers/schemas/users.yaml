@@ -1,0 +1,8 @@
+
+---
+
+type: map
+mapping:
+  users:
+    type: str
+    pattern: N.*n
