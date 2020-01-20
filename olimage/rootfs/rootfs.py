@@ -4,7 +4,8 @@ import shutil
 
 import olimage.environment as env
 
-from olimage.core.parsers import (Boards, Board, Distributions, Images, Partitions, Users)
+from olimage.core.parsers import (Boards, Distributions, Partitions, Variants, Users)
+from olimage.core.parsers.boards import Board
 from olimage.core.service import Service
 from olimage.core.setup import Setup
 from olimage.core.stamp import rootfs_stamp
@@ -16,12 +17,12 @@ logger = logging.getLogger(__name__)
 
 
 class Rootfs(object):
-    def __init__(self, boards: Boards, distributions: Distributions, images: Images, users: Users, partitions: Partitions):
+    def __init__(self, boards: Boards, distributions: Distributions, variants: Variants, users: Users, partitions: Partitions):
 
         # Initialize dependencies
         self._board: Board = boards.get_board(env.options['board'])
         self._distributions = distributions
-        self._image = images.get_image(env.options['variant'])
+        self._variant = variants.get_variant(env.options['variant'])
         self._partitions = partitions
         self._users = users
 
@@ -45,9 +46,6 @@ class Rootfs(object):
 
         # Store cleanup
         self._cleanup = []
-
-        # Store variant
-        self._variant = env.options['variant']
 
         # Set build path
         self._debootstrap = os.path.join(
@@ -104,7 +102,7 @@ class Rootfs(object):
         Setup.console(self._debootstrap, env.options['keyboard_keymap'], env.options['keyboard_layout'])
 
         # Install packages
-        Utils.shell.chroot('apt-get install -y {}'.format(' '.join(self._image.packages)), self._debootstrap)
+        Utils.shell.chroot('apt-get install -y {}'.format(' '.join(self._variant.packages)), self._debootstrap)
 
         # Configure getty
         Setup.getty(self._debootstrap)

@@ -1,4 +1,4 @@
-images:
+variants:
   lite:
     packages: &lite
       - arm-trusted-firmware

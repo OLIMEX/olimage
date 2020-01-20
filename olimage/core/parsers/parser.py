@@ -22,12 +22,16 @@ class LoaderBase(object):
 
 
 class GenericLoader(LoaderBase):
-    def __init__(self, name, holder) -> None:
+    def __init__(self, name, holder, prefix=None) -> None:
         # Hold objects
         self._objects = []
 
         # Read configuration file
-        with open(os.path.join(env.paths['configs'], '{}.yaml'.format(name))) as f:
+        with open(os.path.join(
+                env.paths['configs'],
+                '{}'.format(prefix if prefix else ""),
+                '{}.yaml'.format(name)
+        )) as f:
             data = yaml.full_load(f.read())[name]
 
         # Generate objects

@@ -28,5 +28,5 @@ class Distribution(object):
 
 class Distributions(GenericLoader):
     def __init__(self) -> None:
-        super().__init__("distributions", Distribution)
+        super().__init__("distributions", Distribution, prefix='core')
 

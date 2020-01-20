@@ -4,7 +4,8 @@ import uuid
 
 import olimage.environment as env
 
-from olimage.core.parsers import (Board, Partitions)
+from olimage.core.parsers.boards import Board
+from olimage.core.parsers import Partitions
 from olimage.core.utils import Utils
 
 
@@ -58,29 +59,29 @@ class Boot(object):
         # Generate fdts and overlay data
         fdts = []
         overlays = []
-        for variant in board.variants:
-            if variant.fdt not in fdts:
-                fdts.append(variant.fdt)
+        for model in board.models:
+            if model.fdt not in fdts:
+                fdts.append(model.fdt)
 
-            for overlay in variant.overlays:
-                file = env.paths['debootstrap'] + '/usr/lib/olimex-sunxi-overlays/{}/{}'.format(board.family, overlay)
+            for overlay in model.overlays:
+                file = env.paths['debootstrap'] + '/usr/lib/olimex-sunxi-overlays/{}/{}'.format(board.soc, overlay)
                 if overlay not in overlays and os.path.exists(file):
                     overlays.append(overlay)
 
         # Remap board fdt and overlays
-        variants = []
-        for variant in board.variants:
+        models = []
+        for model in board.models:
             dtbo = []
-            for overlay in variant.overlays:
+            for overlay in model.overlays:
                 if overlay in overlays:
                     dtbo.append(overlays.index(overlay) + 1)
 
-            variants.append({
-                'name': str(variant),
-                'fdt': fdts.index(variant.fdt) + 1,
-                'id': variant.id,
+            models.append({
+                'name': str(model),
+                'fdt': fdts.index(model.fdt) + 1,
+                'id': model.id,
                 'overlays': dtbo,
-                'compatible': 'olimex,{}'.format(str(variant).lower())
+                'compatible': 'olimex,{}'.format(str(model).lower())
             })
 
         # Generate load addresses for fdt files
@@ -114,6 +115,6 @@ class Boot(object):
                 'date': str(datetime.datetime.now()),
                 'uuid': str(uuid.uuid4()),
             },
-            variants=variants,
+            models=models,
 
         )

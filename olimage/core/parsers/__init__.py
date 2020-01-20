@@ -1,10 +1,10 @@
-from .boards import Board, Boards, Bootloader
+from .boards import Boards
 from .distributions import Distributions
-from .images import Images
+from .variants import Variants
 from .partitions import Partitions
 from .users import Users
 
 
 __all__ = [
-    'Board', 'Boards', 'Bootloader', 'Distributions', 'Partitions', 'Images', 'Users'
+    'Boards', 'Distributions', 'Partitions', 'Variants', 'Users'
 ]

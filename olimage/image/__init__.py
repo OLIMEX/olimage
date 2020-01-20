@@ -5,6 +5,7 @@ import os
 import olimage.environment as env
 
 from .image import Image
+from .parameters import parameters
 
 __all__ = [
     'Image'
@@ -24,28 +25,30 @@ def get_size(path):
 
 
 @click.command(name="image")
-# Arguments
-@click.argument("source")
-@click.argument("output")
-# Options
-@click.option("--size", default=500, help="Size in MiB")
-def build_image(**kwargs):
+@parameters
+@click.pass_context
+def build_image(ctx:click.Context, **kwargs):
 
     kwargs['output'] = os.path.join(env.paths['images'], kwargs['output'])
 
     # Update env options
     env.options.update(kwargs)
 
+    # Invoke build rootfs
+    import olimage.rootfs
+    ctx.invoke(olimage.rootfs.build_rootfs, **kwargs)
+    source = env.paths['debootstrap']
+
     print("\nBuilding: \033[1m{}\033[0m based distribution".format(kwargs['output']))
 
     # Check required space
-    size = max((get_size(kwargs['source']) >> 20) + 300, kwargs['size'])
+    size = max((get_size(source) >> 20) + 300, kwargs['size'])
 
     image: Image = env.obj_graph.provide(Image)
     image.generate(size)
     image.partition()
     image.format()
     image.configure()
-    image.copy(kwargs['source'])
+    image.copy(source)
 
 

@@ -8,6 +8,7 @@ import pinject
 import olimage.image
 import olimage.rootfs
 
+import olimage
 import olimage.environment as environment
 
 
@@ -84,7 +85,7 @@ def prepare_tree():
 @click.option("--workdir", default="output", help="Specify working directory.")
 @click.option("--configs", default="configs", help="Configs directory")
 @click.option("--overlay", default="overlay", help="Path to overlay files")
-@click.option("-v", "--verbose", count=True, help="Increase logging verbosity.")
+# Apt-cacher
 @click.option("--apt-cacher/--no-apt-cacher",
               default=True,
               help="Use apt-cacher service")
@@ -95,78 +96,88 @@ def prepare_tree():
               default=lambda: int(os.environ.get('APT_CACHER_PORT', '3142')),
               type=int,
               help="Specify apt-cache service port")
+# Logging
+@click.option("-v", "--verbose", count=True, help="Increase logging verbosity.")
 @click.option("--log",
               help="Logging file.")
+@click.option("-V", "--version", is_flag=True, help="Show the current package version")
 def cli(**kwargs):
+
+    # Check for package version
+    if kwargs['version']:
+        print("olimage: {}".format(olimage.__version__))
+        sys.exit(0)
+
+    # Generate environment and tree
     generate_environment(**kwargs)
     prepare_logging()
     prepare_tree()
 
+    # Initialize the object graph
     environment.obj_graph = pinject.new_object_graph()
 
 
-# # Add sub-commands
-# cli.add_command(olimage.packages.build_packages)
+# Add sub-commands
 cli.add_command(olimage.rootfs.build_rootfs)
 cli.add_command(olimage.image.build_image)
 
 
-@cli.command()
-# Arguments
-@click.argument("board")
-@click.argument("release")
-@click.argument("variant", type=click.Choice(['lite', 'base', 'full']))
-@click.argument("output")
-@click.pass_context
-def test(ctx: click.Context, **kwargs):
-
-    from olimage.core.parsers import Boards, Board, Bootloader
-    from olimage.core.utils import Utils
-
-    # Update environment options
-    environment.options.update(kwargs)
-
-    # Build rootfs
-    ctx.invoke(olimage.rootfs.build_rootfs, **kwargs)
-
-    # Install packages
-    # ctx.invoke(olimage.packages.build_packages, board=kwargs['board'], package=None, command='install')
-
-    # Build image
-    ctx.invoke(olimage.image.build_image, source=environment.paths['debootstrap'], output=kwargs['output'])
-
-    # Install bootloader
-    _boards: Boards = environment.obj_graph.provide(Boards)
-    _board: Board = _boards.get_board(kwargs['board'])
-
-    # Install SPL
-    spl: Bootloader
-    spl = _board._data['bootloaders']['spl']
-    Utils.shell.run(
-            'dd if={} of={} conv=notrunc,fsync bs={} seek={}'.format(
-                environment.paths['debootstrap'] + spl['file'], environment.options['output'], spl['block'], spl['offset'])
-    )
-
-    # Install u-boot
-    u_boot: Bootloader
-    u_boot = _board._data['bootloaders']['u-boot']
-    temp = Utils.shell.run('mktemp -d').decode().strip()
-    Utils.shell.run('cp -vf {}/usr/lib/arm-trusted-firmware/sun50i_a64/bl31.bin {}/'.format(environment.paths['debootstrap'], temp))
-    Utils.shell.run('cp -vf {}/usr/lib/u-boot/a64-olinuxino/sun50i-a64-olinuxino.dtb {}/'.format(environment.paths['debootstrap'], temp))
-    Utils.shell.run('cp -vf {}/usr/lib/u-boot/a64-olinuxino/u-boot-nodtb.bin {}/'.format(environment.paths['debootstrap'], temp))
-    Utils.shell.run('cp -vf {}/usr/lib/u-boot/a64-olinuxino/u-boot.bin {}/'.format(environment.paths['debootstrap'], temp))
-    Utils.shell.run('cp -vf {}/usr/bin/mksunxi_fit_atf {}/'.format(environment.paths['debootstrap'], temp))
-    Utils.shell.run(
-        'cd {} && bash mksunxi_fit_atf *.dtb > u-boot.its && mkimage -f u-boot.its u-boot.itb'.format(temp),
-        shell=True
-    )
-
-    Utils.shell.run(
-        'dd if={} of={} conv=notrunc,fsync bs={} seek={}'.format(
-            os.path.join(temp, u_boot['file']), environment.options['output'], u_boot['block'], u_boot['offset'])
-    )
-
-    Utils.shell.run('rm -rvf {}'.format(temp))
+# @cli.command()
+# # Arguments
+# @click.argument("board")
+# @click.argument("release")
+# @click.argument("variant", type=click.Choice(['lite', 'base', 'full']))
+# @click.argument("output")
+# @click.pass_context
+# def test(ctx: click.Context, **kwargs):
+#
+#     from olimage.core.parsers import Boards, Board, Bootloader
+#     from olimage.core.utils import Utils
+#
+#     # Update environment options
+#     environment.options.update(kwargs)
+#
+#     # Build rootfs
+#     ctx.invoke(olimage.rootfs.build_rootfs, **kwargs)
+#
+#     # Install packages
+#     # ctx.invoke(olimage.packages.build_packages, board=kwargs['board'], package=None, command='install')
+#
+#     # Build image
+#     ctx.invoke(olimage.image.build_image, source=environment.paths['debootstrap'], output=kwargs['output'])
+#
+#     # Install bootloader
+#     _boards: Boards = environment.obj_graph.provide(Boards)
+#     _board: Board = _boards.get_board(kwargs['board'])
+#
+#     # Install SPL
+#     spl: Bootloader
+#     spl = _board._data['bootloaders']['spdl']
+#     Utils.shell.run(
+#             'dd if={} of={} conv=notrunc,fsync bs={} seek={}'.format(
+#                 environment.paths['debootstrap'] + spl['file'], environment.options['output'], spl['block'], spl['offset'])
+#     )
+#
+#     # Install u-boot
+#     u_boot: Bootloader
+#     u_boot = _board._data['bootloaders']['u-boot']
+#     temp = Utils.shell.run('mktemp -d').decode().strip()
+#     Utils.shell.run('cp -vf {}/usr/lib/arm-trusted-firmware/sun50i_a64/bl31.bin {}/'.format(environment.paths['debootstrap'], temp))
+#     Utils.shell.run('cp -vf {}/usr/lib/u-boot/a64-olinuxino/sun50i-a64-olinuxino.dtb {}/'.format(environment.paths['debootstrap'], temp))
+#     Utils.shell.run('cp -vf {}/usr/lib/u-boot/a64-olinuxino/u-boot-nodtb.bin {}/'.format(environment.paths['debootstrap'], temp))
+#     Utils.shell.run('cp -vf {}/usr/lib/u-boot/a64-olinuxino/u-boot.bin {}/'.format(environment.paths['debootstrap'], temp))
+#     Utils.shell.run('cp -vf {}/usr/bin/mksunxi_fit_atf {}/'.format(environment.paths['debootstrap'], temp))
+#     Utils.shell.run(
+#         'cd {} && bash mksunxi_fit_atf *.dtb > u-boot.its && mkimage -f u-boot.its u-boot.itb'.format(temp),
+#         shell=True
+#     )
+#
+#     Utils.shell.run(
+#         'dd if={} of={} conv=notrunc,fsync bs={} seek={}'.format(
+#             os.path.join(temp, u_boot['file']), environment.options['output'], u_boot['block'], u_boot['offset'])
+#     )
+#
+#     Utils.shell.run('rm -rvf {}'.format(temp))
 
 
 if __name__ == "__main__":

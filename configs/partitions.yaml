@@ -1,4 +1,5 @@
 partitions:
+
   rootfs:
     fstab:
       type: 'ext4'

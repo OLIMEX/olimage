@@ -1,46 +1,29 @@
 boards:
   arch: &arch 'arm64'
 
-  board_packages:
-    linux:
-      arch: *arch
-      defconfig: ~
-      refs: 'v5.4'
-      #source: 'https://kernel.googlesource.com/pub/scm/linux/kernel/git/stable/linux-stable'
-      source: 'https://kernel.googlesource.com/pub/scm/linux/kernel/git/torvalds/linux'
-      targets:
-        - 'Image'
-        - 'dtbs'
-        - 'modules'
-      toolchain:
-        prefix: 'aarch64-linux-gnu-'
-        version: 7
-      version: '5.4.0-1-olimex'
-      localversion: '-1-olimex'
+#  bootloaders:
+#    spl:
+#      file: '/usr/lib/u-boot/a64-olinuxino/sunxi-spl.bin'
+#      block: 1024
+#      offset: 8
+#    u-boot:
+#      file: 'u-boot.itb'
+#      prepare:
+#        requires:
+#          - '/usr/lib/arm-trusted-firmware/sun50i_a64/bl31.bin'
+#          - '/usr/lib/u-boot/a64-olinuxino/sun50i-a64-olinuxino.dtb'
+#          - '/usr/lib/u-boot/a64-olinuxino/u-boot-nodtb.bin'
+#          - '/usr/lib/u-boot/a64-olinuxino/u-boot.bin'
+#          - '/usr/bin/mksunxi_fit_atf'
+#        commands:
+#          - '/usr/lib'
+#      block: 1024
+#      offset: 40
 
-  bootloaders:
-    spl:
-      file: '/usr/lib/u-boot/a64-olinuxino/sunxi-spl.bin'
-      block: 1024
-      offset: 8
-    u-boot:
-      file: 'u-boot.itb'
-      prepare:
-        requires:
-          - '/usr/lib/arm-trusted-firmware/sun50i_a64/bl31.bin'
-          - '/usr/lib/u-boot/a64-olinuxino/sun50i-a64-olinuxino.dtb'
-          - '/usr/lib/u-boot/a64-olinuxino/u-boot-nodtb.bin'
-          - '/usr/lib/u-boot/a64-olinuxino/u-boot.bin'
-          - '/usr/bin/mksunxi_fit_atf'
-        commands:
-          - '/usr/lib'
-      block: 1024
-      offset: 40
-
-  family: 'sun50i-a64'
+  soc: 'sun50i-a64'
 
   # Define board variants
-  variants:
+  models:
     A64-OLinuXino-1Ge4GW:
       id : 8367
       fdt: 'allwinner/sun50i-a64-olinuxino-emmc.dtb'
