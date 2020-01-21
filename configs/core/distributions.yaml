@@ -5,6 +5,8 @@ distributions:
     releases:
       - 'stretch'
       - 'buster'
+      - 'bullseye'
+      - 'sid'
     repository: 'http://httpredir.debian.org/debian'
 
   ubuntu:

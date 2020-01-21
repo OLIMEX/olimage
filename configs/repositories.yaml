@@ -1,0 +1,7 @@
+repositories:
+  olimex:
+    components:
+      - "main"
+    keyserver: "keyserver.ubuntu.com"
+    key: "2BE33123120C50F2666530ED09271DCFB6350689"
+    url: "http://repository.olimex.com"

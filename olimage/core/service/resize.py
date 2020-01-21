@@ -1,7 +1,3 @@
-import os
-
-import olimage.environment as env
-
 from olimage.core.utils import Utils
 
 

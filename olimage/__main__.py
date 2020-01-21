@@ -4,6 +4,7 @@ import sys
 
 import click
 import pinject
+import shutil
 
 import olimage.image
 import olimage.rootfs
@@ -87,7 +88,7 @@ def prepare_tree():
 @click.option("--overlay", default="overlay", help="Path to overlay files")
 # Apt-cacher
 @click.option("--apt-cacher/--no-apt-cacher",
-              default=True,
+              default=False,
               help="Use apt-cacher service")
 @click.option("--apt-cacher-host",
               default=lambda: os.environ.get('APT_CACHER_HOST', '127.0.0.1'),
@@ -117,9 +118,15 @@ def cli(**kwargs):
     environment.obj_graph = pinject.new_object_graph()
 
 
-# Add sub-commands
+@cli.command(name="clean")
+def clean():
+    shutil.rmtree(environment.paths['workdir'])
+
+# Add external sub-commands
 cli.add_command(olimage.rootfs.build_rootfs)
 cli.add_command(olimage.image.build_image)
+
+
 
 
 # @cli.command()

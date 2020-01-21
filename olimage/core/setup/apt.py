@@ -16,7 +16,7 @@ class Apt(object):
 
         # Import gpg key
         Utils.shell.chroot(
-            'apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 2BE33123120C50F2666530ED09271DCFB6350689'
+            'apt-key adv --keyserver keyserver.ubuntu.com --recv-keys'
         )
 
         # Install source list

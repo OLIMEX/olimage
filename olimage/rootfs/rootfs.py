@@ -8,7 +8,7 @@ from olimage.core.parsers import (Boards, Distributions, Partitions, Variants, U
 from olimage.core.parsers.boards import Board
 from olimage.core.service import Service
 from olimage.core.setup import Setup
-from olimage.core.stamp import rootfs_stamp
+from olimage.core.stamp import stamp
 from olimage.core.utils import Utils
 from olimage.core.printer import Printer
 
@@ -54,7 +54,7 @@ class Rootfs(object):
         env.paths['debootstrap'] = self._debootstrap
 
     @Printer("Building")
-    @rootfs_stamp
+    @stamp
     def build(self):
 
         # Remove previous directory
@@ -75,7 +75,7 @@ class Rootfs(object):
         Utils.archive.gzip(self._debootstrap)
 
     @Printer("Configuring")
-    @rootfs_stamp
+    @stamp
     def configure(self):
 
         # Remove previous directory
@@ -129,7 +129,7 @@ class Rootfs(object):
         Setup.ssh(self._debootstrap, env.options['ssh'])
 
     @Printer("Installing services")
-    @rootfs_stamp
+    @stamp
     def services(self):
         # Install services
         Service.resize.install()

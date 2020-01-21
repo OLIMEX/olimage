@@ -42,7 +42,6 @@ fi
 # Build image
 docker build -t olimage "${DIR}"
 
-# Run container
 docker run --rm -it --privileged \
     --name "${CONTAINER_NAME}" \
 	--volume /tmp:/tmp \
@@ -50,7 +49,8 @@ docker run --rm -it --privileged \
 	--volume /proc:/proc \
 	--volume $(pwd):/olimage \
 	--net 'host' \
-	-w /olimage olimage
+	-w /olimage olimage python3 -m olimage $@
+
 #	-e "GIT_HASH=$(git rev-parse HEAD)" \
 #	-e "APT_CACHER_HOST=${APT_CACHER_HOST}" \
 #	-e "APT_CACHER_PORT=${APT_CACHER_PORT}" \
