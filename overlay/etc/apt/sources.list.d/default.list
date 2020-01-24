@@ -1,0 +1,5 @@
+deb {{ repo.url }} {{ release }} {% for component in repo.components %}{{ component }}{% endfor %}
+
+{% if repo.sources %}
+deb-src {{ repo.url }} {{ release }} {% for component in repo.components %}{{ component }}{% endfor %}
+{% endif %}

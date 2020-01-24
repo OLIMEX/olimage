@@ -1,0 +1,22 @@
+---
+repositories:
+  type: 'dict'
+  keysrules:
+    type: 'string'
+  valuesrules:
+    type: 'dict'
+    schema:
+      components:
+        type: 'list'
+      key:
+        dependencies: ['keyserver']
+        type: 'string'
+      keyserver:
+        dependencies: ['key']
+        type: 'string'
+      sources:
+        type: 'boolean'
+      url:
+        required: true
+        type: 'string'
+

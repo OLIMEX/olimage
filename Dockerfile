@@ -21,7 +21,9 @@ RUN apt-get update && \
         parted \
         python-dev \
         python3 \
+        python3-gdbm \
         python3-pip \
+        python3-tk \
         rsync \
         swig \
         qemu-user-static \
@@ -32,6 +34,7 @@ RUN apt-get update && \
 
 # Install pip packages
 RUN pip3 install \
+    cerberus \
     click \
     GitPython \
     halo \

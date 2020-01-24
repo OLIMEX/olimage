@@ -4,6 +4,7 @@ import sys
 import time
 
 import halo
+from halo._utils import encode_utf_8_text
 
 
 class Printer(halo.Halo):
@@ -107,3 +108,26 @@ class Printer(halo.Halo):
             self._write(encode_utf_8_text(output))
 
         return self
+
+
+class PrinterProcess(Printer):
+    def __init__(self, text='', color='cyan', text_color=None, spinner=None, animation=None, placement='left',
+                 interval=-1, enabled=True, stream=sys.stdout):
+        super().__init__('... ' + text, color, text_color, spinner, animation, placement, interval, enabled, stream)
+
+
+class PrinterHeader(object):
+    def __init__(self, text=''):
+        self._text = text
+
+    def __call__(self, f):
+        @functools.wraps(f)
+        def wrapped(*args, **kwargs):
+            print('\n' + self._text)
+            return f(*args, **kwargs)
+        return wrapped
+
+
+class Print():
+    header = PrinterHeader
+    process = PrinterProcess

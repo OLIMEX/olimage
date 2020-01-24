@@ -12,7 +12,7 @@ def stamp(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
 
-        file = os.path.join(env.paths['debootstrap'], '.stamp_' + func.__name__.lstrip('_'))
+        file = os.path.join(env.paths['rootfs'], '.stamp_' + func.__name__.lstrip('_'))
 
         # Check if stamp exists
         if os.path.isfile(file):

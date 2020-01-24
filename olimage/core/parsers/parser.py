@@ -1,6 +1,6 @@
-import abc
 import os
 
+import cerberus
 import yaml
 
 import olimage.environment as env
@@ -32,10 +32,26 @@ class GenericLoader(LoaderBase):
                 '{}'.format(prefix if prefix else ""),
                 '{}.yaml'.format(name)
         )) as f:
-            data = yaml.full_load(f.read())[name]
+            data = yaml.full_load(f.read())
+
+        # Load schema
+        schemas_dir = os.path.join(env.paths['configs'], 'schemas')
+        schema = None
+
+        for (_, _, files) in os.walk(schemas_dir):
+            for file in files:
+                if file == '{}.yaml'.format(name):
+                    with open(os.path.join(schemas_dir, '{}.yaml'.format(name))) as f:
+                        schema = yaml.full_load(f.read())
+
+        if schema:
+            # Validate config
+            v = cerberus.Validator()
+            if not v.validate(data, schema):
+                raise Exception("Failed to parse \"{}.yaml\": {}".format(name, v.errors))
 
         # Generate objects
-        for key, value in data.items():
+        for key, value in data[name].items():
             self._objects.append(holder(key, value))
 
 

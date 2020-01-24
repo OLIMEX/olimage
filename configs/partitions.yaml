@@ -9,5 +9,5 @@ partitions:
       passno: 1
     parted:
       type: 'ext4'
-      start: '4MiB'
+      start: '10MiB'
       end: '100%'

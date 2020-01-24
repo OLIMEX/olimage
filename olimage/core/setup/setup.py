@@ -39,7 +39,7 @@ class SetupMeta(type):
                     module_path = 'olimage.core.setup.' + module
                     obj = importlib.import_module(module_path)
 
-                    for name, cls in inspect.getmembers(obj, inspect.isclass):
+                    for _, cls in inspect.getmembers(obj, inspect.isclass):
                         if cls.__module__ != module_path:
                             continue
 

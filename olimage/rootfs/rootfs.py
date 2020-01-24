@@ -10,7 +10,7 @@ from olimage.core.service import Service
 from olimage.core.setup import Setup
 from olimage.core.stamp import stamp
 from olimage.core.utils import Utils
-from olimage.core.printer import Printer
+from olimage.core.printer import Printer, Print
 
 
 logger = logging.getLogger(__name__)
@@ -74,10 +74,8 @@ class Rootfs(object):
         # Compress
         Utils.archive.gzip(self._debootstrap)
 
-    @Printer("Configuring")
-    @stamp
-    def configure(self):
-
+    @Print.process("Extracting")
+    def extract(self):
         # Remove previous directory
         if os.path.exists(self._debootstrap):
             shutil.rmtree(self._debootstrap)
@@ -86,12 +84,21 @@ class Rootfs(object):
         # Extract fresh copy
         Utils.archive.extract(self._archive, env.paths['rootfs'])
 
+    @Print.header("Configuring")
+    @stamp
+    def configure(self):
+
+        self.extract()
+
         # Configure apt
         if env.options['apt_cacher']:
             Service.apt_cache.install(env.options['apt_cacher_host'], env.options['apt_cacher_port'])
             self._cleanup.append(Service.apt_cache.uninstall)
         Setup.apt(self._release)
         self._cleanup.append(Setup.apt.clean)
+
+        import sys
+        sys.exit(0)
 
         # Configure locales
         # NOTE: This must be run before package installation

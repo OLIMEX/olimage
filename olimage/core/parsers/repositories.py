@@ -11,9 +11,32 @@ class Repository(object):
 
     @property
     def components(self) -> list:
-        print(self._data)
-        import sys
-        sys.exit(0)
+        if 'components' in self._data:
+            return self._data['components']
+        return ['main']
+
+    @property
+    def key(self) -> str:
+        if 'key' in self._data:
+            return self._data['key']
+        return None
+
+    @property
+    def keyserver(self) -> str:
+        if 'keyserver' in self._data:
+            return self._data['keyserver']
+        return None
+
+    @property
+    def sources(self) -> bool:
+        if 'sources' in self._data:
+            return self._data['sources']
+        return False
+
+    @property
+    def url(self) -> str:
+        return self._data['url']
+
 
 
 class Repositories(GenericLoader):
