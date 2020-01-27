@@ -4,16 +4,15 @@ import shutil
 
 import olimage.environment as env
 
+from olimage.core.io import Output
 from olimage.core.parsers import (Boards, Distributions, Partitions, Variants, Users)
 from olimage.core.parsers.boards import Board
 from olimage.core.service import Service
 from olimage.core.setup import Setup
-from olimage.core.stamp import stamp
 from olimage.core.utils import Utils
-from olimage.core.printer import Printer, Print
 
 
-logger = logging.getLogger(__name__)
+from .stamp import stamp
 
 
 class Rootfs(object):
@@ -53,7 +52,6 @@ class Rootfs(object):
         self._archive = self._debootstrap + '.tar.gz'
         env.paths['debootstrap'] = self._debootstrap
 
-    @Printer("Building")
     @stamp
     def build(self):
 
@@ -63,89 +61,93 @@ class Rootfs(object):
         os.mkdir(self._debootstrap)
 
         # Built a new rootfs
-        Utils.qemu.debootstrap(
-            arch=self._board.arch,
-            release=self._release,
-            path=self._debootstrap,
-            components=self._distribution.components,
-            include=None,
-            mirror=self._distribution.repository)
+        with Output.step("Running qemu-debootstrap"):
+            Utils.qemu.debootstrap(
+                arch=self._board.arch,
+                release=self._release,
+                path=self._debootstrap,
+                components=self._distribution.components,
+                include=None,
+                mirror=self._distribution.repository)
 
         # Compress
-        Utils.archive.gzip(self._debootstrap)
+        with Output.step("Creating archive"):
+            Utils.archive.gzip(self._debootstrap)
 
-    @Print.process("Extracting")
-    def extract(self):
+    @stamp
+    def configure(self):
+
         # Remove previous directory
         if os.path.exists(self._debootstrap):
             shutil.rmtree(self._debootstrap)
         os.mkdir(self._debootstrap)
 
         # Extract fresh copy
-        Utils.archive.extract(self._archive, env.paths['rootfs'])
-
-    @Print.header("Configuring")
-    @stamp
-    def configure(self):
-
-        self.extract()
+        with Output.step("Extracting archive"):
+            Utils.archive.extract(self._archive, env.paths['rootfs'])
 
         # Configure apt
         if env.options['apt_cacher']:
             Service.apt_cache.install(env.options['apt_cacher_host'], env.options['apt_cacher_port'])
             self._cleanup.append(Service.apt_cache.uninstall)
-        Setup.apt(self._release)
-        self._cleanup.append(Setup.apt.clean)
-
-        import sys
-        sys.exit(0)
+        with Output.step("Configuring the APT repositories"):
+            Setup.apt(self._release)
+            self._cleanup.append(Setup.apt.clean)
 
         # Configure locales
         # NOTE: This must be run before package installation
-        Setup.locales(self._debootstrap, env.options['locale'])
+        with Output.step("Configuring locales"):
+            Setup.locales(self._debootstrap, env.options['locale'])
 
         # Configure console
         # NOTE: This must be run before package installation
-        Setup.console(self._debootstrap, env.options['keyboard_keymap'], env.options['keyboard_layout'])
+        with Output.step("Configuring console"):
+            Setup.console(self._debootstrap, env.options['keyboard_keymap'], env.options['keyboard_layout'])
 
         # Install packages
-        Utils.shell.chroot('apt-get install -y {}'.format(' '.join(self._variant.packages)), self._debootstrap)
-
-        # Configure getty
-        Setup.getty(self._debootstrap)
+        with Output.step("Installing packages"):
+            pass
+            # Utils.shell.chroot('apt-get install -y {}'.format(' '.join(self._variant.packages)), self._debootstrap)
 
         # Configure hostname
         hostname = str(self._board)
         if env.options['hostname']:
             hostname = env.options['hostname']
-        Setup.hostname(hostname, self._debootstrap)
+        with Output.step("Configuring hostname: \'{}\'".format(hostname)):
+            Setup.hostname(hostname, self._debootstrap)
 
         # Configure users
-        for user in self._users:
-            Setup.user(str(user), user.password, self._debootstrap, groups=user.groups)
+        with Output.step("Configuring users"):
+            for user in self._users:
+                with Output.substep("Adding user: \'{}\'".str(user)):
+                    Setup.user(str(user), user.password, self._debootstrap, groups=user.groups)
 
         # Configure timezone
-        Setup.timezone(self._debootstrap, env.options['timezone'])
+        with Output.step("Configuring timezone: \'{}\'".env.options['timezone']):
+            Setup.timezone(self._debootstrap, env.options['timezone'])
 
         # Disable useless services
-        Utils.systemctl.disable('hwclock.sh')
-        Utils.systemctl.disable('nfs-common')
-        Utils.systemctl.disable('rpcbind')
+        with Output.step("Removing useless services"):
+            for service in ['hwclock.sh', 'nfs-common', 'rpcbind']:
+                with Output.substep("Removing \'\'".format(service)):
+                    Utils.systemctl.disable(service)
 
         # Configure ssh
-        Setup.ssh(self._debootstrap, env.options['ssh'])
+        with Output.step("{}abling SSH".format('En' if env.options['ssh'] else 'Dis')):
+            Setup.ssh(self._debootstrap, env.options['ssh'])
 
-    @Printer("Installing services")
     @stamp
     def services(self):
-        # Install services
-        Service.resize.install()
+        with Output.step("Installing services"):
+            # Install services
+            for s in [ Service.getty, Service.resize ]:
+                with Output.substep("Enabling: \'{}\'".format(s.name())):
+                    s.enable()
 
         # Setup boot
         # Note: This depends on olimex-sunxi-overlays
-        Setup.boot(self._board, self._partitions)
+        # Setup.boot(self._board, self._partitions)
 
-    @Printer("Cleanup")
     def cleanup(self):
         # Cleanup registered functions
         for item in self._cleanup:

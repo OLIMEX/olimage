@@ -1,5 +1,5 @@
 boards:
-  arch: &arch 'arm64'
+  arch: 'arm64'
 
 #  bootloaders:
 #    spl:

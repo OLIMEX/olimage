@@ -6,6 +6,7 @@ from olimage.core.utils import Utils
 class Timezone(object):
     @staticmethod
     def __call__(path: str, timezone: str):
+
         file = '/etc/timezone'
 
         source = env.paths['overlay'] + file

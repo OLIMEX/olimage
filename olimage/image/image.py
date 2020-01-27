@@ -3,11 +3,10 @@ import os
 
 import olimage.environment as env
 
+from olimage.core.io import Output
 from olimage.core.parsers import Partitions
 from olimage.core.setup import Setup
 from olimage.core.utils import Utils
-
-from olimage.core.printer import Printer
 
 from .mount import Mounter
 
@@ -23,19 +22,27 @@ class Image(object):
         # Global data
         self._output = env.options['output']
 
-    @Printer("Generating blank image")
-    def generate(self, size: int) -> None:
+    def generate(self) -> None:
         """
         Generate black image
 
         :return: None
         """
 
-        # Get size and add 500MiB size
-        # size = math.ceil(self.get_size(self._rootfs)/1024/1024) + 500
-        Utils.qemu.img(self._output, size)
+        size = 0
+        for _dir, _, file in os.walk(env.paths['debootstrap']):
+            for f in file:
+                fp = os.path.join(_dir, f)
 
-    @Printer("Partitioning")
+                if not os.path.islink(fp):
+                    size += os.path.getsize(fp)
+
+        # Get size and add 500MiB size
+        size = max((size >> 20) + 500, env.options['size'])
+
+        with Output.step("Generating black image with size: {}MiB".format(size)):
+            Utils.qemu.img(self._output, size)
+
     def partition(self) -> None:
         """
         Partition the output blank image
@@ -44,70 +51,68 @@ class Image(object):
         """
 
         # Create label
-        logger.info("Creating disk label: msdos")
-        Utils.shell.run('parted -s {} mklabel msdos'.format(self._output))
+        with Output.step("Creating msdos partition table"):
+            Utils.shell.run('parted -s {} mklabel msdos'.format(self._output))
 
         # Create partitions
-        for part in self._partitions:
-            logger.info("Creating partition: {}".format(part))
-            Utils.shell.run(
-                'parted -s {} mkpart primary {} {} {}'.format(
-                    self._output, part.parted.type,
-                    part.parted.start,
-                    part.parted.end
-                )
+        for partition in self._partitions:
+            with Output.substep("Creating partition: \'{}\'".format(str(partition))):
+                Utils.shell.run(
+                    'parted -s {} mkpart primary {} {} {}'.format(
+                        self._output, partition.parted.type,
+                        partition.parted.start,
+                        partition.parted.end
+                    )
             )
 
-    @Printer("Formatting")
-    @Mounter.map()
+    # @Mounter.map()
     def format(self):
 
-        for partition in self._partitions:
-            logger.info("Formatting partition: {}".format(partition))
+        with Mounter.map(self._output, self._partitions) as m:
+            for partition in self._partitions:
+                with Output.substep("Formating partition: \'{}\'".format(str(partition))):
+                    # Get parted related information
+                    device = m.device(partition)
 
-            # Get parted related information
-            device = partition.device
-            fstab = partition.fstab
+                    opts = ''
+                    if partition.fstab.type == 'ext4':
+                        opts = '-O ^64bit,^metadata_csum'
 
-            opts = ''
-            if type == 'ext4':
-                opts = '-O ^64bit,^metadata_csum'
+                    # Make filesystem
+                    Utils.shell.run('mkfs.{} {} {}'.format(partition.fstab.type, opts, device))
+                    Utils.shell.run('udevadm trigger {}'.format(device))
+                    Utils.shell.run('udevadm settle'.format(device))
 
-            # Make filesystem
-            Utils.shell.run('mkfs.{} {} {}'.format(fstab.type, opts, device))
-            Utils.shell.run('udevadm trigger {}'.format(device))
-            Utils.shell.run('udevadm settle'.format(device))
-
-            # Generate UUID
-            fstab.uuid = Utils.shell.run(
-                'blkid -s UUID -o value {}'.format(device)
-            ).decode().splitlines()[0]
-
-    @Printer("Configuring")
     def configure(self):
-        Setup.fstab(self._partitions, '/olimage/output/rootfs/arm64-buster')
+        # # Generate UUID
+        # partition.fstab.uuid = Utils.shell.run(
+        #     'blkid -s UUID -o value {}'.format(device)
+        # ).decode().splitlines()[0]
 
-    @Printer("Installing")
-    @Mounter.mount()
+        with Output.step("Generating /etc/fstab"):
+            Setup.fstab(self._partitions, env.paths)
+
+    # @Mounter.mount()
     def copy(self, source):
         exclude = ['/dev/*', '/proc/*', '/run/*', '/tmp/*', '/sys/*']
         order = []
 
-        for part in self._partitions:
+        with Mounter.mount(self._output, self._partitions) as m:
+            for part in self._partitions:
 
-            mount = part.fstab.mount
-            if mount == '/':
-                order.insert(0, mount)
-            else:
-                order.append(mount)
-                exclude.append(mount)
+                mount = part.fstab.mount
+                if mount == '/':
+                    order.insert(0, mount)
+                else:
+                    order.append(mount)
+                    exclude.append(mount)
 
-        mnt = os.path.join(os.path.dirname(self._output), ".mnt")
-        for mount in order:
-            if mount == '/':
-                ex = ""
-                for key in exclude:
-                    ex += '--exclude="{}" '.format(key)
-                Utils.shell.run('rsync -aHWXh {} {}/ {}/'.format(ex, source, mnt))
-            else:
-                Utils.shell.run('rsync -rLtWh {}/ {}/'.format(os.path.join(source, mount), mnt + mount))
+        # mnt = os.path.join(os.path.dirname(self._output), ".mnt")
+        # for mount in order:
+        #     if mount == '/':
+        #         ex = ""
+        #         for key in exclude:
+        #             ex += '--exclude="{}" '.format(key)
+        #         Utils.shell.run('rsync -aHWXh {} {}/ {}/'.format(ex, source, mnt))
+        #     else:
+        #         Utils.shell.run('rsync -rLtWh {}/ {}/'.format(os.path.join(source, mount), mnt + mount))

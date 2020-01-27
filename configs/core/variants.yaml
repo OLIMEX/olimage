@@ -1,14 +1,29 @@
 variants:
+  # Those packages are arch dependant
+  arm64: &arm64
+    - arm-trusted-firmware
+
+  armhf: &armhf
+    - linux-image-armmp-lpae
+
+  # Those packages are provided by Olimex Ltd.
+  # There may be conflicting packages
+  olimex: &olimex
+    - olimex-sunxi-overlays
+    - u-boot-olinuxino
+
+  mainline: &mainline
+    - u-boot-sunxi
+    - *armhf
+
   lite:
     packages: &lite
-      - arm-trusted-firmware
       - apt-listchanges
       - avahi-daemon
       - bash-completion
       - build-essential
       - ca-certificates
       - cifs-utils
-#      - console-setup
       - crda
       - curl
       - debconf-utils
@@ -23,7 +38,6 @@ variants:
       - hardlink
       - htop
       - initramfs-tools
-#      - keyboard-configuration
       - less
       - libfreetype6-dev
       - libmtp-runtime
@@ -36,7 +50,6 @@ variants:
       - net-tools
       - netbase
       - ntfs-3g
-      - olimex-sunxi-overlays
       - parted
       - pkg-config
       - policykit-1
@@ -47,11 +60,11 @@ variants:
       - ssh-import-id
       - strace
       - sudo
-      - u-boot-olinuxino
       - unzip
       - usb-modeswitch
       - usbutils
       - v4l-utils
+      - *mainline
 
   base:
     packages: &base

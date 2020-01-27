@@ -1,10 +1,16 @@
 from olimage.core.utils import Utils
 
+from .base import ServiceBase
 
-class Resize(object):
+
+class Resize(ServiceBase):
+
     @staticmethod
-    def install() -> None:
-        # Install file
+    def name() -> str:
+        return 'olinuxino-expand.service'
+
+    @staticmethod
+    def enable() -> None:
         Utils.install(
             [
                 '/usr/lib/olinuxino/olinuxino-expand',
@@ -14,3 +20,7 @@ class Resize(object):
 
         # Enable service
         Utils.shell.chroot("systemctl enable olinuxino-expand.service")
+
+    @staticmethod
+    def disable() -> None:
+        Utils.shell.chroot("systemctl disable olinuxino-expand.service")

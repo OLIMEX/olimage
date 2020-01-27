@@ -5,6 +5,7 @@ import os
 import olimage.environment as env
 
 from .apt_cache import AptCache
+from .getty import Getty
 from .resize import Resize
 
 
@@ -45,4 +46,5 @@ class ServiceMeta(type):
 
 class Service(metaclass=ServiceMeta):
     apt_cache: AptCache
+    getty: Getty
     resize: Resize

@@ -21,8 +21,12 @@ def build_rootfs(**kwargs):
     # Build rootfs
     rootfs: Rootfs = env.obj_graph.provide(Rootfs)
 
-    print("\nBuilding: \033[1m{}\033[0m based distribution".format(env.options['release']))
+    print("rootfs: Building")
     rootfs.build()
+
+    print("rootfs: Configuring")
     rootfs.configure()
     rootfs.services()
+
+    print("rootfs: Cleanup")
     rootfs.cleanup()

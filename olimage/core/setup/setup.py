@@ -8,7 +8,6 @@ from .apt import Apt
 from .boot import Boot
 from .console import Console
 from .fstab import FSTab
-from .getty import Getty
 from .hostname import Hostname
 from .locales import Locales
 from .ssh import SSH
@@ -56,7 +55,6 @@ class Setup(object, metaclass=SetupMeta):
     boot: Boot
     console: Console
     fstab: FSTab
-    getty: Getty
     hostname: Hostname
     locales: Locales
     ssh: SSH

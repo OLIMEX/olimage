@@ -4,51 +4,38 @@ import os
 import re
 import shutil
 
+from olimage.core.parsers.partitions import Partition
 from olimage.core.utils import Utils
 
 logger = logging.getLogger(__name__)
 
 
 class Map(object):
-    def __init__(self):
-        self._output = None
-        self._mount = None
+    def __init__(self, image, partitions):
 
-        self._partitions = None
+        self._image = image
+        self._partitions = partitions
+
+        # Store partition -> mapped device dictionary
+        self._devices = {}
+
+        # Store cleanup
         self._order = []
 
-    def __call__(self, *args, **kwargs):
-        f = args[0]
-
-        @functools.wraps(f)
-        def wrapper(*args, **kwargs):
-
-            # Get self
-            from olimage.image import Image
-            obj: Image = args[0]
-
-            # Copy values
-            self._output = obj._output
-            self._partitions = obj._partitions
-            self._mount = os.path.join(os.path.dirname(self._output), ".mnt")
-
-            with self:
-                return f(*args, **kwargs)
-        return wrapper
-
     def __enter__(self):
-        logger.info("Mapping image {}".format(self._output))
+        logger.info("Mapping image {}".format(self._image))
 
-        output = Utils.shell.run('kpartx -avs {}'.format(self._output)).decode('utf-8', 'ignore')
-        for line in output.splitlines():
+        lines = Utils.shell.run('kpartx -avs {}'.format(self._image)).decode('utf-8', 'ignore')
+        for line in lines.splitlines():
             w = line.split()
             if w[0] == 'add':
                 device = os.path.join('/dev/mapper', w[2])
                 index = int(re.match(r'^loop\d+p(\d+)$', w[2])[1])
 
                 # Get partition and set device
+                partition: Partition
                 partition = self._partitions[index - 1]
-                partition.device = device
+                self._devices[str(partition)] = device
 
                 # Always add '/' at first place
                 if partition.fstab.mount == '/':
@@ -56,19 +43,28 @@ class Map(object):
                 else:
                     self._order.append(partition)
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        logger.info("Unmapping image {}".format(self._output))
+        return self
 
-        Utils.shell.run('kpartx -dvs {}'.format(self._output))
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        logger.info("Unmapping image {}".format(self._image))
+
+        Utils.shell.run('kpartx -dvs {}'.format(self._image))
+
+    def device(self, partition):
+        if isinstance(partition, Partition):
+            partition = str(partition)
+
+        for key, value in self._devices.items():
+            if key == partition:
+                return value
+
+        return None
 
 
 class Mount(Map):
-
     def __enter__(self):
-        # First map
         super().__enter__()
 
-        # Then mount
         logger.info("Mounting partitions")
 
         # Recreate mounting point
@@ -106,4 +102,4 @@ class Mount(Map):
 
 class Mounter(object):
     map = Map
-    mount = Mount
+    # mount = Mount

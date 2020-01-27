@@ -1,6 +1,14 @@
 boards:
-  variants:
+  arch: 'armhf'
+  soc: 'sun7i-a20'
+
+  models:
     A20-OLinuXino-MICRO:
       id: 2323
       fdt: 'sun7i-a20-olinuxino-micro.dtb'
+      overlays: ~
+
+    A20-OLinuXino-LIME2:
+      id: 7701
+      fdt: 'sun7i-a20-olinuxino-lime2.dtb'
       overlays: ~

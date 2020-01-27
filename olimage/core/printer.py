@@ -4,10 +4,11 @@ import sys
 import time
 
 import halo
+from colorama import Fore, Style
 from halo._utils import encode_utf_8_text
 
 
-class Printer(halo.Halo):
+class PrinterBase(halo.Halo):
     """Wrapper for halo module"""
 
     def __init__(self, text='', color='cyan', text_color=None, spinner=None, animation=None, placement='left',
@@ -29,6 +30,10 @@ class Printer(halo.Halo):
         -------
         self
         """
+
+        if self._start is None:
+            return super().frame()
+
         frames = self._spinner['frames']
         frame = frames[self._frame_index]
 
@@ -39,12 +44,12 @@ class Printer(halo.Halo):
         self._frame_index = self._frame_index % len(frames)
 
         text_frame = self.text_frame()
-        delta = datetime.timedelta(seconds=int(time.time() - self._start))
+        delta =int(time.time() - self._start)
 
-        return u'{} {:32} {}'.format(*[
+        return u'{} {:70} {}{}{}'.format(*[
             (text_frame, frame, '')
             if self._placement == 'right' else
-            (frame, text_frame, delta),
+            (frame, text_frame, Fore.YELLOW,  datetime.timedelta(seconds=delta) if delta > 0 else '', Style.RESET_ALL),
         ][0])
 
     def __call__(self, f):
@@ -64,6 +69,10 @@ class Printer(halo.Halo):
 
         return wrapped
 
+    def start(self, text=None):
+        self._start = time.time()
+        return super().start(text=text)
+
     def stop_and_persist(self, symbol=' ', text=None):
         """Stops the spinner and persists the final frame to be shown.
         Parameters
@@ -77,6 +86,9 @@ class Printer(halo.Halo):
         -------
         self
         """
+        if self._start is None:
+            return super().stop_and_persist(symbol=symbol, text=text)
+
         if not self.enabled:
             return self
 
@@ -94,12 +106,12 @@ class Printer(halo.Halo):
 
         self.stop()
 
-        delta = datetime.timedelta(seconds=int(time.time() - self._start))
+        delta = int(time.time() - self._start)
 
-        output = u'{} {:32} {}\n'.format(*[
+        output = u'{} {:70} {}{}{}\n'.format(*[
             (text, symbol, '')
             if self._placement == 'right' else
-            (symbol, text, delta)
+            (symbol, text, Fore.YELLOW, datetime.timedelta(seconds=delta) if delta > 0 else '', Style.RESET_ALL)
         ][0])
 
         try:
@@ -110,10 +122,18 @@ class Printer(halo.Halo):
         return self
 
 
-class PrinterProcess(Printer):
+# TODO: Remove this
+class PrinterProcess(PrinterBase):
     def __init__(self, text='', color='cyan', text_color=None, spinner=None, animation=None, placement='left',
                  interval=-1, enabled=True, stream=sys.stdout):
-        super().__init__('... ' + text, color, text_color, spinner, animation, placement, interval, enabled, stream)
+        super().__init__(' - ' + text + '...', color, text_color, spinner, animation, placement, interval, enabled, stream)
+
+
+# TODO: Remove this
+class PrinterSubprocess(PrinterBase):
+    def __init__(self, text='', color='cyan', text_color=None, spinner=None, animation=None, placement='left',
+                 interval=-1, enabled=True, stream=sys.stdout):
+        super().__init__(' --- ' + text + '...', color, text_color, spinner, animation, placement, interval, enabled, stream)
 
 
 class PrinterHeader(object):
@@ -131,3 +151,7 @@ class PrinterHeader(object):
 class Print():
     header = PrinterHeader
     process = PrinterProcess
+    subprocess = PrinterSubprocess
+
+# TODO: Remove the 'Printer' class
+Printer = PrinterBase

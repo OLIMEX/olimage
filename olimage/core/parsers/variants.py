@@ -11,7 +11,19 @@ class Variant(object):
 
     @property
     def packages(self) -> list:
-        return self._data['packages']
+
+        def flat(data):
+            _data = []
+            for p in data:
+                if isinstance(p, list):
+                    _data += flat(p)
+                elif isinstance(p, str):
+                    _data.append(p)
+                else:
+                    raise Exception("Unsupported type: \'{}\'".format(type(p)))
+            return _data
+
+        return flat(self._data['packages'])
 
 
 class Variants(GenericLoader):
