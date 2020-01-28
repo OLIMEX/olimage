@@ -1,7 +1,4 @@
 import logging
-import os
-
-import olimage.environment as env
 
 from olimage.core.utils import Utils
 from olimage.core.parsers import Partitions
@@ -19,22 +16,13 @@ class FSTab(object):
         :param path: Path to install files
         :return: None
         """
-        for partition in partitions:
-            uuid = partition.fstab.uuid
-            mount = partition.fstab.mount
 
-            logger.debug("Adding {} as UUID={} to {}".format(partition, uuid, mount))
-
-        file = 'etc/fstab'
-        source = os.path.join(env.paths['overlay'], file)
-        destination = os.path.join(path, file)
-
-        # Copy file
-        Utils.shell.run("rsync -rlDHWXhv {} {}".format(source, destination))
+        file = '/etc/fstab'
+        Utils.install(file, path=path)
 
         # Generate template
         Utils.template.install(
-            destination,
+            path + file,
             partitions=[
                 {
                     'uuid': '{:36}'.format(part.fstab.uuid),

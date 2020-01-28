@@ -21,12 +21,13 @@ def build_rootfs(**kwargs):
     # Build rootfs
     rootfs: Rootfs = env.obj_graph.provide(Rootfs)
 
-    print("rootfs: Building")
+    print("# Rootfs")
+    print("## Building")
     rootfs.build()
 
-    print("rootfs: Configuring")
+    print("## Configuring")
     rootfs.configure()
     rootfs.services()
 
-    print("rootfs: Cleanup")
+    print("## Cleanup")
     rootfs.cleanup()

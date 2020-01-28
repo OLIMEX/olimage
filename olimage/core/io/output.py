@@ -21,6 +21,8 @@ class OutputBase(object):
         _previous_printer = self._printer
 
     def print(self):
+        global _previous_printer
+        _previous_printer = None
         return self._printer.start().succeed()
 
     def __enter__(self):

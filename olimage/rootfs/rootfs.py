@@ -1,4 +1,3 @@
-import logging
 import os
 import shutil
 
@@ -106,8 +105,7 @@ class Rootfs(object):
 
         # Install packages
         with Output.step("Installing packages"):
-            pass
-            # Utils.shell.chroot('apt-get install -y {}'.format(' '.join(self._variant.packages)), self._debootstrap)
+            Utils.shell.chroot('apt-get install -y {}'.format(' '.join(self._variant.packages)), self._debootstrap)
 
         # Configure hostname
         hostname = str(self._board)
@@ -119,11 +117,11 @@ class Rootfs(object):
         # Configure users
         with Output.step("Configuring users"):
             for user in self._users:
-                with Output.substep("Adding user: \'{}\'".str(user)):
+                with Output.substep("Adding user: \'{}\'".format(str(user))):
                     Setup.user(str(user), user.password, self._debootstrap, groups=user.groups)
 
         # Configure timezone
-        with Output.step("Configuring timezone: \'{}\'".env.options['timezone']):
+        with Output.step("Configuring timezone: \'{}\'".format(env.options['timezone'])):
             Setup.timezone(self._debootstrap, env.options['timezone'])
 
         # Disable useless services
@@ -143,10 +141,6 @@ class Rootfs(object):
             for s in [ Service.getty, Service.resize ]:
                 with Output.substep("Enabling: \'{}\'".format(s.name())):
                     s.enable()
-
-        # Setup boot
-        # Note: This depends on olimex-sunxi-overlays
-        # Setup.boot(self._board, self._partitions)
 
     def cleanup(self):
         # Cleanup registered functions

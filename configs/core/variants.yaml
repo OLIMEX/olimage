@@ -14,7 +14,7 @@ variants:
 
   mainline: &mainline
     - u-boot-sunxi
-    - *armhf
+#    - *armhf
 
   lite:
     packages: &lite

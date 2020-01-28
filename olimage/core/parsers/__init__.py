@@ -1,4 +1,4 @@
-from .boards import Boards
+from .boards import (Board, Boards)
 from .distributions import Distributions
 from .variants import Variants
 from .partitions import Partitions
@@ -7,7 +7,7 @@ from .users import Users
 
 
 __all__ = [
-    'Boards', 'Distributions', 'Partitions',
+    'Board', 'Boards', 'Distributions', 'Partitions',
     'Repository', 'Repositories',
     'Variants', 'Users'
 ]

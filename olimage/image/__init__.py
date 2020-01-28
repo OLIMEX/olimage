@@ -27,18 +27,17 @@ def build_image(ctx:click.Context, **kwargs):
 
     image: Image = env.obj_graph.provide(Image)
 
-    print("image: Generating")
+    print("\n\n# Image")
+    print("## Generating")
     image.generate()
     image.partition()
     image.format()
-    import sys
-    sys.exit(0)
+    image.bootloader()
 
-    print("image: Configuring")
-    # image.configure()
-
-
-    print("image: Installing")
+    print("## Copying")
     image.copy(env.paths['debootstrap'])
+
+    print("## Configuring")
+    image.configure()
 
 
