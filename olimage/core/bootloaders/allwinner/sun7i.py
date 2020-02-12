@@ -1,7 +1,11 @@
-from olimage.core.bootloaders.bootloader import BootloaderAbstract
+import olimage.environment as env
+
+from olimage.core.bootloaders.base import BootloaderAbstract
+from olimage.core.utils import Utils
+from olimage.core.parsers import (Board)
 
 
-class SUN7I(BootloaderAbstract):
+class Sun7iA20(BootloaderAbstract):
     @staticmethod
     def supported():
         """
@@ -10,9 +14,13 @@ class SUN7I(BootloaderAbstract):
         :return: list with supported devices
         """
         return [
-            'sun7i_a20'
+            'sun7i-a20'
         ]
 
     @staticmethod
-    def install():
-        pass
+    def install(board: Board, output: str):
+        Utils.shell.run(
+            'dd if={} of={} bs=1k seek=8 conv=sync,fsync,notrunc'.format(
+                env.paths['debootstrap'] + "/usr/lib/u-boot-olinuxino/a20-olinuxino/u-boot-sunxi-with-spl.bin",
+                output
+            ))

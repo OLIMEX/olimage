@@ -3,6 +3,7 @@ import os
 
 import olimage.environment as env
 
+from olimage.core.bootloaders import Bootloader
 from olimage.core.io import Output
 from olimage.core.parsers import (Board, Boards, Partitions)
 from olimage.core.setup import Setup
@@ -85,11 +86,7 @@ class Image(object):
 
     def bootloader(self):
         with Output.substep("Writing bootloader"):
-            Utils.shell.run(
-                'dd if={} of={} bs=1k seek=8 conv=sync,fsync,notrunc'.format(
-                    env.paths['debootstrap'] + '/usr/lib/u-boot/A20-OLinuXino-Lime2-eMMC/u-boot-sunxi-with-spl.bin',
-                    self._output
-                ))
+            Bootloader.install(self._board, self._output)
 
     def configure(self):
 
