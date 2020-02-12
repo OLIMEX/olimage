@@ -2,7 +2,7 @@
 #
 # boot_config - Explicitly specify the boot configuration
 # fdtoverlays - List of overlay files
-# load_legacy - Load separate Image and fdt file,
+# load_legacy - Don't load FIT image,
 # optargs - Optional arguments passed to the kernel
 
 {% if configs %}
