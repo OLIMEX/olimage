@@ -9,7 +9,7 @@ variants:
   # Those packages are provided by Olimex Ltd.
   # There may be conflicting packages
   olimex: &olimex
-    - olimex-sunxi-overlays
+    - olinuxino-overlays
     - u-boot-olinuxino
 
   mainline: &mainline
@@ -64,7 +64,7 @@ variants:
       - usb-modeswitch
       - usbutils
       - v4l-utils
-      - *mainline
+      - *olimex
 
   base:
     packages: &base
