@@ -1,0 +1,2 @@
+class ConsoleException(Exception):
+    pass

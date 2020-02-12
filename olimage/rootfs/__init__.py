@@ -2,6 +2,8 @@ import click
 
 import olimage.environment as env
 
+from olimage.core.io import Console
+
 from .parameters import parameters
 from .rootfs import Rootfs
 
@@ -20,14 +22,16 @@ def build_rootfs(**kwargs):
 
     # Build rootfs
     rootfs: Rootfs = env.obj_graph.provide(Rootfs)
+    console = Console()
 
-    print("# Rootfs")
-    print("## Building")
-    rootfs.build()
+    console.info("Creating the target file-system...")
 
-    print("## Configuring")
-    rootfs.configure()
-    rootfs.services()
+    with Console("Building"):
+        rootfs.build()
 
-    print("## Cleanup")
-    rootfs.cleanup()
+    with Console("Configuring"):
+        rootfs.configure()
+        rootfs.services()
+
+    with Console("Cleanup"):
+        rootfs.cleanup()

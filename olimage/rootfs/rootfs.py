@@ -3,7 +3,7 @@ import shutil
 
 import olimage.environment as env
 
-from olimage.core.io import Output
+from olimage.core.io import Console
 from olimage.core.parsers import (Boards, Distributions, Partitions, Variants, Users)
 from olimage.core.parsers.boards import Board
 from olimage.core.service import Service
@@ -60,7 +60,7 @@ class Rootfs(object):
         os.mkdir(self._debootstrap)
 
         # Built a new rootfs
-        with Output.step("Running qemu-debootstrap"):
+        with Console("Running qemu-debootstrap"):
             Utils.qemu.debootstrap(
                 arch=self._board.arch,
                 release=self._release,
@@ -70,7 +70,7 @@ class Rootfs(object):
                 mirror=self._distribution.repository)
 
         # Compress
-        with Output.step("Creating archive"):
+        with Console("Creating archive"):
             Utils.archive.gzip(self._debootstrap)
 
     @stamp
@@ -82,61 +82,61 @@ class Rootfs(object):
         os.mkdir(self._debootstrap)
 
         # Extract fresh copy
-        with Output.step("Extracting archive"):
+        with Console("Extracting archive"):
             Utils.archive.extract(self._archive, env.paths['rootfs'])
 
         # Configure apt
         if env.options['apt_cacher']:
             Service.apt_cache.install(env.options['apt_cacher_host'], env.options['apt_cacher_port'])
             self._cleanup.append(Service.apt_cache.uninstall)
-        with Output.step("Configuring the APT repositories"):
+        with Console("Configuring the APT repositories"):
             Setup.apt(self._release)
             self._cleanup.append(Setup.apt.clean)
 
         # Configure locales
         # NOTE: This must be run before package installation
-        with Output.step("Configuring locales"):
+        with Console("Configuring locales"):
             Setup.locales(self._debootstrap, env.options['locale'])
 
         # Configure console
         # NOTE: This must be run before package installation
-        with Output.step("Configuring console"):
+        with Console("Configuring console"):
             Setup.console(self._debootstrap, env.options['keyboard_keymap'], env.options['keyboard_layout'])
 
         # Install packages
-        with Output.step("Installing packages"):
+        with Console("Installing packages"):
             Utils.shell.chroot('apt-get install -y {}'.format(' '.join(self._variant.packages)), self._debootstrap)
 
         # Configure hostname
         hostname = str(self._board)
         if env.options['hostname']:
             hostname = env.options['hostname']
-        with Output.step("Configuring hostname: \'{}\'".format(hostname)):
+        with Console("Configuring hostname: \'{}\'".format(hostname)):
             Setup.hostname(hostname, self._debootstrap)
 
         # Configure users
-        with Output.step("Configuring users"):
+        with Console("Configuring users"):
             for user in self._users:
                 with Output.substep("Adding user: \'{}\'".format(str(user))):
                     Setup.user(str(user), user.password, self._debootstrap, groups=user.groups)
 
         # Configure timezone
-        with Output.step("Configuring timezone: \'{}\'".format(env.options['timezone'])):
+        with Console("Configuring timezone: \'{}\'".format(env.options['timezone'])):
             Setup.timezone(self._debootstrap, env.options['timezone'])
 
         # Disable useless services
-        with Output.step("Removing useless services"):
+        with Console("Removing useless services"):
             for service in ['hwclock.sh', 'nfs-common', 'rpcbind']:
                 with Output.substep("Removing \'\'".format(service)):
                     Utils.systemctl.disable(service)
 
         # Configure ssh
-        with Output.step("{}abling SSH".format('En' if env.options['ssh'] else 'Dis')):
+        with Console("{}abling SSH".format('En' if env.options['ssh'] else 'Dis')):
             Setup.ssh(self._debootstrap, env.options['ssh'])
 
     @stamp
     def services(self):
-        with Output.step("Installing services"):
+        with Console("Installing services"):
             # Install services
             for s in [ Service.getty, Service.resize ]:
                 with Output.substep("Enabling: \'{}\'".format(s.name())):
