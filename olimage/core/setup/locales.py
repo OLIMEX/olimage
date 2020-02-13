@@ -1,6 +1,6 @@
 from olimage.core.utils import Utils
 
-from olimage.core.io import Output
+from olimage.core.io import Console
 
 
 class Locales(object):
@@ -8,7 +8,7 @@ class Locales(object):
     def __call__(path: str, locale: str):
 
         # Configure
-        with Output.substep("Generating locales: \'{}\'".format(locale)):
+        with Console("Generating locales: \'{}\'".format(locale)):
             Utils.shell.chroot(
                 'bash -c \'\
                 echo "locales locales/locales_to_be_generated multiselect {locale} UTF-8" | debconf-set-selections -v; \
@@ -18,5 +18,5 @@ class Locales(object):
             )
 
         # Install
-        with Output.substep("Installing packages"):
+        with Console("Installing packages"):
             Utils.shell.chroot('apt-get install -y locales', path)

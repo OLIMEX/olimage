@@ -1,6 +1,6 @@
 from .logger import Logger
-from .output import Output
+from .console import Console
 
 __all__ = [
-    'Logger', 'Output'
+    'Console', 'Logger'
 ]

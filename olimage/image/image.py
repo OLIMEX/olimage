@@ -4,7 +4,7 @@ import os
 import olimage.environment as env
 
 from olimage.core.bootloaders import Bootloader
-from olimage.core.io import Output
+from olimage.core.io import Console
 from olimage.core.parsers import (Board, Boards, Partitions)
 from olimage.core.setup import Setup
 from olimage.core.utils import Utils
@@ -42,7 +42,7 @@ class Image(object):
         # Get size and add 500MiB size
         size = max((size >> 20) + 500, env.options['size'])
 
-        with Output.step("Generating black image with size: {}MiB".format(size)):
+        with Console("Generating black image with size: {}MiB".format(size)):
             Utils.qemu.img(self._output, size)
 
     def partition(self) -> None:
@@ -53,12 +53,12 @@ class Image(object):
         """
 
         # Create label
-        with Output.step("Creating msdos partition table"):
+        with Console("Creating msdos partition table"):
             Utils.shell.run('parted -s {} mklabel msdos'.format(self._output))
 
         # Create partitions
         for partition in self._partitions:
-            with Output.substep("Creating partition: \'{}\'".format(str(partition))):
+            with Console("Creating partition: \'{}\'".format(str(partition))):
                 Utils.shell.run(
                     'parted -s {} mkpart primary {} {} {}'.format(
                         self._output, partition.parted.type,
@@ -71,7 +71,7 @@ class Image(object):
 
         with Mounter.map(self._output, self._partitions) as m:
             for partition in self._partitions:
-                with Output.substep("Formating partition: \'{}\'".format(str(partition))):
+                with Console("Formating partition: \'{}\'".format(str(partition))):
                     # Get parted related information
                     device = m.device(partition)
 
@@ -85,13 +85,13 @@ class Image(object):
                     Utils.shell.run('udevadm settle'.format(device))
 
     def bootloader(self):
-        with Output.substep("Writing bootloader"):
+        with Console("Writing bootloader"):
             Bootloader.install(self._board, self._output)
 
     def configure(self):
 
         with Mounter.mount(self._output, self._partitions) as m:
-            with Output.step("Generating /etc/fstab"):
+            with Console("Generating /etc/fstab"):
                 # Append UUID
                 for partition in self._partitions:
                     partition.fstab.uuid = m.uuid(partition)
@@ -99,7 +99,7 @@ class Image(object):
                 # TODO: This need a fix
                 Setup.fstab(self._partitions, m.mountpoint('rootfs'))
 
-            with Output.step("Configuring boot files"):
+            with Console("Configuring boot files"):
                 Setup.boot(self._board, self._partitions)
 
 
@@ -109,7 +109,7 @@ class Image(object):
 
         with Mounter.mount(self._output, self._partitions) as m:
             for partition in self._partitions:
-                with Output.step("Copying partition: \'{}\'".format(str(partition))):
+                with Console("Copying partition: \'{}\'".format(str(partition))):
                     x = ""
                     for e in exclude:
                         x += '--exclude={} '.format(e)

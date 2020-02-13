@@ -1,9 +1,8 @@
 import olimage.environment as env
 
+from olimage.core.io import Console
 from olimage.core.parsers import (Repository, Repositories)
 from olimage.core.utils import Utils
-
-from olimage.core.io import Output
 
 
 class Apt(object):
@@ -11,13 +10,13 @@ class Apt(object):
     @staticmethod
     def __call__(release: str):
 
-        with Output.substep("Installing packages"):
+        with Console("Installing packages"):
             Utils.shell.chroot('apt-get install -y gnupg')
 
         for repo in Repositories():
             repo: Repository
 
-            with Output.substep("Installing repository: \'{}\'".format(repo.url)):
+            with Console("Installing repository: \'{}\'".format(repo.url)):
                 file = '/etc/apt/sources.list.d/{}.list'.format(str(repo))
 
                 source = env.paths['overlay'] + '/etc/apt/sources.list.d/default.list'
@@ -34,7 +33,7 @@ class Apt(object):
         # Update sources
         # It's possible for some repository to have missing release files, so
         # for now ignore error upon update
-        with Output.substep("Updating sources list"):
+        with Console("Updating sources list"):
             Utils.shell.chroot('apt-get update', ignore_fail=True)
 
     @staticmethod
