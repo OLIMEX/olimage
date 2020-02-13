@@ -4,20 +4,28 @@ repositories:
   # Specify the name of the repository.
   # Each key will create additional file ini /etc/apt/lists.d/, so
   # the key must be unique
-  olimex:
+#  olimex:
+#
+#    # Repository components
+#    # Usually main, contrib, etc. If omitted, "main" will be used
+#    components:
+#      - "main"
+#
+#    # Specify key and keyserver for import
+#    key: "2BE33123120C50F2666530ED09271DCFB6350689"
+#    keyserver: "keyserver.ubuntu.com"
+#
+#    # Should deb-src be included?
+#    sources: false
+#
+#    # The repository url
+#    url: "http://repository.olimex.com"
 
-    # Repository components
-    # Usually main, contrib, etc. If omitted, "main" will be used
+  staging:
     components:
-      - "main"
+      - 'main'
 
-    # Specify key and keyserver for import
-    key: "2BE33123120C50F2666530ED09271DCFB6350689"
-    keyserver: "keyserver.ubuntu.com"
-
-    # Should deb-src be included?
-    sources: false
-
-    # The repository url
-    url: "http://repository.olimex.com"
+    keyfile: '/tmp/staging.olimex.com.key'
+    sources: true
+    url: "http://192.168.0.17/staging"
 

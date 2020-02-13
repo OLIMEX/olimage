@@ -22,6 +22,12 @@ class Repository(object):
         return None
 
     @property
+    def keyfile(self) -> str:
+        if 'keyfile' in self._data:
+            return self._data['keyfile']
+        return None
+
+    @property
     def keyserver(self) -> str:
         if 'keyserver' in self._data:
             return self._data['keyserver']
