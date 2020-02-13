@@ -1,0 +1,95 @@
+/**
+ * Auto-generated on: {{ stamp.date }}
+ * Generated UUID: {{ stamp.uuid }}
+ */
+/dts-v1/;
+
+/ {
+        description = "Boot Linux kernel";
+        #address-cells = <1>;
+
+        images {
+                kernel-1 {
+                        description = "Linux kernel ${VERSION}";
+                        data = /incbin/("./vmlinuz-${VERSION}");
+                        type = "kernel";
+                        arch = "{{ board.arch }}";
+                        os = "linux";
+                        compression = "gzip";
+                        load = <{{ kernel.load }}>;
+                        entry = <{{ kernel.entry }}>;
+                        hash-1 {
+                                algo = "crc32";
+                        };
+                        hash-2 {
+                                algo = "sha1";
+                        };
+                };
+
+                ramdisk-1 {
+                    description = "Ramdisk for kernel ${VERSION}";
+                    data = /incbin/("./initrd.img-${VERSION}");
+                    type = "ramdisk";
+                    arch = "{{ board.arch }}";
+                    os = "linux";
+                    load = <{{ ramdisk.load }}>;
+                    entry = <{{ ramdisk.entry }}>;
+                    hash-1 {
+                            algo = "crc32";
+                    };
+                    hash-2 {
+                            algo = "sha1";
+                    };
+                };
+{% for fdt in fdts %}
+
+                fdt-{{ loop.index }} {
+{% for key,value in fdt.items() %}
+                    data = /incbin/("/usr/lib/linux-image-${VERSION}/{{ key }}");
+                    type = "flat_dt";
+                    arch = "{{ board.arch }}";
+                    compression = "none";
+                    load = <{{ value.load }}>;
+                    hash-1 {
+                            algo = "crc32";
+                    };
+                    hash-2 {
+                            algo = "sha1";
+                    };
+{% endfor %}
+                };
+{% endfor %}
+{% for overlay in overlays %}
+
+                overlay-{{ loop.index }} {
+{% for key,value in overlay.items() %}
+                    data = /incbin/("/usr/lib/olimex-sunxi-overlays/{{ board.family }}/{{ key }}");
+                    type = "flat_dt";
+                    arch = "{{ board.arch }}";
+                    compression = "none";
+                    load = <{{ value.load }}>;
+                    hash-1 {
+                            algo = "crc32";
+                    };
+                    hash-2 {
+                            algo = "sha1";
+                    };
+{% endfor %}
+                };
+{% endfor %}
+        };
+
+        configurations {
+                default = "config-{{ board.target.id }}";
+{% for model in models %}
+
+                config-{{ model.id }} {
+                        description = "Boot Linux kernel ${VERSION} with {{ model.name }}";
+                        kernel = "kernel-1";
+                        ramdisk = "ramdisk-1";
+                        fdt = "fdt-{{ model.fdt }}"{% for overlay in model.overlays %}, "overlay-{{ overlay }}"{% endfor %};
+                        compatible = "{{ model.compatible }}";
+                };
+{% endfor %}
+        };
+};
