@@ -30,6 +30,11 @@ class SetupApt(object):
                     # Import gpg key
                     Utils.shell.chroot('apt-key adv --keyserver {} --recv-keys {}'.format(repo.keyserver, repo.key))
 
+                elif repo.keyfile:
+                    # Import keyfile
+                    Utils.install(repo.keyfile)
+                    Utils.shell.chroot('apt-key add {}'.format(repo.keyfile))
+
         # Update sources
         # It's possible for some repository to have missing release files, so
         # for now ignore error upon update

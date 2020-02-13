@@ -11,6 +11,8 @@ repositories:
       key:
         dependencies: ['keyserver']
         type: 'string'
+      keyfile:
+        type: 'string'
       keyserver:
         dependencies: ['key']
         type: 'string'
