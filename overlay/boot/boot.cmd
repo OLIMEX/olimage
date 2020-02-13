@@ -1,3 +1,7 @@
+#
+# Auto-generated on: {{ stamp.date }}
+# Generated UUID: {{ stamp.uuid }}
+#
 # Set default bootargs
 {% for key, value in bootargs.items() %}
 setenv {{ key }} "{{ value }}"
@@ -33,11 +37,13 @@ if test -n ${load_legacy} && ${load_legacy}; then
         if test -e mmc ${mmc_bootdev}:{{ partitions.boot }} ${prefix}Image; then
             load mmc ${mmc_bootdev}:{{ partitions.boot }} ${kernel_addr_r} ${prefix}Image
             load mmc ${mmc_bootdev}:{{ partitions.boot }} ${fdt_addr_r} ${fdtfile}
-
+{% if arch == 'arm64' %}
             booti ${kernel_addr_r} - ${fdt_addr_r}
+{% else %}
+            bootz ${kernel_addr_r} - ${fdt_addr_r}
+{% endif %}
         fi
     done
-
 fi
 
 # Load kernel.itb

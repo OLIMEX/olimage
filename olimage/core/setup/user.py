@@ -1,10 +1,9 @@
 from olimage.core.utils import Utils
 
 
-class User(object):
+class SetupUser(object):
     @staticmethod
     def __call__(username, password, path, groups=None):
-
         # Root user is always present. Only change password for it.
         if username == 'root':
             Utils.shell.chroot(

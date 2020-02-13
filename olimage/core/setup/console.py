@@ -4,13 +4,9 @@ from olimage.core.io import Console
 from olimage.core.utils import Utils
 
 
-class Console(object):
+class SetupConsole(object):
     @staticmethod
     def __call__(path: str, keymap: str, layout: str):
-
-        file = '/etc/default/console-setup'
-        source = env.paths['overlay'] + file
-        destination = path + file
 
         # Configure console
         with Console("Generating console configuration"):
@@ -45,7 +41,7 @@ class Console(object):
             )
 
         # Install files
-        Utils.shell.run('install -v -m 644 {} {}'.format(source, destination))
+        Utils.install('/etc/default/console-setup')
 
         # Run configuration
         with Console("Running setup"):

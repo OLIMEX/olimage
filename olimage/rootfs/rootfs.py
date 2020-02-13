@@ -107,6 +107,14 @@ class Rootfs(object):
         with Console("Installing packages"):
             Utils.shell.chroot('apt-get install -y {}'.format(' '.join(self._variant.packages)), self._debootstrap)
 
+        # Generate boot files
+        with Console("Generating boot files"):
+            Setup.boot(self._board, self._partitions)
+
+        # Install kernel
+        with Console("Installing kernel"):
+            Utils.shell.chroot('apt-get install -y linux-image-armmp-lpae')
+
         # Configure hostname
         hostname = str(self._board)
         if env.options['hostname']:
@@ -124,23 +132,21 @@ class Rootfs(object):
         with Console("Configuring timezone: \'{}\'".format(env.options['timezone'])):
             Setup.timezone(self._debootstrap, env.options['timezone'])
 
-        # Disable useless services
-        with Console("Removing useless services"):
-            for service in ['hwclock.sh', 'nfs-common', 'rpcbind']:
-                with Console("Removing \'\'".format(service)):
-                    Utils.systemctl.disable(service)
-
-        # Configure ssh
-        with Console("{}abling SSH".format('En' if env.options['ssh'] else 'Dis')):
-            Setup.ssh(self._debootstrap, env.options['ssh'])
-
     @stamp
     def services(self):
-        with Console("Installing services"):
-            # Install services
+        with Console("Configuring services"):
+            # Disable useless services
+            for service in ['hwclock.sh', 'nfs-common', 'rpcbind']:
+                with Console("Disabling: \'{}\'".format(service)):
+                    Utils.systemctl.disable(service)
+
+            # Enable the custom services
             for s in [ Service.getty, Service.resize ]:
                 with Console("Enabling: \'{}\'".format(s.name())):
                     s.enable()
+
+            with Console("{}abling: 'ssh'".format('En' if env.options['ssh'] else 'Dis')):
+                Setup.ssh(self._debootstrap, env.options['ssh'])
 
     def cleanup(self):
         # Cleanup registered functions

@@ -5,7 +5,7 @@ import olimage.environment as env
 from olimage.core.utils import Utils
 
 
-class Hostname(object):
+class SetupHostname(object):
     @staticmethod
     def __call__(hostname: str, path: str, **kwargs) -> None:
         """

@@ -8,12 +8,11 @@ logger = logging.getLogger(__name__)
 
 class Template(object):
     @staticmethod
-    def install(files, permissions=None, **kwargs):
+    def install(files, **kwargs):
         """
         Render templates
 
         :param files: list with files, found in the source directory
-        :param permissions: Set permissions upon write
         :param kwargs: kwargs passed to jinja2
         :return: self
         """
@@ -33,9 +32,3 @@ class Template(object):
             data = template.render(**kwargs)
             with open(file, 'w') as f:
                 f.write(data + "\n")
-
-            # Set file permissions
-            if permissions is not None:
-                if re.match("^[0-7]{3}$", permissions) is None:
-                    raise ValueError("Invalid permissions string: {}".format(permissions))
-                os.chmod(file, int("0o" + permissions, 8))

@@ -1,20 +1,9 @@
 variants:
-  # Those packages are arch dependant
-  arm64: &arm64
-    - arm-trusted-firmware
-
-  armhf: &armhf
-    - linux-image-armmp-lpae
-
   # Those packages are provided by Olimex Ltd.
   # There may be conflicting packages
   olimex: &olimex
     - olinuxino-overlays
     - u-boot-olinuxino
-
-  mainline: &mainline
-    - u-boot-sunxi
-#    - *armhf
 
   lite:
     packages: &lite
@@ -60,6 +49,7 @@ variants:
       - ssh-import-id
       - strace
       - sudo
+      - u-boot-tools
       - unzip
       - usb-modeswitch
       - usbutils

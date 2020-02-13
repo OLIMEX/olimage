@@ -43,7 +43,7 @@ class Spinner(halo.Halo):
         text_frame = self.text_frame()
         delta =int(time.time() - self._start)
 
-        return u'{} {:70} {}{}{}'.format(*[
+        return u'{} {:73} {}{}{}'.format(*[
             (text_frame, frame, '')
             if self._placement == 'right' else
             (frame, text_frame, Fore.YELLOW,  datetime.timedelta(seconds=delta) if delta > 0 else '', Style.RESET_ALL),
@@ -147,7 +147,7 @@ class Spinner(halo.Halo):
 
         delta = int(time.time() - self._start)
 
-        output = u'{} {:70} {}{}{}\n'.format(*[
+        output = u'{} {:73} {}{}{}\n'.format(*[
             (text, symbol, '')
             if self._placement == 'right' else
             (symbol, text, Fore.YELLOW, datetime.timedelta(seconds=delta) if delta > 0 else '', Style.RESET_ALL)
