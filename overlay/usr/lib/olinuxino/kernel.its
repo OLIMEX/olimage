@@ -13,7 +13,7 @@
                         description = "Linux kernel ${VERSION}";
                         data = /incbin/("./vmlinuz-${VERSION}");
                         type = "kernel";
-                        arch = "{{ board.arch }}";
+                        arch = "{{ arch }}";
                         os = "linux";
                         compression = "gzip";
                         load = <{{ kernel.load }}>;
@@ -30,7 +30,7 @@
                     description = "Ramdisk for kernel ${VERSION}";
                     data = /incbin/("./initrd.img-${VERSION}");
                     type = "ramdisk";
-                    arch = "{{ board.arch }}";
+                    arch = "{{ arch }}";
                     os = "linux";
                     load = <{{ ramdisk.load }}>;
                     entry = <{{ ramdisk.entry }}>;
@@ -47,7 +47,7 @@
 {% for key,value in fdt.items() %}
                     data = /incbin/("/usr/lib/linux-image-${VERSION}/{{ key }}");
                     type = "flat_dt";
-                    arch = "{{ board.arch }}";
+                    arch = "{{ arch }}";
                     compression = "none";
                     load = <{{ value.load }}>;
                     hash-1 {
@@ -65,7 +65,7 @@
 {% for key,value in overlay.items() %}
                     data = /incbin/("/usr/lib/olimex-sunxi-overlays/{{ board.family }}/{{ key }}");
                     type = "flat_dt";
-                    arch = "{{ board.arch }}";
+                    arch = "{{ arch }}";
                     compression = "none";
                     load = <{{ value.load }}>;
                     hash-1 {

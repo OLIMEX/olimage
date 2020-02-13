@@ -3,10 +3,9 @@ from olimage.core.utils import Utils
 from olimage.core.io import Console
 
 
-class Locales(object):
+class SetupLocales(object):
     @staticmethod
     def __call__(path: str, locale: str):
-
         # Configure
         with Console("Generating locales: \'{}\'".format(locale)):
             Utils.shell.chroot(

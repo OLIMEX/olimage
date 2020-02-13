@@ -5,7 +5,7 @@ from olimage.core.parsers import (Repository, Repositories)
 from olimage.core.utils import Utils
 
 
-class Apt(object):
+class SetupApt(object):
 
     @staticmethod
     def __call__(release: str):

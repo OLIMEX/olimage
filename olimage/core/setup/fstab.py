@@ -3,10 +3,8 @@ import logging
 from olimage.core.utils import Utils
 from olimage.core.parsers import Partitions
 
-logger = logging.getLogger(__name__)
 
-
-class FSTab(object):
+class SetupFstab(object):
     @staticmethod
     def __call__(partitions: Partitions, path: str, **kwargs) -> None:
         """

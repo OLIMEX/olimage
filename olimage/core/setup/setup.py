@@ -4,15 +4,15 @@ import inspect
 
 import olimage.environment as env
 
-from .apt import Apt
-from .boot import Boot
-from .console import Console
-from .fstab import FSTab
-from .hostname import Hostname
-from .locales import Locales
-from .ssh import SSH
-from .timezone import Timezone
-from .user import User
+from .apt import SetupApt
+from .boot import SetupBoot
+from .console import SetupConsole
+from .fstab import SetupFstab
+from .hostname import SetupHostname
+from .locales import SetupLocales
+from .ssh import SetupSSH
+from .timezone import SetupTimezone
+from .user import SetupUser
 
 
 class SetupMeta(type):
@@ -51,12 +51,12 @@ class SetupMeta(type):
 
 
 class Setup(object, metaclass=SetupMeta):
-    apt: Apt
-    boot: Boot
-    console: Console
-    fstab: FSTab
-    hostname: Hostname
-    locales: Locales
-    ssh: SSH
-    timezone: Timezone
-    user: User
+    apt: SetupApt
+    boot: SetupBoot
+    console: SetupConsole
+    fstab: SetupFstab
+    hostname: SetupHostname
+    locales: SetupLocales
+    ssh: SetupSSH
+    timezone: SetupTimezone
+    user: SetupUser

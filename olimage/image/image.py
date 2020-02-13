@@ -89,7 +89,6 @@ class Image(object):
             Bootloader.install(self._board, self._output)
 
     def configure(self):
-
         with Mounter.mount(self._output, self._partitions) as m:
             with Console("Generating /etc/fstab"):
                 # Append UUID
@@ -98,11 +97,6 @@ class Image(object):
 
                 # TODO: This need a fix
                 Setup.fstab(self._partitions, m.mountpoint('rootfs'))
-
-            with Console("Configuring boot files"):
-                Setup.boot(self._board, self._partitions)
-
-
 
     def copy(self, source):
         exclude = ['/dev/*', '/proc/*', '/run/*', '/tmp/*', '/sys/*']
@@ -118,4 +112,3 @@ class Image(object):
                         env.paths['debootstrap'] + partition.fstab.mount,
                         m.mountpoint(partition)
                     ))
-

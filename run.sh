@@ -40,7 +40,7 @@ fi
 #echo "apt-cacher listening on: ${APT_CACHER_HOST}:${APT_CACHER_PORT}"
 
 # Build image
-docker build -t olimage "${DIR}"
+docker build -q -t olimage "${DIR}"
 
 docker run --rm -it --privileged \
     --name "${CONTAINER_NAME}" \

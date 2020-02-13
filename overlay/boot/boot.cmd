@@ -1,3 +1,7 @@
+#
+# Auto-generated on: {{ stamp.date }}
+# Generated UUID: {{ stamp.uuid }}
+#
 # Set default bootargs
 {% for key, value in bootargs.items() %}
 setenv {{ key }} "{{ value }}"
@@ -39,9 +43,7 @@ if test -n ${load_legacy} && ${load_legacy}; then
             bootz ${kernel_addr_r} - ${fdt_addr_r}
 {% endif %}
         fi
-
     done
-
 fi
 
 # Load kernel.itb

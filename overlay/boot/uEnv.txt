@@ -1,3 +1,7 @@
+#
+# Auto-generated on: {{ stamp.date }}
+# Generated UUID: {{ stamp.uuid }}
+#
 # Put u-boot environment variables here. Before boot, boot.scr will use these variables:
 #
 # boot_config - Explicitly specify the boot configuration

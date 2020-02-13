@@ -9,9 +9,6 @@ if [[ ! -e ${template} ]]; then
     exit 2
 fi
 
-# Check if UUID is the same
-##current_uuid=$(cat /boot/kernel.its | grep "Generated UUID" | awk -F': ' '{print $2}')
-# new_uuid=$(cat ${template} | grep "Generated UUID" | awk -F': ' '{print $2}')
 echo >&1 "Generating FIT source"
 sed "s/\${VERSION}/${version}/g" ${template} > /boot/kernel.its
 
