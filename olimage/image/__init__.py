@@ -2,6 +2,7 @@ import click
 import os
 
 import olimage.environment as env
+from olimage.core.io import Console
 
 from .image import Image
 from .parameters import parameters
@@ -26,18 +27,20 @@ def build_image(ctx:click.Context, **kwargs):
     ctx.invoke(olimage.rootfs.build_rootfs, **kwargs)
 
     image: Image = env.obj_graph.provide(Image)
+    console = Console()
 
-    print("\n\n# Image")
-    print("## Generating")
-    image.generate()
-    image.partition()
-    image.format()
-    image.bootloader()
+    console.info("Creating the target file-system...")
 
-    print("## Copying")
-    image.copy(env.paths['debootstrap'])
+    with Console("Generating black image"):
+        image.generate()
+        image.partition()
+        image.format()
+        image.bootloader()
 
-    print("## Configuring")
-    image.configure()
+    with Console("Copying target files"):
+        image.copy(env.paths['debootstrap'])
+
+    with Console("Configuring"):
+        image.configure()
 
 

@@ -1,7 +1,7 @@
 import olimage.environment as env
 
+from olimage.core.io import Console
 from olimage.core.utils import Utils
-from olimage.core.io import Output
 
 
 class Console(object):
@@ -13,7 +13,7 @@ class Console(object):
         destination = path + file
 
         # Configure console
-        with Output.substep("Generating console configuration"):
+        with Console("Generating console configuration"):
             Utils.shell.chroot(
                 'bash -c \'\
                 echo "console-setup console-setup/charmap47 select UTF-8" | debconf-set-selections -v; \
@@ -24,7 +24,7 @@ class Console(object):
             )
 
         # Configure keyboard
-        with Output.substep("Generating keyboard configuration: \'{}\'".format(keymap)):
+        with Console("Generating keyboard configuration: \'{}\'".format(keymap)):
             Utils.shell.chroot(
                 'bash -c \'\
                 echo "keyboard-configuration keyboard-configuration/altgr select The default for the keyboard layout" | debconf-set-selections -v; \
@@ -38,7 +38,7 @@ class Console(object):
             )
 
         # Install package
-        with Output.substep("Installing packages"):
+        with Console("Installing packages"):
             Utils.shell.chroot(
                 'apt-get install -y console-setup keyboard-configuration',
                 path
@@ -48,7 +48,7 @@ class Console(object):
         Utils.shell.run('install -v -m 644 {} {}'.format(source, destination))
 
         # Run configuration
-        with Output.substep("Running setup"):
+        with Console("Running setup"):
             Utils.shell.chroot(
                 'setupcon --force --save-only -v',
                 path

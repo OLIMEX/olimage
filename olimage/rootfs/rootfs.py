@@ -117,7 +117,7 @@ class Rootfs(object):
         # Configure users
         with Console("Configuring users"):
             for user in self._users:
-                with Output.substep("Adding user: \'{}\'".format(str(user))):
+                with Console("Adding user: \'{}\'".format(str(user))):
                     Setup.user(str(user), user.password, self._debootstrap, groups=user.groups)
 
         # Configure timezone
@@ -127,7 +127,7 @@ class Rootfs(object):
         # Disable useless services
         with Console("Removing useless services"):
             for service in ['hwclock.sh', 'nfs-common', 'rpcbind']:
-                with Output.substep("Removing \'\'".format(service)):
+                with Console("Removing \'\'".format(service)):
                     Utils.systemctl.disable(service)
 
         # Configure ssh
@@ -139,7 +139,7 @@ class Rootfs(object):
         with Console("Installing services"):
             # Install services
             for s in [ Service.getty, Service.resize ]:
-                with Output.substep("Enabling: \'{}\'".format(s.name())):
+                with Console("Enabling: \'{}\'".format(s.name())):
                     s.enable()
 
     def cleanup(self):
