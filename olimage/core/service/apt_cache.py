@@ -4,10 +4,12 @@ import olimage.environment as env
 
 from olimage.core.utils import Utils
 
+from .base import ServiceBase
 
-class AptCache(object):
+
+class ServiceAptCache(ServiceBase):
     @staticmethod
-    def install(host: str, port: int) -> None:
+    def enable(host: str, port: int) -> None:
         file = '/etc/apt/apt.conf.d/01cache'
 
         # Install the file
@@ -21,7 +23,7 @@ class AptCache(object):
         )
 
     @staticmethod
-    def uninstall() -> None:
+    def disable() -> None:
         file = env.paths['debootstrap'] + '/etc/apt/apt.conf.d/01cache'
 
         # Check if file exists

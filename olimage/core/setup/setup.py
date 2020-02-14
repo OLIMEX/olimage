@@ -10,7 +10,6 @@ from .console import SetupConsole
 from .fstab import SetupFstab
 from .hostname import SetupHostname
 from .locales import SetupLocales
-from .ssh import SetupSSH
 from .timezone import SetupTimezone
 from .user import SetupUser
 
@@ -57,6 +56,5 @@ class Setup(object, metaclass=SetupMeta):
     fstab: SetupFstab
     hostname: SetupHostname
     locales: SetupLocales
-    ssh: SetupSSH
     timezone: SetupTimezone
     user: SetupUser
