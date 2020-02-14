@@ -4,9 +4,10 @@ import os
 
 import olimage.environment as env
 
-from .apt_cache import AptCache
-from .getty import Getty
-from .resize import Resize
+from .apt_cache import ServiceAptCache
+from .getty import ServiceGetty
+from .expand import ServiceExpand
+from .ssh import ServiceSSH
 
 
 class ServiceMeta(type):
@@ -45,6 +46,7 @@ class ServiceMeta(type):
 
 
 class Service(metaclass=ServiceMeta):
-    apt_cache: AptCache
-    getty: Getty
-    resize: Resize
+    apt_cache: ServiceAptCache
+    getty: ServiceGetty
+    expand: ServiceExpand
+    ssh: ServiceSSH

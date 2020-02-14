@@ -87,8 +87,8 @@ class Rootfs(object):
 
         # Configure apt
         if env.options['apt_cacher']:
-            Service.apt_cache.install(env.options['apt_cacher_host'], env.options['apt_cacher_port'])
-            self._cleanup.append(Service.apt_cache.uninstall)
+            Service.apt_cache.enable(env.options['apt_cacher_host'], env.options['apt_cacher_port'])
+            self._cleanup.append(Service.apt_cache.disable)
         with Console("Configuring the APT repositories"):
             Setup.apt(self._release)
             self._cleanup.append(Setup.apt.clean)
@@ -141,12 +141,13 @@ class Rootfs(object):
                     Utils.systemctl.disable(service)
 
             # Enable the custom services
-            for s in [ Service.getty, Service.resize ]:
-                with Console("Enabling: \'{}\'".format(s.name())):
+            for s in [ Service.getty, Service.expand ]:
                     s.enable()
 
-            with Console("{}abling: 'ssh'".format('En' if env.options['ssh'] else 'Dis')):
-                Setup.ssh(self._debootstrap, env.options['ssh'])
+            if env.options['ssh']:
+                Service.ssh.enable()
+            else:
+                Service.ssh.disable()
 
     def cleanup(self):
         # Cleanup registered functions
