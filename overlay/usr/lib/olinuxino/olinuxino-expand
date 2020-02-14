@@ -20,10 +20,20 @@ done
 
 # Get device
 ROOT_PART=$(blkid | grep ${ROOT#PARTUUID=} | cut -d':' -f1)
-DEVICE="/dev/"$(lsblk -n -o PKNAME ${ROOT_PART} | head -n1)
-PART_COUNT=$(fdisk -l ${DEVICE} | grep "^${DEVICE}p" | wc -l)
-
 echo "Detected root partition: ${ROOT_PART}"
+
+# The following doesn't work on debian sid.
+DEVICE=$(lsblk -n -o PKNAME ${ROOT_PART} | head -n1)
+# Try regex expression
+if [[ -z ${DEVICE} ]]; then
+    [[ ${ROOT_PART} =~ "/dev/mmcblk"[0-9]+ ]] || \
+    [[ ${ROOT_PART} =~ "/dev/sd"[a-z] ]] && \
+    DEVICE=${BASH_REMATCH[0]}
+else
+    DEVICE="/dev/${DEVICE}"
+fi
+[[ -z ${DEVICE} ]] && echo >&2 "Failed to determine the parent of ${ROOT_PART}." && exit 1
+PART_COUNT=$(fdisk -l ${DEVICE} | grep "^${DEVICE}p" | wc -l)
 
 # Get boundaries
 while read line; do
