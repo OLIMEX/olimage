@@ -113,7 +113,7 @@ class Rootfs(object):
 
         # Install kernel
         with Console("Installing kernel"):
-            Utils.shell.chroot('apt-get install -y linux-image-armmp-lpae')
+            Utils.shell.chroot('apt-get install -y linux-image-5.5.2-olimex')
 
         # Configure hostname
         hostname = str(self._board)

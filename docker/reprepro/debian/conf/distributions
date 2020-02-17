@@ -1,4 +1,11 @@
 Codename: buster
+Suite: stable
 Components: main
 Architectures: armhf arm64 source
-SignWith: EC5488437C053795ABE8EC5A4B9E3C712FA9C269
+SignWith: 9F4E16798BC8A96D
+
+Codename: sid
+Suite: unstable
+Components: main
+Architectures: armhf arm64 source
+SignWith: 9F4E16798BC8A96D

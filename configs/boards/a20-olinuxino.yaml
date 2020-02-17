@@ -2,14 +2,77 @@ boards:
   arch: 'armhf'
 
   models:
+    # A20-OLinuXino-LIME
+    A20-OLinuXino-LIME:
+      id: 7739
+      fdt: 'sun7i-a20-olinuxino-lime.dtb'
+
+    A20-OLinuXino-LIME-n4GB:
+      id: 7743
+      fdt: 'sun7i-a20-olinuxino-lime.dtb'
+
+    A20-OLinuXino-LIME-n8G:
+      id: 8934
+      fdt: 'sun7i-a20-olinuxino-lime.dtb'
+
+    A20-OLinuXino-LIME-s16MB:
+      id: 9076
+      fdt: 'sun7i-a20-olinuxino-lime.dtb'
+      overlays:
+        - 'sun7i-a20-spi0.dtbo'
+        - 'spi0-spiflash.dtbo'
+
+    A20-OLinuXino-LIME-e4GB:
+      id: 9160
+      fdt: 'sun7i-a20-olinuxino-lime-emmc.dtb'
+
+    A20-OLinuXino-LIME-e16Gs16M:
+      id: 9516
+      fdt: 'sun7i-a20-olinuxino-lime-emmc.dtb'
+      overlays:
+        - 'sun7i-a20-spi0.dtbo'
+        - 'spi0-spiflash.dtbo'
+
+    A20-OLinuXino-LIME-e4Gs16M:
+      id: 9696
+      fdt: 'sun7i-a20-olinuxino-lime-emmc.dtb'
+      overlays:
+        - 'sun7i-a20-spi0.dtbo'
+        - 'spi0-spiflash.dtbo'
+
+    # T2-OLinuXino-LIME
+    T2-OLinuXino-LIME-IND:
+      id: 9211
+      fdt: 'sun7i-a20-olinuxino-lime.dtb'
+
+    T2-OLinuXino-LIME-s16MB-IND:
+      id: 9215
+      fdt: 'sun7i-a20-olinuxino-lime.dtb'
+      overlays:
+        - 'sun7i-a20-spi0.dtbo'
+        - 'spi0-spiflash.dtbo'
+
+    T2-OLinuXino-LIME-e4G-IND:
+      id: 9219
+      fdt: 'sun7i-a20-olinuxino-lime-emmc.dtb'
+
+    T2-OLinuXino-LIME-e4Gs16M-IND:
+      id: 9734
+      fdt: 'sun7i-a20-olinuxino-lime-emmc.dtb'
+
+    # A20-OLinuXino-MICRO
     A20-OLinuXino-MICRO:
       id: 2323
       fdt: 'sun7i-a20-olinuxino-micro.dtb'
-      overlays: ~
 
     A20-OLinuXino-LIME2:
       id: 7701
       fdt: 'sun7i-a20-olinuxino-lime2.dtb'
-      overlays: ~
+
+    A20-SOM204-1G-M:
+      id: 10257
+      fdt: 'sun7i-a20-olimex-som204-evb.dtb'
+      overlays:
+        - 'sun7i-a20-som204-emac.dtbo'
 
   soc: 'sun7i-a20'

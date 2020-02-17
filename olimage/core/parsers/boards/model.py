@@ -32,8 +32,12 @@ class Model(object):
         """
         Get model's default overlays
 
-        :return: FDTO filenames list
+        :return: .dtbo filenames list
         """
+
+        if 'overlays' not in self._data:
+            return []
+
         overlays = self._data['overlays']
         if overlays is None:
             return []

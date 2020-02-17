@@ -12,7 +12,7 @@ from olimage.core.utils import Utils
 
 class SetupBoot(object):
     @staticmethod
-    def generate_uboot_env(configs: dict) -> None:
+    def generate_uboot_env(configs: dict = None) -> None:
         with Console("Generating /boot/uEnv.txt"):
             Utils.install('/boot/uEnv.txt')
             Utils.template.install(
@@ -140,7 +140,7 @@ class SetupBoot(object):
 
     @staticmethod
     def __call__(board: Board, partitions: Partitions):
-        SetupBoot.generate_uboot_env(None)
+        SetupBoot.generate_uboot_env()
         SetupBoot.generate_boot_cmd(board)
         SetupBoot.generete_fit(board)
 

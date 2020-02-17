@@ -25,7 +25,7 @@ repositories:
     components:
       - 'main'
 
-    keyfile: '/tmp/staging.olimex.com.key'
+    keyfile: '/tmp/olimage.gpg'
     sources: true
-    url: "http://192.168.0.17/staging"
+    url: "http://192.168.0.59"
 

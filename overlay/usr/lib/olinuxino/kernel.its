@@ -15,7 +15,11 @@
                         type = "kernel";
                         arch = "{{ arch }}";
                         os = "linux";
+{% if arch == 'arm' %}
+                        compression = "none";
+{% else %}
                         compression = "gzip";
+{% endif %}
                         load = <{{ kernel.load }}>;
                         entry = <{{ kernel.entry }}>;
                         hash-1 {
@@ -63,7 +67,7 @@
 
                 overlay-{{ loop.index }} {
 {% for key,value in overlay.items() %}
-                    data = /incbin/("/usr/lib/olimex-sunxi-overlays/{{ board.family }}/{{ key }}");
+                    data = /incbin/("/usr/lib/olinuxino-overlays/{{ board.soc }}/{{ key }}");
                     type = "flat_dt";
                     arch = "{{ arch }}";
                     compression = "none";
