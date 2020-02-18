@@ -202,7 +202,7 @@ boards:
         - 'spi0-spiflash.dtbo'
 
     T2-OLinuXino-MICRO-e4Gs16M-IND:
-      id: 9235
+      id: 9739
       fdt: 'sun7i-a20-olinuxino-micro-emmc.dtb'
       overlays:
         - 'sun7i-a20-spi0.dtbo'
