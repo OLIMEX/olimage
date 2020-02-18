@@ -8,11 +8,6 @@ from .parameters import parameters
 from .rootfs import Rootfs
 
 
-__all__ = [
-    'Rootfs'
-]
-
-
 @click.command(name="rootfs")
 @parameters
 def build_rootfs(**kwargs):
@@ -21,17 +16,17 @@ def build_rootfs(**kwargs):
     env.options.update(kwargs)
 
     # Build rootfs
-    rootfs: Rootfs = env.obj_graph.provide(Rootfs)
+    root: Rootfs = env.obj_graph.provide(Rootfs)
     console = Console()
 
     console.info("Creating the target file-system...")
 
     with Console("Building"):
-        rootfs.build()
+        root.build()
 
     with Console("Configuring"):
-        rootfs.configure()
-        rootfs.services()
+        root.configure()
+        root.services()
 
     with Console("Cleanup"):
-        rootfs.cleanup()
+        root.cleanup()
