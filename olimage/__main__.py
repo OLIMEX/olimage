@@ -73,7 +73,7 @@ def prepare_tree():
     if not os.path.exists(workdir):
         os.mkdir(workdir)
 
-    for directory in ['dl', 'build', 'rootfs', 'images']:
+    for directory in ['build', 'rootfs', 'images']:
         path = os.path.join(workdir, directory)
 
         # Create directory
