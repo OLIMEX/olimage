@@ -65,7 +65,7 @@ class Image(object):
                         partition.parted.start,
                         partition.parted.end
                     )
-            )
+                )
 
     def format(self):
 
@@ -98,7 +98,7 @@ class Image(object):
                 # TODO: This need a fix
                 Setup.fstab(self._partitions, m.mountpoint('rootfs'))
 
-    def copy(self, source):
+    def copy(self):
         exclude = ['/dev/*', '/proc/*', '/run/*', '/tmp/*', '/sys/*']
 
         with Mounter.mount(self._output, self._partitions) as m:

@@ -23,8 +23,10 @@ def stamp(func):
             if key not in env.paths:
                 raise Exception("The path \'{}\' not set in the global environment".format(key))
 
-        # Generate stamp for the exact rootfs: .stamp_<function_<arch>-<suite>
-        file = os.path.join(env.paths['rootfs'], '.stamp_' + func.__name__.lstrip('_') + '_' + os.path.basename(env.paths['debootstrap']))
+        # Generate stamp for the exact rootfs: .stamp_<function_<arch>-<suite>-<variant>
+        file = os.path.join(
+            env.paths['rootfs'],
+            '.stamp_' + func.__name__.lstrip('_') + '_' + os.path.basename(env.paths['debootstrap']))
 
         # Check if stamp exists
         if os.path.isfile(file):
@@ -37,6 +39,7 @@ def stamp(func):
         # Stamp
         logger.debug("Creating stamp: {}".format(file))
         # TODO: Store hash sum for the directory. This way you can check for modifications
+        # Probably with: tar -cf - somedir | md5sum
         open(file, 'x').close()
 
         return ret

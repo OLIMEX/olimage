@@ -15,6 +15,5 @@ class Configs(unittest.TestCase):
         setup.Setup.hostname("asdad", "aaaa")
 
 
-
 if __name__ == '__main__':
     unittest.main()

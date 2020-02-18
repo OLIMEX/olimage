@@ -46,6 +46,9 @@ class ServiceMeta(type):
 
 
 class Service(metaclass=ServiceMeta):
+    def __init__(self):
+        pass
+
     apt_cache: ServiceAptCache
     getty: ServiceGetty
     expand: ServiceExpand

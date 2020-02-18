@@ -44,7 +44,6 @@ class Repository(object):
         return self._data['url']
 
 
-
 class Repositories(GenericLoader):
     def __init__(self) -> None:
         super().__init__("repositories", Repository)

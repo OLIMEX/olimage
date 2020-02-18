@@ -19,11 +19,11 @@ done
     exit 1
 
 # Get device
-ROOT_PART=$(blkid | grep ${ROOT#PARTUUID=} | cut -d':' -f1)
+ROOT_PART=$(blkid | grep "${ROOT#PARTUUID=}" | cut -d':' -f1)
 echo "Detected root partition: ${ROOT_PART}"
 
 # The following doesn't work on debian sid.
-DEVICE=$(lsblk -n -o PKNAME ${ROOT_PART} | head -n1)
+DEVICE=$(lsblk -n -o PKNAME "${ROOT_PART}" | head -n1)
 # Try regex expression
 if [[ -z ${DEVICE} ]]; then
     [[ ${ROOT_PART} =~ "/dev/mmcblk"[0-9]+ ]] || \
@@ -33,19 +33,19 @@ else
     DEVICE="/dev/${DEVICE}"
 fi
 [[ -z ${DEVICE} ]] && echo >&2 "Failed to determine the parent of ${ROOT_PART}." && exit 1
-PART_COUNT=$(fdisk -l ${DEVICE} | grep "^${DEVICE}p" | wc -l)
+PART_COUNT=$(fdisk -l "${DEVICE}" | grep -c "^${DEVICE}p")
 
 # Get boundaries
-while read line; do
-    grep -q "^${ROOT_PART}" <<< ${line} || continue
+while read -r line; do
+    grep -q "^${ROOT_PART}" <<< "${line}" || continue
 
-    PART_START="$(awk -F' ' '{print $2}' <<< ${line})"
-done <<< $(fdisk -l ${DEVICE})
+    PART_START="$(awk -F' ' '{print $2}' <<< "${line}")"
+done <<< "$(fdisk -l "${DEVICE}")"
 
 
 # Commands are different for single and multi-partition devices
 if [[ ${PART_COUNT} -eq 1 ]]; then
-    fdisk ${DEVICE} << __EOF__
+    fdisk "${DEVICE}" << __EOF__
 d
 n
 p
@@ -55,7 +55,7 @@ ${PART_START}
 w
 __EOF__
 else
-    fdisk ${DEVICE} << __EOF__
+    fdisk "${DEVICE}" << __EOF__
 d
 ${ROOT_PART#${DEVICE}p}
 n
@@ -68,7 +68,7 @@ __EOF__
 fi
 
 # Expand
-resize2fs ${ROOT_PART}
+resize2fs "${ROOT_PART}"
 
 # Disable service
 systemctl disable olinuxino-expand.service

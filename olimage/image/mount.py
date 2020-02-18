@@ -29,7 +29,7 @@ class Map(object):
                 partition: Partition
                 partition = self._partitions[index - 1]
                 self._devices[str(partition)] = {
-                        'device' : device,
+                        'device': device,
                     }
 
         return self
@@ -98,7 +98,6 @@ class Mount(Map):
             return self._devices[partition]['mount']
         except KeyError:
             raise Exception("Partition \'{}\' in not mounted!".format(partition))
-
 
 
 class Mounter(object):

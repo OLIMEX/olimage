@@ -10,12 +10,16 @@ from olimage.core.service import Service
 from olimage.core.setup import Setup
 from olimage.core.utils import Utils
 
-
 from .stamp import stamp
 
 
 class Rootfs(object):
-    def __init__(self, boards: Boards, distributions: Distributions, variants: Variants, users: Users, partitions: Partitions):
+    def __init__(self,
+                 boards: Boards,
+                 distributions: Distributions,
+                 variants: Variants,
+                 users: Users,
+                 partitions: Partitions):
 
         # Initialize dependencies
         self._board: Board = boards.get_board(env.options['board'])
@@ -61,6 +65,7 @@ class Rootfs(object):
 
         # Built a new rootfs
         with Console("Running qemu-debootstrap"):
+            # TODO: Store date, UUID and configs and compare them to the stamp
             Utils.qemu.debootstrap(
                 arch=self._board.arch,
                 release=self._release,
@@ -84,6 +89,7 @@ class Rootfs(object):
         # Extract fresh copy
         with Console("Extracting archive"):
             Utils.archive.extract(self._archive, env.paths['rootfs'])
+            # TODO: The new extract copy must have different name.
 
         # Configure apt
         if env.options['apt_cacher']:
@@ -141,8 +147,8 @@ class Rootfs(object):
                     Utils.systemctl.disable(service)
 
             # Enable the custom services
-            for s in [ Service.getty, Service.expand ]:
-                    s.enable()
+            for s in [Service.getty, Service.expand]:
+                s.enable()
 
             if env.options['ssh']:
                 Service.ssh.enable()

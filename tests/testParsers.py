@@ -19,5 +19,6 @@ class Parsers(unittest.TestCase):
             print(v.errors)
             raise e
 
+
 if __name__ == '__main__':
     unittest.main()

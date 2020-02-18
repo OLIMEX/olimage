@@ -3,13 +3,13 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 DOCKER="docker"
 
-APT_CACHER_NAME="olimage_apt-cacher-ng_1"
-APT_CACHER_HOST=""
-APT_CACHER_PORT="3142"
-
-NGINX_NAME="olimage_nginx_1"
-NGINX_HOST=""
-NGINX_PORT="80"
+#APT_CACHER_NAME="olimage_apt-cacher-ng_1"
+#APT_CACHER_HOST=""
+#APT_CACHER_PORT="3142"
+#
+#NGINX_NAME="olimage_nginx_1"
+#NGINX_HOST=""
+#NGINX_PORT="80"
 
 CONTAINER_NAME="olimage_work"
 
@@ -47,7 +47,7 @@ docker run --rm -it --privileged \
 	--volume /tmp:/tmp \
 	--volume /dev:/dev \
 	--volume /proc:/proc \
-	--volume $(pwd):/olimage \
+	--volume "$(pwd)":/olimage \
 	--net 'host' \
 	-w /olimage olimage python3 -m olimage "$@"
 

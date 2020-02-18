@@ -44,7 +44,7 @@ class PrinterBase(halo.Halo):
         self._frame_index = self._frame_index % len(frames)
 
         text_frame = self.text_frame()
-        delta =int(time.time() - self._start)
+        delta = int(time.time() - self._start)
 
         return u'{} {:70} {}{}{}'.format(*[
             (text_frame, frame, '')
@@ -62,7 +62,6 @@ class PrinterBase(halo.Halo):
                     ret = f(*args, **kwargs)
                     self.succeed()
                     return ret
-
                 except Exception as e:
                     self.fail()
                     raise e
@@ -126,14 +125,16 @@ class PrinterBase(halo.Halo):
 class PrinterProcess(PrinterBase):
     def __init__(self, text='', color='cyan', text_color=None, spinner=None, animation=None, placement='left',
                  interval=-1, enabled=True, stream=sys.stdout):
-        super().__init__(' - ' + text + '...', color, text_color, spinner, animation, placement, interval, enabled, stream)
+        super().__init__(
+            ' - ' + text + '...', color, text_color, spinner, animation, placement, interval, enabled, stream)
 
 
 # TODO: Remove this
 class PrinterSubprocess(PrinterBase):
     def __init__(self, text='', color='cyan', text_color=None, spinner=None, animation=None, placement='left',
                  interval=-1, enabled=True, stream=sys.stdout):
-        super().__init__(' --- ' + text + '...', color, text_color, spinner, animation, placement, interval, enabled, stream)
+        super().__init__(
+            ' --- ' + text + '...', color, text_color, spinner, animation, placement, interval, enabled, stream)
 
 
 class PrinterHeader(object):
@@ -149,9 +150,13 @@ class PrinterHeader(object):
 
 
 class Print():
+    def __init__(self):
+        pass
+
     header = PrinterHeader
     process = PrinterProcess
     subprocess = PrinterSubprocess
+
 
 # TODO: Remove the 'Printer' class
 Printer = PrinterBase

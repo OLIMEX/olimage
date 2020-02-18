@@ -41,7 +41,7 @@ class Spinner(halo.Halo):
         self._frame_index = self._frame_index % len(frames)
 
         text_frame = self.text_frame()
-        delta =int(time.time() - self._start)
+        delta = int(time.time() - self._start)
 
         return u'{} {:73} {}{}{}'.format(*[
             (text_frame, frame, '')

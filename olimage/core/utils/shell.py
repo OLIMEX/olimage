@@ -4,6 +4,7 @@ import shlex
 
 import olimage.environment as env
 
+
 class Shell(object):
     @staticmethod
     def run(command, logger=None, **kwargs):

@@ -34,7 +34,10 @@ class BootloaderA64(BootloaderAbstract):
                 '{source}/u-boot.bin '
                 '{debootstrap}/usr/bin/mksunxi_fit_atf '
                 '{temp}/'.format(debootstrap=env.paths['debootstrap'], source=source, temp=temp))
-            Utils.shell.run('cd {} && bash mksunxi_fit_atf *.dtb > u-boot.its && mkimage -f u-boot.its u-boot.itb'.format(temp), shell=True)
+            Utils.shell.run(
+                'cd {} && '
+                'bash mksunxi_fit_atf *.dtb > u-boot.its && '
+                'mkimage -f u-boot.its u-boot.itb'.format(temp), shell=True)
 
         with Console("Writing \'u-boot.itb\'"):
             Utils.shell.run('dd if={}/u-boot.itb of={} conv=notrunc,fsync bs=1k seek=40'.format(temp, output))

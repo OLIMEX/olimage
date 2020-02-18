@@ -27,10 +27,10 @@ def generate_environment(**kwargs):
     # Add paths
     root = os.path.dirname(os.path.abspath(__file__))
     environment.paths.update({
-        'root' : root,
-        'configs' : os.path.join(os.path.dirname(root), kwargs['configs']),
+        'root': root,
+        'configs': os.path.join(os.path.dirname(root), kwargs['configs']),
         'overlay': os.path.join(os.path.dirname(root), kwargs['overlay']),
-        'workdir' : os.path.join(os.path.dirname(root), kwargs['workdir']),
+        'workdir': os.path.join(os.path.dirname(root), kwargs['workdir']),
     })
 
     # Copy command-line parameters to global env
@@ -124,6 +124,7 @@ def cli(**kwargs):
 @cli.command(name="clean")
 def clean():
     shutil.rmtree(environment.paths['workdir'])
+
 
 # Add external sub-commands
 cli.add_command(olimage.rootfs.build_rootfs)

@@ -15,7 +15,7 @@ __all__ = [
 @click.command(name="image")
 @parameters
 @click.pass_context
-def build_image(ctx:click.Context, **kwargs):
+def build_image(ctx: click.Context, **kwargs):
 
     kwargs['output'] = os.path.join(env.paths['images'], kwargs['output'])
 
@@ -26,21 +26,21 @@ def build_image(ctx:click.Context, **kwargs):
     import olimage.rootfs
     ctx.invoke(olimage.rootfs.build_rootfs, **kwargs)
 
-    image: Image = env.obj_graph.provide(Image)
+    _image: Image = env.obj_graph.provide(Image)
     console = Console()
 
     console.info("Creating the target file-system...")
 
     with Console("Generating black image"):
-        image.generate()
-        image.partition()
-        image.format()
-        image.bootloader()
+        _image.generate()
+        _image.partition()
+        _image.format()
+        _image.bootloader()
 
     with Console("Copying target files"):
-        image.copy(env.paths['debootstrap'])
+        _image.copy(env.paths['debootstrap'])
 
     with Console("Configuring"):
-        image.configure()
+        _image.configure()
 
 

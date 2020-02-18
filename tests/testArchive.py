@@ -32,5 +32,6 @@ class Archive(unittest.TestCase):
         self.assertTrue(os.path.exists('/olimage/tmp/olimage'))
         shutil.rmtree('/olimage/tmp')
 
+
 if __name__ == '__main__':
     unittest.main()
