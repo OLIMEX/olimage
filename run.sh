@@ -40,7 +40,7 @@ fi
 #echo "apt-cacher listening on: ${APT_CACHER_HOST}:${APT_CACHER_PORT}"
 
 # Build image
-docker build -q -t olimage "${DIR}"
+docker build -t olimage "${DIR}"
 
 docker run --rm -it --privileged \
     --name "${CONTAINER_NAME}" \
@@ -49,7 +49,7 @@ docker run --rm -it --privileged \
 	--volume /proc:/proc \
 	--volume $(pwd):/olimage \
 	--net 'host' \
-	-w /olimage olimage python3 -m olimage $@
+	-w /olimage olimage python3 -m olimage "$@"
 
 #	-e "GIT_HASH=$(git rev-parse HEAD)" \
 #	-e "APT_CACHER_HOST=${APT_CACHER_HOST}" \
