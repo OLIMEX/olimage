@@ -1,6 +1,16 @@
 boards:
+  # Define boards architecture
   arch: 'armhf'
 
+  # Define load addresses
+  loading:
+    kernel:   '0x40080000'
+    fdt:      '0x4FA00000'
+    overlays: '0x4FA10000'
+    ramdisk:  '0x4FE00000'
+    fit:      '0x58000000'
+
+  # Define board models
   models:
     # A20-OLinuXino-LIME
     A20-OLinuXino-LIME:

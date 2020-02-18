@@ -1,7 +1,8 @@
 from .board import Board
 from .boards import Boards
-from .model import Model
+from .loading import BoardLoading
+from .model import BoardModel
 
 __all__ = [
-    'Board', 'Boards', 'Model'
+    'Board', 'Boards', 'BoardLoading', 'BoardModel'
 ]

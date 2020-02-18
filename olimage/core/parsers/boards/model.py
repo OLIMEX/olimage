@@ -1,4 +1,4 @@
-class Model(object):
+class BoardModel(object):
     """
     Parse single board model
     """
