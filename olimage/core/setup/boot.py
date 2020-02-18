@@ -53,7 +53,7 @@ class SetupBoot(object):
                 },
                 fit={
                     'file': 'kernel.itb',
-                    'load': '0x60000000'
+                    'load': board.loading.fit,
                 },
                 partitions=parts,
                 stamp={
