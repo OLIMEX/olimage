@@ -1,4 +1,5 @@
-from .model import Model
+from .loading import BoardLoading
+from .model import BoardModel
 
 
 class Board(object):
@@ -11,9 +12,10 @@ class Board(object):
 
         # Create variants
         self._default = None
+        self._loading = BoardLoading(data['loading'])
         self._models = []
         for key, value in data['models'].items():
-            self._models.append(Model(key, value))
+            self._models.append(BoardModel(key, value))
 
     def __str__(self) -> str:
         """
@@ -42,7 +44,11 @@ class Board(object):
         return self._data['soc']
 
     @property
-    def models(self) -> [Model]:
+    def loading(self) -> BoardLoading:
+        return self._loading
+
+    @property
+    def models(self) -> [BoardModel]:
         """
         Get all models of the board
 
@@ -51,7 +57,7 @@ class Board(object):
         return self._models
 
     @property
-    def target(self) -> Model:
+    def target(self) -> BoardModel:
         """
         Get the target model
 
@@ -60,7 +66,7 @@ class Board(object):
         return self._default
 
     @target.setter
-    def target(self, model: Model) -> None:
+    def target(self, model: BoardModel) -> None:
         """
         Set the target model
         

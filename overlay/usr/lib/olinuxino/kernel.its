@@ -20,8 +20,8 @@
 {% else %}
                         compression = "gzip";
 {% endif %}
-                        load = <{{ kernel.load }}>;
-                        entry = <{{ kernel.entry }}>;
+                        load = <{{ board.loading.kernel }}>;
+                        entry = <{{ board.loading.kernel }}>;
                         hash-1 {
                                 algo = "crc32";
                         };
@@ -36,8 +36,8 @@
                     type = "ramdisk";
                     arch = "{{ arch }}";
                     os = "linux";
-                    load = <{{ ramdisk.load }}>;
-                    entry = <{{ ramdisk.entry }}>;
+                    load = <{{ board.loading.ramdisk }}>;
+                    entry = <{{ board.loading.ramdisk }}>;
                     hash-1 {
                             algo = "crc32";
                     };
@@ -48,19 +48,17 @@
 {% for fdt in fdts %}
 
                 fdt-{{ loop.index }} {
-{% for key,value in fdt.items() %}
-                    data = /incbin/("/usr/lib/linux-image-${VERSION}/{{ key }}");
+                    data = /incbin/("/usr/lib/linux-image-${VERSION}/{{ fdt }}");
                     type = "flat_dt";
                     arch = "{{ arch }}";
                     compression = "none";
-                    load = <{{ value.load }}>;
+                    load = <{{ board.loading.fdt }}>;
                     hash-1 {
                             algo = "crc32";
                     };
                     hash-2 {
                             algo = "sha1";
                     };
-{% endfor %}
                 };
 {% endfor %}
 {% for overlay in overlays %}

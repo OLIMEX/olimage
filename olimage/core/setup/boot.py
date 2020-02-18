@@ -70,7 +70,7 @@ class SetupBoot(object):
             )
 
     @staticmethod
-    def generete_fit(board):
+    def generate_fit(board):
         with Console("Generating /usr/lib/olinuxino/kernel.its"):
             Utils.install('/etc/kernel/postinst.d/uboot-fit', mode='755')
             Utils.install('/usr/lib/olinuxino/kernel.its')
@@ -103,14 +103,8 @@ class SetupBoot(object):
                     'compatible': 'olimex,{}'.format(str(model).lower())
                 })
 
-            # Generate load addresses for fdt files
-            temp = []
-            for fdt in fdts:
-                temp.append({fdt: {'load': '0x4FA00000'}})
-            fdts = temp
-
             # Generate load addresses for overlays
-            addr = 0x4FA10000
+            addr = int(board.loading.overlays, 16)
             temp = []
             for overlay in overlays:
                 temp.append({overlay: {'load': '0x{:08X}'.format(addr)}})
@@ -122,15 +116,7 @@ class SetupBoot(object):
                 arch='arm' if board.arch == 'armhf' else board.arch,
                 board=board,
                 fdts=fdts,
-                kernel={
-                    'load': '0x40080000',
-                    'entry': '0x40080000'
-                },
                 overlays=overlays,
-                ramdisk={
-                    'load': '0x4FE00000',
-                    'entry': '0x4FE00000'
-                },
                 stamp={
                     'date': str(datetime.datetime.now()),
                     'uuid': str(uuid.uuid4()),
@@ -142,5 +128,5 @@ class SetupBoot(object):
     def __call__(board: Board, partitions: Partitions):
         SetupBoot.generate_uboot_env()
         SetupBoot.generate_boot_cmd(board)
-        SetupBoot.generete_fit(board)
+        SetupBoot.generate_fit(board)
 
