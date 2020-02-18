@@ -2,10 +2,11 @@ import abc
 
 
 class BootloaderAbstract(metaclass=abc.ABCMeta):
-    @abc.abstractstaticmethod
-    def supported():
+    @staticmethod
+    @abc.abstractmethod
+    def compatible() -> str:
         pass
 
-    @abc.abstractstaticmethod
-    def install(board, output):
+    @abc.abstractmethod
+    def install(self, output: str) -> None:
         pass

@@ -4,8 +4,8 @@ repositories:
   # Specify the name of the repository.
   # Each key will create additional file ini /etc/apt/lists.d/, so
   # the key must be unique
+
 #  olimex:
-#
 #    # Repository components
 #    # Usually main, contrib, etc. If omitted, "main" will be used
 #    components:
@@ -22,10 +22,17 @@ repositories:
 #    url: "http://repository.olimex.com"
 
   staging:
+    # Repository components
+    # Usually main, contrib, etc. If omitted, "main" will be used
     components:
-      - 'main'
+      - "main"
 
-    keyfile: '/tmp/olimage.gpg'
+    # Specify key and keyserver for import
+    key: "2BE33123120C50F2666530ED09271DCFB6350689"
+    keyserver: "keyserver.ubuntu.com"
+
+    # Should deb-src be included?
     sources: true
-    url: "http://192.168.0.59"
 
+    # The repository url
+    url: "http://staging.olimex.com/staging"

@@ -1,6 +1,13 @@
 boards:
   arch: 'arm64'
 
+  loading:
+    kernel:   '0x40080000'
+    fdt:      '0x4FA00000'
+    overlays: '0x4FA10000'
+    ramdisk:  '0x4FE00000'
+    fit:      '0x58000000'
+
 #  bootloaders:
 #    spl:
 #      file: '/usr/lib/u-boot/a64-olinuxino/sunxi-spl.bin'
@@ -19,33 +26,29 @@ boards:
 #          - '/usr/lib'
 #      block: 1024
 #      offset: 40
-
-  soc: 'sun50i-a64'
-
   # Define board variants
   models:
     A64-OLinuXino-1Ge4GW:
       id : 8367
       fdt: 'allwinner/sun50i-a64-olinuxino-emmc.dtb'
-      overlays: ~
 
     A64-OLinuXino-1G:
       id: 8857
       fdt: 'allwinner/sun50i-a64-olinuxino.dtb'
-      overlays: ~
 
     A64-OLinuXino-2Ge8G-IND:
       id: 8861
       fdt: 'allwinner/sun50i-a64-olinuxino-emmc.dtb'
-      overlays: ~
 
     A64-OLinuXino-1Gs16M:
       id: 9065
       fdt: 'allwinner/sun50i-a64-olinuxino.dtb'
       overlays:
+        - 'sun50i-a64-spi0.dtbo'
         - 'spi0-spiflash.dtbo'
 
     A64-OLinuXino-1Ge16GW:
       id: 9849
       fdt: 'allwinner/sun50i-a64-olinuxino-emmc.dtb'
-      overlays: ~
+
+  soc: 'sun50i-a64'

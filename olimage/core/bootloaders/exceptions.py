@@ -1,0 +1,2 @@
+class BootloaderException(Exception):
+    pass

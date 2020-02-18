@@ -26,7 +26,7 @@ class Image(object):
 
     def generate(self) -> None:
         """
-        Generate black image
+        Generate blank image
 
         :return: None
         """
@@ -42,7 +42,7 @@ class Image(object):
         # Get size and add 500MiB size
         size = max((size >> 20) + 500, env.options['size'])
 
-        with Console("Generating black image with size: {}MiB".format(size)):
+        with Console("Generating blank image with size: {}MiB".format(size)):
             Utils.qemu.img(self._output, size)
 
     def partition(self) -> None:
@@ -85,8 +85,8 @@ class Image(object):
                     Utils.shell.run('udevadm settle'.format(device))
 
     def bootloader(self):
-        with Console("Writing bootloader"):
-            Bootloader.install(self._board, self._output)
+        with Console("Flashing bootloader"):
+            Bootloader(self._board).install(self._output)
 
     def configure(self):
         with Mounter.mount(self._output, self._partitions) as m:

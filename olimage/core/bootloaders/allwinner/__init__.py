@@ -1,4 +1,6 @@
-from .sun7i import Sun7iA20
+from .a20 import BootloaderA20
+from .a64 import BootloaderA64
+
 __all__ = [
-    'Sun7iA20'
+    'BootloaderA20', 'BootloaderA64'
 ]
