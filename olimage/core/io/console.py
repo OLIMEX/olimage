@@ -52,5 +52,8 @@ class Console(BaseIO):
         return "{} {}{}{}".format(indent, style, message, colorama.Style.RESET_ALL)
 
     def info(self, message: str):
-        print(self._format(message, 0))
+        print("{}{}{}".format(colorama.Style.BRIGHT, message, colorama.Style.RESET_ALL))
+
+    def critical(self, message: str):
+        print("{}{}{}".format(colorama.Style.BRIGHT + colorama.Fore.RED, message, colorama.Style.RESET_ALL))
 

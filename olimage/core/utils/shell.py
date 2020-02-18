@@ -4,7 +4,6 @@ import shlex
 
 import olimage.environment as env
 
-
 class Shell(object):
     @staticmethod
     def run(command, logger=None, **kwargs):
@@ -15,6 +14,7 @@ class Shell(object):
             for line in data.decode().rstrip().split('\n'):
                 logger.debug(line)
 
+        _e = None
         kw = dict()
         kw['env'] = env.env
         kw['stdout_callback'] = handle_output
@@ -28,10 +28,15 @@ class Shell(object):
 
         try:
             return cliapp.runcmd(command, **kw)
+        except KeyboardInterrupt as e:
+            _e = e
         except cliapp.app.AppException as e:
             msg: str = e.msg
             logger.error(msg)
-            raise Exception(msg.splitlines()[0])
+            _e = Exception('\n'.join(msg.splitlines()))
+
+        if _e:
+            raise _e
 
     @staticmethod
     def _bind(directory):

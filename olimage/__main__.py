@@ -1,6 +1,7 @@
 import logging
 import os
 import sys
+import traceback
 
 import click
 import pinject
@@ -11,6 +12,8 @@ import olimage.rootfs
 
 import olimage
 import olimage.environment as environment
+
+from olimage.core.io import Console
 
 
 def generate_environment(**kwargs):
@@ -127,70 +130,11 @@ cli.add_command(olimage.rootfs.build_rootfs)
 cli.add_command(olimage.image.build_image)
 
 
-
-
-# @cli.command()
-# # Arguments
-# @click.argument("board")
-# @click.argument("release")
-# @click.argument("variant", type=click.Choice(['lite', 'base', 'full']))
-# @click.argument("output")
-# @click.pass_context
-# def test(ctx: click.Context, **kwargs):
-#
-#     from olimage.core.parsers import Boards, Board, Bootloader
-#     from olimage.core.utils import Utils
-#
-#     # Update environment options
-#     environment.options.update(kwargs)
-#
-#     # Build rootfs
-#     ctx.invoke(olimage.rootfs.build_rootfs, **kwargs)
-#
-#     # Install packages
-#     # ctx.invoke(olimage.packages.build_packages, board=kwargs['board'], package=None, command='install')
-#
-#     # Build image
-#     ctx.invoke(olimage.image.build_image, source=environment.paths['debootstrap'], output=kwargs['output'])
-#
-#     # Install bootloader
-#     _boards: Boards = environment.obj_graph.provide(Boards)
-#     _board: Board = _boards.get_board(kwargs['board'])
-#
-#     # Install SPL
-#     spl: Bootloader
-#     spl = _board._data['bootloaders']['spdl']
-#     Utils.shell.run(
-#             'dd if={} of={} conv=notrunc,fsync bs={} seek={}'.format(
-#                 environment.paths['debootstrap'] + spl['file'], environment.options['output'], spl['block'], spl['offset'])
-#     )
-#
-#     # Install u-boot
-#     u_boot: Bootloader
-#     u_boot = _board._data['bootloaders']['u-boot']
-#     temp = Utils.shell.run('mktemp -d').decode().strip()
-#     Utils.shell.run('cp -vf {}/usr/lib/arm-trusted-firmware/sun50i_a64/bl31.bin {}/'.format(environment.paths['debootstrap'], temp))
-#     Utils.shell.run('cp -vf {}/usr/lib/u-boot/a64-olinuxino/sun50i-a64-olinuxino.dtb {}/'.format(environment.paths['debootstrap'], temp))
-#     Utils.shell.run('cp -vf {}/usr/lib/u-boot/a64-olinuxino/u-boot-nodtb.bin {}/'.format(environment.paths['debootstrap'], temp))
-#     Utils.shell.run('cp -vf {}/usr/lib/u-boot/a64-olinuxino/u-boot.bin {}/'.format(environment.paths['debootstrap'], temp))
-#     Utils.shell.run('cp -vf {}/usr/bin/mksunxi_fit_atf {}/'.format(environment.paths['debootstrap'], temp))
-#     Utils.shell.run(
-#         'cd {} && bash mksunxi_fit_atf *.dtb > u-boot.its && mkimage -f u-boot.its u-boot.itb'.format(temp),
-#         shell=True
-#     )
-#
-#     Utils.shell.run(
-#         'dd if={} of={} conv=notrunc,fsync bs={} seek={}'.format(
-#             os.path.join(temp, u_boot['file']), environment.options['output'], u_boot['block'], u_boot['offset'])
-#     )
-#
-#     Utils.shell.run('rm -rvf {}'.format(temp))
-
-
 if __name__ == "__main__":
-    sys.exit(cli())
-    # try:
-    #     sys.exit(cli())
-    # except Exception as e:
-    #     print(e)
-    #     sys.exit(1)
+    try:
+        sys.exit(cli())
+    except Exception as e:
+        # Print the exception traceback
+        traceback.print_exc()
+        Console().critical(str(e))
+        sys.exit(1)
