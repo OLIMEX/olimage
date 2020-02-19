@@ -8,9 +8,9 @@ from olimage.core.parsers.variants import Variant
 from olimage.core.service import Service
 from olimage.core.setup import Setup
 from olimage.core.utils import Utils
-from olimage.rootfs.filesystem import FileSystemBase
 
-from olimage.rootfs.stamp import stamp
+from olimage.filesystem.filesystem import FileSystemBase
+from olimage.filesystem.stamp import stamp
 
 
 class FileSystemLite(FileSystemBase):
@@ -51,7 +51,7 @@ class FileSystemLite(FileSystemBase):
 
         # Extract fresh copy
         with Console("Extracting archive"):
-            Utils.archive.extract(self._build_dir + '.build.tar.gz', env.paths['rootfs'])
+            Utils.archive.extract(self._build_dir + '.build.tar.gz', env.paths['filesystem'])
 
         # Configure apt
         if env.options['apt_cacher']:

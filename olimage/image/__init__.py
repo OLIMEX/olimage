@@ -22,9 +22,9 @@ def build_image(ctx: click.Context, **kwargs):
     # Update env options
     env.options.update(kwargs)
 
-    # Invoke build rootfs
-    import olimage.rootfs
-    ctx.invoke(olimage.rootfs.build_rootfs, **kwargs)
+    # Invoke build filesystem
+    import olimage.filesystem
+    ctx.invoke(olimage.filesystem.build_filesystem, **kwargs)
 
     _image: Image = env.obj_graph.provide(Image)
     console = Console()

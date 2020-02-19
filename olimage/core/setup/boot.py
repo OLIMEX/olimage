@@ -63,8 +63,8 @@ class SetupBoot(object):
 
             # Generate boot.scr
             Utils.shell.run(
-                "mkimage -C none -A arm -T script -d {rootfs}/boot/boot.cmd {rootfs}/boot/boot.scr".format(
-                    rootfs=env.paths['build']),
+                "mkimage -C none -A arm -T script -d {build}/boot/boot.cmd {build}/boot/boot.scr".format(
+                    build=env.paths['build']),
                 shell=True
             )
 

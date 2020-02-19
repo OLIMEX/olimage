@@ -34,15 +34,15 @@ def verify_options():
     env.options['release'] = release
 
 
-@click.command(name="rootfs")
+@click.command(name="filesystem")
 @parameters
-def build_rootfs(**kwargs):
+def build_filesystem(**kwargs):
 
     # Update environment options
     env.options.update(kwargs)
     verify_options()
 
-    # Build rootfs
+    # Build filesystem
     # root: Rootfs = env.obj_graph.provide(Rootfs)
 
     board: Board = Boards().get_board(kwargs['board'])

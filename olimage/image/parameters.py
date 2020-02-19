@@ -1,6 +1,6 @@
 import click
 
-from olimage.rootfs.parameters import _arguments, _options
+from olimage.filesystem.parameters import _arguments, _options
 
 _arguments += [
     click.argument("output")

@@ -8,7 +8,7 @@ import pinject
 import shutil
 
 import olimage.image
-import olimage.rootfs
+import olimage.filesystem
 
 import olimage
 import olimage.environment as environment
@@ -57,7 +57,7 @@ def prepare_logging():
     logging.basicConfig(
         filename=environment.options['log'],
         filemode='w',
-        format='\033[1m%(name)s\033[0m | %(message)s',
+        format='%(message)s',
         level=logging.DEBUG if environment.options['verbose'] > 0 else logging.INFO)
 
 
@@ -73,7 +73,7 @@ def prepare_tree():
     if not os.path.exists(output):
         os.mkdir(output)
 
-    for directory in ['rootfs', 'images']:
+    for directory in ['filesystem', 'images']:
         path = os.path.join(output, directory)
 
         # Create directory
@@ -85,10 +85,6 @@ def prepare_tree():
 
 
 @click.group()
-# Options
-@click.option("--workdir", default="output", help="Specify working directory.")
-@click.option("--configs", default="configs", help="Configs directory")
-@click.option("--overlay", default="overlay", help="Path to overlay files")
 # Apt-cacher
 @click.option("--apt-cacher/--no-apt-cacher",
               default=False,
@@ -127,7 +123,7 @@ def clean():
 
 
 # Add external sub-commands
-cli.add_command(olimage.rootfs.build_rootfs)
+cli.add_command(olimage.filesystem.build_filesystem)
 cli.add_command(olimage.image.build_image)
 
 

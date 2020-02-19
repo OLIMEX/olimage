@@ -65,7 +65,7 @@ class Mount(Map):
             device = self._devices[str(partition)]['device']
             uuid = Utils.shell.run('blkid -s UUID -o value {}'.format(device)).decode().splitlines()[0]
 
-            self._devices[str(partition)]['mount'] = env.paths['rootfs'] + '/.mnt_' + str(partition)
+            self._devices[str(partition)]['mount'] = env.paths['filesystem'] + '/.mnt_' + str(partition)
             self._devices[str(partition)]['uuid'] = uuid
 
             self._mount(self._devices[str(partition)])

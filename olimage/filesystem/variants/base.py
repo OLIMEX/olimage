@@ -1,4 +1,4 @@
-from olimage.rootfs.filesystem import FileSystemBase
+from olimage.filesystem.filesystem import FileSystemBase
 
 
 class FileSystemBase(FileSystemBase):

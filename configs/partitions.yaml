@@ -1,6 +1,6 @@
 partitions:
 
-  rootfs:
+  root:
     fstab:
       type: 'ext4'
       mount: '/'

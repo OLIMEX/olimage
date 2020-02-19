@@ -96,7 +96,7 @@ class Image(object):
                     partition.fstab.uuid = m.uuid(partition)
 
                 # TODO: This need a fix
-                Setup.fstab(self._partitions, m.mountpoint('rootfs'))
+                Setup.fstab(self._partitions, m.mountpoint('root'))
 
     def copy(self):
         exclude = ['/dev/*', '/proc/*', '/run/*', '/tmp/*', '/sys/*']
