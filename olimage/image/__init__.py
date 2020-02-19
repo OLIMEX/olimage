@@ -29,7 +29,7 @@ def build_image(ctx: click.Context, **kwargs):
     _image: Image = env.obj_graph.provide(Image)
     console = Console()
 
-    console.info("Creating the target file-system...")
+    console.info("Creating image \'{}\'...".format(os.path.basename(kwargs['output'])))
 
     with Console("Generating black image"):
         _image.generate()
@@ -38,7 +38,7 @@ def build_image(ctx: click.Context, **kwargs):
         _image.bootloader()
 
     with Console("Copying target files"):
-        _image.copy(env.paths['build'])
+        _image.copy()
 
     with Console("Configuring"):
         _image.configure()
