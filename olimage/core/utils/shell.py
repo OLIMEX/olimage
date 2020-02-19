@@ -4,22 +4,42 @@ import shlex
 
 import olimage.environment as env
 
+logger = logging.getLogger(__name__)
+buffer = {
+    'stdout': '',
+    'stderr': '',
+}
 
 class Shell(object):
     @staticmethod
-    def run(command, logger=None, **kwargs):
-        if logger is None or not isinstance(logger, logging.Logger):
-            logger = logging.getLogger(__name__)
+    def stderr_callback(data):
+        for line in data.decode().rstrip().split('\n'):
+            global buffer
+            buffer['stderr'] += line + '\n'
 
-        def handle_output(data):
-            for line in data.decode().rstrip().split('\n'):
-                logger.debug(line)
+            logger.debug(line)
+
+    @staticmethod
+    def stdout_callback(data):
+        for line in data.decode().rstrip().split('\n'):
+            global buffer
+            buffer['stdout'] += line + '\n'
+
+            logger.debug(line)
+
+    @staticmethod
+    def run(command, **kwargs):
+
+        global buffer
+        buffer['stdout'] = ''
+        buffer['stderr'] = ''
 
         _e = None
+
         kw = dict()
         kw['env'] = env.env
-        kw['stdout_callback'] = handle_output
-        kw['stderr_callback'] = handle_output
+        kw['stdout_callback'] = Shell.stdout_callback
+        kw['stderr_callback'] = Shell.stderr_callback
         kw.update(kwargs)
 
         if 'shell' in kwargs and kwargs['shell']:
@@ -34,7 +54,7 @@ class Shell(object):
         except cliapp.app.AppException as e:
             msg: str = e.msg
             logger.error(msg)
-            _e = Exception('\n'.join(msg.splitlines()))
+            _e = Exception(msg.splitlines()[0] + '\n' + buffer['stderr'])
 
         if _e:
             raise _e
@@ -54,18 +74,22 @@ class Shell(object):
         Shell.run("umount {}/proc".format(directory))
 
     @staticmethod
-    def chroot(command, directory=None, logger=None, **kwargs):
+    def chroot(command, directory=None, **kwargs):
         # This should use env
         if directory is None:
             directory = env.paths['debootstrap']
 
+        _e = None
         Shell._bind(directory)
         try:
-            Shell.run("chroot {} ".format(directory) + command, logger, **kwargs)
+            Shell.run("chroot {} ".format(directory) + command, **kwargs)
             Shell._unbind(directory)
         except KeyboardInterrupt:
             Shell._unbind(directory)
-            raise KeyboardInterrupt
+            _e = KeyboardInterrupt
         except Exception as e:
             Shell._unbind(directory)
-            raise e
+            _e = e
+
+        if _e:
+            raise _e
