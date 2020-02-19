@@ -51,9 +51,15 @@ class Console(BaseIO):
 
         return "{} {}{}{}".format(indent, style, message, colorama.Style.RESET_ALL)
 
-    def info(self, message: str):
-        print("{}{}{}".format(colorama.Style.BRIGHT, message, colorama.Style.RESET_ALL))
+    @staticmethod
+    def info(message: str):
+        print("{}I: {}{}".format(colorama.Style.BRIGHT, message, colorama.Style.RESET_ALL))
 
-    def critical(self, message: str):
-        print("{}{}{}".format(colorama.Style.BRIGHT + colorama.Fore.RED, message, colorama.Style.RESET_ALL))
+    @staticmethod
+    def warning(message: str):
+        print("{}W: {}{}".format(colorama.Style.BRIGHT + colorama.Fore.YELLOW, message, colorama.Style.RESET_ALL))
+
+    @staticmethod
+    def error(message: str):
+        print("{}E: {}{}".format(colorama.Style.BRIGHT + colorama.Fore.RED, message, colorama.Style.RESET_ALL))
 

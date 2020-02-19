@@ -16,11 +16,11 @@ class SetupApt(object):
         for repo in Repositories():
             repo: Repository
 
-            with Console("Installing repository: \'{}\'".format(repo.url)):
+            with Console("Adding: \'{}\'".format(repo.url)):
                 file = '/etc/apt/sources.list.d/{}.list'.format(str(repo))
 
                 source = env.paths['overlay'] + '/etc/apt/sources.list.d/default.list'
-                destination = env.paths['debootstrap'] + file
+                destination = env.paths['build'] + file
 
                 # # Install source list
                 Utils.shell.run("install -m 644 {} {}".format(source, destination))
@@ -38,7 +38,7 @@ class SetupApt(object):
         # Update sources
         # It's possible for some repository to have missing release files, so
         # for now ignore error upon update
-        with Console("Updating sources list"):
+        with Console("Updating"):
             Utils.shell.chroot('apt-get update', ignore_fail=True)
 
     @staticmethod

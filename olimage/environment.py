@@ -9,5 +9,8 @@ paths = {}
 # Global options
 options = {}
 
+# Global bjects
+objects = {}
+
 # Objects
 obj_graph: pinject.object_graph.ObjectGraph = None

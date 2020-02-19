@@ -19,14 +19,14 @@ def stamp(func):
     def wrapper(*args, **kwargs):
 
         # Check if the environment keys are set
-        for key in ['rootfs', 'debootstrap']:
+        for key in ['rootfs', 'build']:
             if key not in env.paths:
                 raise Exception("The path \'{}\' not set in the global environment".format(key))
 
         # Generate stamp for the exact rootfs: .stamp_<function_<arch>-<suite>-<variant>
         file = os.path.join(
             env.paths['rootfs'],
-            '.stamp_' + func.__name__.lstrip('_') + '_' + os.path.basename(env.paths['debootstrap']))
+            '.stamp_' + func.__name__.lstrip('_') + '_' + os.path.basename(env.paths['build']))
 
         # Check if stamp exists
         if os.path.isfile(file):

@@ -17,7 +17,7 @@ class BootloaderA64(BootloaderAbstract):
 
     def install(self, output: str):
 
-        source = env.paths['debootstrap'] + '/usr/lib/u-boot-olinuxino/a64-olinuxino'
+        source = env.paths['build'] + '/usr/lib/u-boot-olinuxino/a64-olinuxino'
 
         # Write SPL image
         with Console("Writing \'sunxi-spl.bin\'"):
@@ -28,12 +28,12 @@ class BootloaderA64(BootloaderAbstract):
         with Console("Generating \'u-boot.itb\'"):
             temp = Utils.shell.run('mktemp -d').decode().strip()
             Utils.shell.run(
-                'cp -vf {debootstrap}/usr/lib/arm-trusted-firmware/sun50i_a64/bl31.bin '
+                'cp -vf {build}/usr/lib/arm-trusted-firmware/sun50i_a64/bl31.bin '
                 '{source}/sun50i-a64-olinuxino.dtb '
                 '{source}/u-boot-nodtb.bin '
                 '{source}/u-boot.bin '
-                '{debootstrap}/usr/bin/mksunxi_fit_atf '
-                '{temp}/'.format(debootstrap=env.paths['debootstrap'], source=source, temp=temp))
+                '{build}/usr/bin/mksunxi_fit_atf '
+                '{temp}/'.format(build=env.paths['build'], source=source, temp=temp))
             Utils.shell.run(
                 'cd {} && '
                 'bash mksunxi_fit_atf *.dtb > u-boot.its && '

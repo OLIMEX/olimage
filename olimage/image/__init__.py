@@ -38,7 +38,7 @@ def build_image(ctx: click.Context, **kwargs):
         _image.bootloader()
 
     with Console("Copying target files"):
-        _image.copy(env.paths['debootstrap'])
+        _image.copy(env.paths['build'])
 
     with Console("Configuring"):
         _image.configure()

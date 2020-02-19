@@ -6,7 +6,7 @@ from olimage.core.utils import Utils
 
 class SetupConsole(object):
     @staticmethod
-    def __call__(path: str, keymap: str, layout: str):
+    def __call__(keymap: str, layout: str):
 
         # Configure console
         with Console("Generating console configuration"):
@@ -16,7 +16,7 @@ class SetupConsole(object):
                 echo "console-setup console-setup/codeset47 select Guess optimal character set\" | debconf-set-selections -v; \
                 echo "console-setup console-setup/fontface47 select  Do not change the boot/kernel font" | debconf-set-selections -v\
                 \'',
-                path
+                env.paths['build']
             )
 
         # Configure keyboard
@@ -30,14 +30,14 @@ class SetupConsole(object):
                 echo "keyboard-configuration keyboard-configuration/ctrl_alt_bksp boolean true" | debconf-set-selections -v; \
                 echo "keyboard-configuration keyboard-configuration/variant select {}" | debconf-set-selections -v\
                 \''.format(keymap, layout),
-                path
+                env.paths['build']
             )
 
         # Install package
         with Console("Installing packages"):
             Utils.shell.chroot(
                 'apt-get install -y console-setup keyboard-configuration',
-                path
+                env.paths['build']
             )
 
         # Install files
@@ -47,5 +47,5 @@ class SetupConsole(object):
         with Console("Running setup"):
             Utils.shell.chroot(
                 'setupcon --force --save-only -v',
-                path
+                env.paths['build']
             )

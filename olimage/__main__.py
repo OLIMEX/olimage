@@ -73,7 +73,7 @@ def prepare_tree():
     if not os.path.exists(workdir):
         os.mkdir(workdir)
 
-    for directory in ['build', 'rootfs', 'images']:
+    for directory in ['rootfs', 'images']:
         path = os.path.join(workdir, directory)
 
         # Create directory
@@ -137,5 +137,5 @@ if __name__ == "__main__":
     except Exception as e:
         # Print the exception traceback
         traceback.print_exc()
-        Console().critical(str(e))
+        Console().error(str(e))
         sys.exit(1)

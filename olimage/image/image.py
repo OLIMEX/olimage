@@ -32,7 +32,7 @@ class Image(object):
         """
 
         size = 0
-        for _dir, _, file in os.walk(env.paths['debootstrap']):
+        for _dir, _, file in os.walk(env.paths['build']):
             for f in file:
                 fp = os.path.join(_dir, f)
 
@@ -109,6 +109,6 @@ class Image(object):
                         x += '--exclude={} '.format(e)
                     Utils.shell.run('rsync -aHWXh {} {}/ {}/'.format(
                         x,
-                        env.paths['debootstrap'] + partition.fstab.mount,
+                        env.paths['build'] + partition.fstab.mount,
                         m.mountpoint(partition)
                     ))

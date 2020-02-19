@@ -6,7 +6,6 @@ import olimage.environment as env
 
 from olimage.core.io import Console
 from olimage.core.parsers.boards import Board
-from olimage.core.parsers import Partitions
 from olimage.core.utils import Utils
 
 
@@ -16,7 +15,7 @@ class SetupBoot(object):
         with Console("Generating /boot/uEnv.txt"):
             Utils.install('/boot/uEnv.txt')
             Utils.template.install(
-                env.paths['debootstrap'] + '/boot/uEnv.txt',
+                env.paths['build'] + '/boot/uEnv.txt',
                 configs=configs,
                 stamp={
                     'date': str(datetime.datetime.now()),
@@ -44,7 +43,7 @@ class SetupBoot(object):
 
             # Generate template
             Utils.template.install(
-                env.paths['debootstrap'] + '/boot/boot.cmd',
+                env.paths['build'] + '/boot/boot.cmd',
                 arch=board.arch,
                 bootargs={
                     'console': 'ttyS0,115200',
@@ -65,7 +64,7 @@ class SetupBoot(object):
             # Generate boot.scr
             Utils.shell.run(
                 "mkimage -C none -A arm -T script -d {rootfs}/boot/boot.cmd {rootfs}/boot/boot.scr".format(
-                    rootfs=env.paths['debootstrap']),
+                    rootfs=env.paths['build']),
                 shell=True
             )
 
@@ -83,7 +82,7 @@ class SetupBoot(object):
                     fdts.append(model.fdt)
 
                 for overlay in model.overlays:
-                    file = env.paths['debootstrap'] + '/usr/lib/olinuxino-overlays/{}/{}'.format(board.soc, overlay)
+                    file = env.paths['build'] + '/usr/lib/olinuxino-overlays/{}/{}'.format(board.soc, overlay)
                     if overlay not in overlays and os.path.exists(file):
                         overlays.append(overlay)
 
@@ -112,7 +111,7 @@ class SetupBoot(object):
             overlays = temp
 
             Utils.template.install(
-                env.paths['debootstrap'] + '/usr/lib/olinuxino/kernel.its',
+                env.paths['build'] + '/usr/lib/olinuxino/kernel.its',
                 arch='arm' if board.arch == 'armhf' else board.arch,
                 board=board,
                 fdts=fdts,
@@ -125,7 +124,8 @@ class SetupBoot(object):
             )
 
     @staticmethod
-    def __call__(board: Board, partitions: Partitions):
+    def __call__():
+        board = env.objects['board']
         SetupBoot.generate_uboot_env()
         SetupBoot.generate_boot_cmd(board)
         SetupBoot.generate_fit(board)

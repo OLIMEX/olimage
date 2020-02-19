@@ -19,6 +19,6 @@ class BootloaderA20(BootloaderAbstract):
         with Console("Writing \'u-boot-sunxi-with-spl.bin\'"):
             Utils.shell.run(
                 'dd if={} of={} bs=1k seek=8 conv=sync,fsync,notrunc'.format(
-                    env.paths['debootstrap'] + "/usr/lib/u-boot-olinuxino/a20-olinuxino/u-boot-sunxi-with-spl.bin",
+                    env.paths['build'] + "/usr/lib/u-boot-olinuxino/a20-olinuxino/u-boot-sunxi-with-spl.bin",
                     output
                 ))

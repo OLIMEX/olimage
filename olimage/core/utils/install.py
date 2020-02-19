@@ -16,7 +16,7 @@ class Install(object):
         for file in files:
             source = env.paths['overlay'] + file
             if path is None:
-                destination = env.paths['debootstrap'] + file
+                destination = env.paths['build'] + file
             else:
                 destination = path + file
 

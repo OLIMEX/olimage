@@ -17,14 +17,14 @@ class ServiceAptCache(ServiceBase):
 
         # Generate template
         Utils.template.install(
-            env.paths['debootstrap'] + file,
+            env.paths['build'] + file,
             host=host,
             port=port
         )
 
     @staticmethod
     def disable() -> None:
-        file = env.paths['debootstrap'] + '/etc/apt/apt.conf.d/01cache'
+        file = env.paths['build'] + '/etc/apt/apt.conf.d/01cache'
 
         # Check if file exists
         if not os.path.exists(file):

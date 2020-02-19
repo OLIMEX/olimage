@@ -21,6 +21,16 @@ class Spinner(halo.Halo):
         self._start = time.time()
         return super().__enter__()
 
+    def timedelta(self):
+        delta = int(time.time() - self._start)
+        if delta > 0:
+            td = datetime.timedelta(seconds=delta)
+            message = str(td)
+            return ':'.join(str(td).split(':')[1:])
+
+
+        return ''
+
     def frame(self):
         """Builds and returns the frame to be rendered
         Returns
@@ -41,12 +51,11 @@ class Spinner(halo.Halo):
         self._frame_index = self._frame_index % len(frames)
 
         text_frame = self.text_frame()
-        delta = int(time.time() - self._start)
 
-        return u'{} {:73} {}{}{}'.format(*[
+        return u'{} {:73} {}{:>7}{}'.format(*[
             (text_frame, frame, '')
             if self._placement == 'right' else
-            (frame, text_frame, Fore.YELLOW,  datetime.timedelta(seconds=delta) if delta > 0 else '', Style.RESET_ALL),
+            (frame, text_frame, Fore.YELLOW,  self.timedelta(), Style.RESET_ALL),
         ][0])
 
     def __call__(self, f):
@@ -145,12 +154,10 @@ class Spinner(halo.Halo):
 
         self.stop()
 
-        delta = int(time.time() - self._start)
-
-        output = u'{} {:73} {}{}{}\n'.format(*[
+        output = u'{} {:73} {}{:>7}{}\n'.format(*[
             (text, symbol, '')
             if self._placement == 'right' else
-            (symbol, text, Fore.YELLOW, datetime.timedelta(seconds=delta) if delta > 0 else '', Style.RESET_ALL)
+            (symbol, text, Fore.YELLOW, self.timedelta(), Style.RESET_ALL)
         ][0])
 
         try:

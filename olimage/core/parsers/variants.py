@@ -35,4 +35,4 @@ class Variants(GenericLoader):
             if name.lower() == str(variant).lower():
                 return variant
 
-        raise Exception("Rootfs variant not found: \"{}\"".format(name))
+        raise Exception("Variant not found: \"{}\"".format(name))
