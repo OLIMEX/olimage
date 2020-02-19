@@ -28,9 +28,9 @@ def generate_environment(**kwargs):
     root = os.path.dirname(os.path.abspath(__file__))
     environment.paths.update({
         'root': root,
-        'configs': os.path.join(os.path.dirname(root), kwargs['configs']),
-        'overlay': os.path.join(os.path.dirname(root), kwargs['overlay']),
-        'workdir': os.path.join(os.path.dirname(root), kwargs['workdir']),
+        'configs': os.path.join(os.path.dirname(root), 'configs'),
+        'overlay': os.path.join(os.path.dirname(root), 'overlay'),
+        'output': os.path.join(os.path.dirname(root), 'output'),
     })
 
     # Copy command-line parameters to global env
@@ -69,12 +69,12 @@ def prepare_tree():
     """
 
     # Check required directory structure
-    workdir = environment.paths['workdir']
-    if not os.path.exists(workdir):
-        os.mkdir(workdir)
+    output = environment.paths['output']
+    if not os.path.exists(output):
+        os.mkdir(output)
 
     for directory in ['rootfs', 'images']:
-        path = os.path.join(workdir, directory)
+        path = os.path.join(output, directory)
 
         # Create directory
         if not os.path.exists(path):
@@ -123,7 +123,7 @@ def cli(**kwargs):
 
 @cli.command(name="clean")
 def clean():
-    shutil.rmtree(environment.paths['workdir'])
+    shutil.rmtree(environment.paths['output'])
 
 
 # Add external sub-commands
