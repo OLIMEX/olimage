@@ -43,4 +43,10 @@ def build_image(ctx: click.Context, **kwargs):
     with Console("Configuring"):
         _image.configure()
 
+    if 'HOST_PWD' in env.env:
+        realpath = env.env['HOST_PWD'] + '/' + '/'.join(kwargs['output'].split('/')[2:])
+    else:
+        realpath = kwargs['output']
+    console.success("Your image is ready at: {}".format(realpath))
+
 

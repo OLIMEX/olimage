@@ -52,14 +52,26 @@ class Console(BaseIO):
         return "{} {}{}{}".format(indent, style, message, colorama.Style.RESET_ALL)
 
     @staticmethod
-    def info(message: str):
+    def _box(message: str, font) -> None:
+        message = ' ' * 2 + message + ' ' * 2
+
+        print("{}{}{}".format(font, ' ' * len(message), colorama.Style.RESET_ALL))
+        print("{}{}{}".format(font, message, colorama.Style.RESET_ALL))
+        print("{}{}{}".format(font, ' ' * len(message), colorama.Style.RESET_ALL))
+
+    @staticmethod
+    def info(message: str) -> None:
         print("{}I: {}{}".format(colorama.Style.BRIGHT, message, colorama.Style.RESET_ALL))
 
     @staticmethod
-    def warning(message: str):
+    def warning(message: str) -> None:
         print("{}W: {}{}".format(colorama.Style.BRIGHT + colorama.Fore.YELLOW, message, colorama.Style.RESET_ALL))
 
     @staticmethod
-    def error(message: str):
+    def error(message: str) -> None:
         print("{}E: {}{}".format(colorama.Style.BRIGHT + colorama.Fore.RED, message, colorama.Style.RESET_ALL))
 
+    @staticmethod
+    def success(message: str) -> None:
+        font = colorama.Back.GREEN + colorama.Fore.WHITE + colorama.Style.BRIGHT
+        Console._box(message, font)

@@ -49,6 +49,7 @@ docker run --rm -it --privileged \
 	--volume /proc:/proc \
 	--volume "$(pwd)":/olimage \
 	--net 'host' \
+	-e "HOST_PWD=${PWD}" \
 	-w /olimage olimage python3 -m olimage "$@"
 
 #	-e "GIT_HASH=$(git rev-parse HEAD)" \
