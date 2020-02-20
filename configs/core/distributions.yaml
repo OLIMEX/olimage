@@ -3,16 +3,12 @@ distributions:
     components: ['main', 'contrib', 'non-free']
     recommended: 'buster'
     releases:
-      - 'stretch'
       - 'buster'
-      - 'bullseye'
-      - 'sid'
     repository: 'http://httpredir.debian.org/debian'
 
   ubuntu:
     components: ['main', 'universe', 'multiverse']
     recommended: 'bionic'
     releases:
-      - 'xenial'
       - 'bionic'
     repository: 'http://ports.ubuntu.com/'

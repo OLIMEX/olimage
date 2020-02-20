@@ -7,7 +7,7 @@ from olimage.core.io import Console
 
 from .parameters import parameters
 
-from .variants import (FileSystemBase, FileSystemLite)
+from .variants import (FileSystemLite, FileSystemMinimal)
 
 
 def verify_options():
@@ -37,6 +37,9 @@ def verify_options():
 @click.command(name="filesystem")
 @parameters
 def build_filesystem(**kwargs):
+    """
+    Build root filesystem and configure it.
+    """
 
     # Update environment options
     env.options.update(kwargs)
@@ -48,22 +51,20 @@ def build_filesystem(**kwargs):
     board: Board = Boards().get_board(kwargs['board'])
     env.objects['board'] = board
 
-    builders = [FileSystemLite]
-    if env.options['variant'] == "base":
-        builders.append(FileSystemBase)
+    builders = [FileSystemMinimal, FileSystemLite]
 
     for builder in builders:
-        Console.info("Creating \'{}\' filesystem...".format(builder.variant.upper()))
+        _builder = builder()
 
-        for stage in ['build', 'configure', 'cleanup', 'export']:
-            try:
-                method = getattr(builder(), stage)
-            except AttributeError:
-                continue
+        Console.info("Creating \'{}\' filesystem...".format(_builder.variant))
 
-            if not callable(method):
-                continue
+        for stage in _builder.stages:
+            method = getattr(_builder, stage)
 
             with Console(stage.capitalize()):
                 method()
+
+        # If this current stage is the target one break
+        if builder.variant == env.options['variant']:
+            break
 

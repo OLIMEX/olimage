@@ -7,6 +7,7 @@ from olimage.core.parsers.packages import ParserPackages
 
 
 class FileSystemBase(object):
+    stages = []
     variant = None
 
     def __init__(self):

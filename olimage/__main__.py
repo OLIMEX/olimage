@@ -15,36 +15,6 @@ import olimage.environment as environment
 
 from olimage.core.io import Console
 
-
-def generate_environment(**kwargs):
-    """
-    Generate global scope environment
-
-    :param kwargs: kwargs to be added
-    :return: None
-    """
-
-    # Add paths
-    root = os.path.dirname(os.path.abspath(__file__))
-    environment.paths.update({
-        'root': root,
-        'configs': os.path.join(os.path.dirname(root), 'configs'),
-        'overlay': os.path.join(os.path.dirname(root), 'overlay'),
-        'output': os.path.join(os.path.dirname(root), 'output'),
-    })
-
-    # Copy command-line parameters to global env
-    environment.options.update(kwargs)
-
-    # Setup environment variables
-    environment.env.update(os.environ.copy())
-    environment.env['LC_ALL'] = 'C'
-    environment.env['LANGUAGE'] = 'C'
-    environment.env['LANG'] = 'C'
-    environment.env['DEBIAN_FRONTEND'] = 'noninteractive'
-    environment.env['DEBCONF_NONINTERACTIVE_SEEN'] = 'true'
-
-
 def prepare_logging():
     """
     Configure logging module
@@ -108,8 +78,9 @@ def cli(**kwargs):
         print("olimage: {}".format(olimage.__version__))
         sys.exit(0)
 
-    # Generate environment and tree
-    generate_environment(**kwargs)
+    # Update environment
+    environment.options.update(kwargs)
+
     prepare_logging()
     prepare_tree()
 

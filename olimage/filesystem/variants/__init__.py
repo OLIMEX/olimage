@@ -1,6 +1,6 @@
-from .base import FileSystemBase
 from .lite import FileSystemLite
+from .minimal import FileSystemMinimal
 
 __all__ = [
-    'FileSystemBase', 'FileSystemLite'
+    'FileSystemLite', 'FileSystemMinimal'
 ]

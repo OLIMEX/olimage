@@ -47,7 +47,7 @@ class SetupMeta(type):
                                         pool[module] = cls
 
         if pool and item in pool:
-            return pool[item]()
+            return pool[item]().setup
 
         return type.__getattribute__(self, item)
 

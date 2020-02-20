@@ -1,9 +1,11 @@
 import click
 
+from olimage.core.parsers.packages import ParserPackages
+
 _arguments = [
     click.argument("board"),
     click.argument("release"),
-    click.argument("variant", type=click.Choice(['lite', 'base', 'full']))
+    click.argument("variant", type=click.Choice([str(v) for v in ParserPackages().variants]))
 ]
 
 _options = [
