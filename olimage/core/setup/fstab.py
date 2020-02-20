@@ -1,12 +1,11 @@
-import logging
-
 from olimage.core.utils import Utils
 from olimage.core.parsers import Partitions
 
+from .base import SetupAbstract
 
-class SetupFstab(object):
-    @staticmethod
-    def __call__(partitions: Partitions, path: str, **kwargs) -> None:
+
+class SetupFstab(SetupAbstract):
+    def setup(self, partitions: Partitions, path: str) -> None:
         """
         Set hostname to etc/hosts and etc/hostname
 

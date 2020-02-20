@@ -8,10 +8,11 @@ from olimage.core.io import Console
 from olimage.core.parsers.boards import Board
 from olimage.core.utils import Utils
 
+from .base import SetupAbstract
 
-class SetupBoot(object):
-    @staticmethod
-    def generate_uboot_env(configs: dict = None) -> None:
+
+class SetupBoot(SetupAbstract):
+    def _generate_uboot_env(self, configs: dict = None) -> None:
         with Console("Generating /boot/uEnv.txt"):
             Utils.install('/boot/uEnv.txt')
             Utils.template.install(
@@ -23,8 +24,7 @@ class SetupBoot(object):
                 }
             )
 
-    @staticmethod
-    def generate_boot_cmd(board: Board) -> None:
+    def _generate_boot_cmd(self, board: Board) -> None:
         with Console("Generating /boot/boot.scr"):
             Utils.install('/boot/boot.cmd')
 
@@ -68,8 +68,7 @@ class SetupBoot(object):
                 shell=True
             )
 
-    @staticmethod
-    def generate_fit(board):
+    def _generate_fit(self, board):
         with Console("Generating /usr/lib/olinuxino/kernel.its"):
             Utils.install('/etc/kernel/postinst.d/uboot-fit', mode='755')
             Utils.install('/usr/lib/olinuxino/kernel.its')
@@ -123,10 +122,10 @@ class SetupBoot(object):
                 models=models,
             )
 
-    @staticmethod
-    def __call__():
+    def setup(self):
         board = env.objects['board']
-        SetupBoot.generate_uboot_env()
-        SetupBoot.generate_boot_cmd(board)
-        SetupBoot.generate_fit(board)
+
+        self._generate_uboot_env()
+        self._generate_boot_cmd(board)
+        self._generate_fit(board)
 

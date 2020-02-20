@@ -2,10 +2,11 @@ import olimage.environment as env
 
 from olimage.core.utils import Utils
 
+from .base import SetupAbstract
 
-class SetupHostname(object):
-    @staticmethod
-    def __call__(hostname: str) -> None:
+
+class SetupHostname(SetupAbstract):
+    def setup(self, hostname: str) -> None:
         """
         Set hostname to etc/hosts and etc/hostname
 

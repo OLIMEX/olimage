@@ -4,14 +4,15 @@ from olimage.core.io import Console
 from olimage.core.parsers import (Repository, Repositories)
 from olimage.core.utils import Utils
 
+from .base import SetupAbstract
 
-class SetupApt(object):
 
-    @staticmethod
-    def __call__(release: str):
+class SetupApt(SetupAbstract):
+
+    def setup(self, release: str):
 
         with Console("Installing packages"):
-            Utils.shell.chroot('apt-get install -y gnupg')
+            Utils.shell.chroot('apt-get install -y {}'.format(' '.join(self.packages)))
 
         for repo in Repositories():
             repo: Repository
@@ -40,8 +41,3 @@ class SetupApt(object):
         # for now ignore error upon update
         with Console("Updating"):
             Utils.shell.chroot('apt-get update', ignore_fail=True)
-
-    @staticmethod
-    def clean():
-        Utils.shell.chroot('apt-get clean')
-

@@ -3,10 +3,12 @@ import olimage.environment as env
 from olimage.core.io import Console
 from olimage.core.utils import Utils
 
+from .base import SetupAbstract
 
-class SetupLocales(object):
-    @staticmethod
-    def __call__(locale: str):
+
+class SetupLocales(SetupAbstract):
+    def setup(self, locale: str):
+
         # Configure
         with Console("Generating locales: \'{}\'".format(locale)):
             Utils.shell.chroot(
@@ -19,4 +21,4 @@ class SetupLocales(object):
 
         # Install
         with Console("Installing packages"):
-            Utils.shell.chroot('apt-get install -y locales', env.paths['build'])
+            Utils.shell.chroot('apt-get install -y {}'.format(' '.join(self.packages)))
