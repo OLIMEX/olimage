@@ -1,7 +1,4 @@
-from .parser import GenericLoader
-
-
-class Variant(object):
+class PackagesBase(object):
     def __init__(self, name: str, data: dict) -> None:
         self._name = name
         self._data = data
@@ -11,7 +8,11 @@ class Variant(object):
 
     @property
     def packages(self) -> list:
+        """
+        Get flattened list with packages
 
+        :return: packages list
+        """
         def flat(data):
             _data = []
             for p in data:
@@ -24,15 +25,3 @@ class Variant(object):
             return _data
 
         return flat(self._data['packages'])
-
-
-class Variants(GenericLoader):
-    def __init__(self) -> None:
-        super().__init__("variants", Variant, prefix='core')
-
-    def get_variant(self, name: str) -> Variant:
-        for variant in self._objects:
-            if name.lower() == str(variant).lower():
-                return variant
-
-        raise Exception("Variant not found: \"{}\"".format(name))

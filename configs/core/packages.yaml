@@ -1,0 +1,134 @@
+.bluetooth: &bluetooth
+  - blueman
+  - bluez
+  - bluez-tools
+
+.locales:
+  - locales
+
+.olimex: &olimex
+  # These packages are provided by Olimex Ltd.
+  # There may be conflicting packages
+  - olinuxino-overlays
+  - u-boot-olinuxino
+
+.xfce4: &xfce4
+  - xfce4
+  - xfce4-notifyd
+  - xfce4-terminal
+
+services:
+  olimage.core.setup.apt:
+    packages:
+      - gnupg
+
+  olimage.core.setup.console:
+    packages:
+      - console-setup
+      - keyboard-configuration
+
+  olimage.core.setup.locales:
+    packages:
+      - locales
+
+
+variants:
+  lite:
+    description: "Build minimal running filesystem"
+    packages:
+      - apt-listchanges
+      - avahi-daemon
+      - bash-completion
+      - build-essential
+      - ca-certificates
+      - cifs-utils
+      - crda
+      - curl
+      - debconf-utils
+      - dhcpcd5
+      - dosfstools
+      - dphys-swapfile
+      - ed
+      - ethtool
+      - fake-hwclock
+      - fbset
+      - gdb
+      - hardlink
+      - htop
+      - initramfs-tools
+      - less
+      - libfreetype6-dev
+      - libmtp-runtime
+      - lua5.1
+      - luajit
+      - man-db
+      - manpages-dev
+      - ncdu
+      - nfs-common
+      - net-tools
+      - netbase
+      - ntfs-3g
+      - parted
+      - pkg-config
+      - policykit-1
+      - psmisc
+      - python
+      - rsync
+      - ssh
+      - ssh-import-id
+      - strace
+      - sudo
+      - u-boot-tools
+      - unzip
+      - usb-modeswitch
+      - usbutils
+      - v4l-utils
+      - *olimex
+
+  base:
+    description: "Build base filesystem with X desktop"
+    packages:
+      - apt-xapian-index
+      - *bluetooth
+      - gcr
+      - gnome-keyring
+      - gnome-orca
+      - gtk2-engines
+      - gtk2-engines-murrine
+      - gtk2-engines-pixbuf
+      - gvfs-backends
+      - gvfs-fuse
+      - libgck-1-0
+      - libgl1-mesa-dri
+      - libgtk2.0-bin
+      - libpam-gnome-keyring
+      - lightdm
+      - lightdm-gtk-greeter
+      - lxtask
+      - network-manager-gnome
+      - numix-gtk-theme
+      - p11-kit
+      - pasystray
+      - pavucontrol
+      - pavumeter
+      - policykit-1
+      - profile-sync-daemon
+      - pulseaudio
+      - pulseaudio-module-bluetooth
+      - synaptic
+      - thunar-volman
+      - x11-xserver-utils
+      - xfonts-base
+      - xinit
+      - xserver-xorg
+      - xserver-xorg-video-fbdev
+      - *xfce4
+
+
+  full:
+    description: "Build base filesystem with X desktop"
+    packages:
+      - null
+
+
+

@@ -22,16 +22,24 @@ class LoaderBase(object):
 
 
 class GenericLoader(LoaderBase):
-    def __init__(self, name, holder, prefix=None) -> None:
-        # Hold objects
+    def __init__(self, node: str, holder: object, path=None) -> None:
+        """
+        Load yaml configuration
+
+        :param node: name of the root node
+        :param holder: Type of object to generate
+        :param path: Path to the configuration file
+        """
+
+        # Object pool
         self._objects = []
 
+        if path is None:
+            path = os.path.join(env.paths['configs'], '{}.yaml'.format(node))
+        filename = os.path.basename(path)
+
         # Read configuration file
-        with open(os.path.join(
-                env.paths['configs'],
-                '{}'.format(prefix if prefix else ""),
-                '{}.yaml'.format(name)
-        )) as f:
+        with open(path, 'r') as f:
             data = yaml.full_load(f.read())
 
         # Load schema
@@ -40,18 +48,18 @@ class GenericLoader(LoaderBase):
 
         for (_, _, files) in os.walk(schemas_dir):
             for file in files:
-                if file == '{}.yaml'.format(name):
-                    with open(os.path.join(schemas_dir, '{}.yaml'.format(name))) as f:
+                if file == filename:
+                    with open(os.path.join(schemas_dir, '{}'.format(filename))) as f:
                         schema = yaml.full_load(f.read())
 
         if schema:
             # Validate config
             v = cerberus.Validator()
             if not v.validate(data, schema):
-                raise Exception("Failed to parse \"{}.yaml\": {}".format(name, v.errors))
+                raise Exception("Failed to parse \'{}\': {}".format(path, v.errors))
 
         # Generate objects
-        for key, value in data[name].items():
+        for key, value in data[node].items():
             self._objects.append(holder(key, value))
 
 

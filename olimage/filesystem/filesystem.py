@@ -2,7 +2,8 @@ import os
 import shutil
 
 import olimage.environment as env
-from olimage.core.parsers import Board, Variants
+from olimage.core.parsers import Board
+from olimage.core.parsers.packages import ParserPackages
 
 
 class FileSystemBase(object):
@@ -16,10 +17,9 @@ class FileSystemBase(object):
         board: Board = env.objects['board']
 
         self._build_dir = os.path.join(env.paths['filesystem'], "{}-{}-{}".format(board.arch, release, self.variant))
-        self._archive = self._build_dir + '.tar.gz'
 
         env.paths['build'] = self._build_dir
-        env.objects['variant'] = Variants().get_variant(self.variant)
+        env.objects['variant'] = ParserPackages().get_variant(self.variant)
 
     def _prepare_build_dir(self) -> None:
         """

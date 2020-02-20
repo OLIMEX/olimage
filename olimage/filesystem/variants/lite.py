@@ -4,7 +4,7 @@ import olimage.environment as env
 
 from olimage.core.io import Console
 from olimage.core.parsers import Board, Distribution, Users
-from olimage.core.parsers.variants import Variant
+from olimage.core.parsers.packages.variant import Variant
 from olimage.core.service import Service
 from olimage.core.setup import Setup
 from olimage.core.utils import Utils
@@ -15,12 +15,6 @@ from olimage.filesystem.stamp import stamp
 
 class FileSystemLite(FileSystemBase):
     variant = 'lite'
-
-    def __init__(self):
-        super().__init__()
-
-        # Used for storing cleanup callbacks
-        self._cleanup = []
 
     @stamp
     def build(self):
@@ -43,7 +37,7 @@ class FileSystemLite(FileSystemBase):
 
         # Compress
         with Console("Creating archive"):
-            Utils.archive.gzip(self._build_dir, output=self._build_dir + '.build.tar.gz')
+            Utils.archive.gzip(self._build_dir, self._build_dir + '.build.tar.gz')
 
     @stamp
     def configure(self):
@@ -51,16 +45,14 @@ class FileSystemLite(FileSystemBase):
 
         # Extract fresh copy
         with Console("Extracting archive"):
-            Utils.archive.extract(self._build_dir + '.build.tar.gz', env.paths['filesystem'])
+            Utils.archive.extract(self._build_dir + '.build.tar.gz', self._build_dir)
 
         # Configure apt
-        if env.options['apt_cacher']:
-            Service.apt_cache.enable(env.options['apt_cacher_host'], env.options['apt_cacher_port'])
-            self._cleanup.append(Service.apt_cache.disable)
-
         with Console("Configuring the APT repositories"):
+            if env.options['apt_cacher']:
+                Service.apt_cache.enable(env.options['apt_cacher_host'], env.options['apt_cacher_port'])
+
             Setup.apt(env.options['release'])
-            self._cleanup.append(Setup.apt.clean)
 
         # Configure locales
         # NOTE: This must be run before package installation
@@ -68,14 +60,12 @@ class FileSystemLite(FileSystemBase):
             Setup.locales(env.options['locale'])
 
         # Configure console
-        # NOTE: This must be run before package installation
         with Console("Configuring console"):
             Setup.console(env.options['keyboard_keymap'], env.options['keyboard_layout'])
 
         # Install packages
         with Console("Installing packages"):
-            variant: Variant = env.objects['variant']
-            Utils.shell.chroot('apt-get install -y {}'.format(' '.join(variant.packages)), self._build_dir)
+            Utils.shell.chroot('apt-get install -y {}'.format(' '.join(env.objects['variant'].packages)))
 
         # Generate boot files
         with Console("Generating boot files"):
@@ -119,8 +109,11 @@ class FileSystemLite(FileSystemBase):
 
     @stamp
     def cleanup(self):
-        for func in reversed(self._cleanup):
-            func()
+        with Console("APT sources"):
+            if env.options['apt_cacher']:
+                Service.apt_cache.disable()
+
+            Utils.shell.chroot('apt-get clean')
 
     @stamp
     def export(self):

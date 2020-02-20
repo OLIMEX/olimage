@@ -1,3 +1,5 @@
+import olimage.environment as env
+
 from .parser import GenericLoader
 
 
@@ -28,5 +30,5 @@ class Distribution(object):
 
 class Distributions(GenericLoader):
     def __init__(self) -> None:
-        super().__init__("distributions", Distribution, prefix='core')
+        super().__init__("distributions", Distribution, path=env.paths['configs'] + '/core/distributions.yaml')
 
