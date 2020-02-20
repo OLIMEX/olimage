@@ -1,8 +1,9 @@
 import logging
 import os
-import tarfile
 
-logger = logging.getLogger(__name__)
+from .shell import Shell
+
+logger = logging.getLogger()
 
 
 class Archive(object):
@@ -11,87 +12,75 @@ class Archive(object):
 
     Supported formats are gzip, bzip2 and lzma
     """
+    modes = {
+        'gz': 'gzip',
+        'bz2': 'bzip2',
+        'lzma': 'lzma'
+    }
 
     @staticmethod
-    def _tar(mode, input, output=None, exclude=None):
+    def _tar(mode: str, source: str, output=None) -> str:
         """
         Preform the actual compression
 
         :param mode: archive mode
-        :param input: input file/directory
+        :param source: input file/directory
         :param output: output file
-        :param exclude: exclude files and directories
         :return: output file path
         """
-        basename = os.path.basename(input)
-        path = os.path.dirname(input)
+        basename = os.path.basename(source)
+        path = os.path.dirname(source)
 
         if output is None:
-            output = os.path.join(path, basename + '.tar.' + mode.split(':')[1])
+            output = os.path.join(path, basename + '.tar.' + mode)
 
-        # Provide filter for excluded files
-        def exclude_filter(x):
-            if exclude is None:
-                return x
-
-            for e in exclude:
-                if e in x.name:
-                    return None
-
-            return x
-
-        logger.info("Archiving {} to {}".format(input, output))
-        with tarfile.open(name=output, mode=mode) as tar:
-            tar.add(input, arcname=basename, filter=exclude_filter)
-
+        logger.info("Archiving {} to {}".format(source, output))
+        Shell.run('tar --{} -cf {} -C {} .'.format(Archive.modes[mode], output, source))
         return output
 
     @staticmethod
-    def gzip(input, output=None, exclude=None) -> str:
+    def gzip(source, output=None) -> str:
         """
         Perform gzip compression
 
-        :param input: file or directory to be archived
+        :param source: file or directory to be archived
         :param output: output file
-        :param exclude: exclude files and directories
         :return: output file path
         """
-        return Archive._tar('w:gz', input, output, exclude)
+        return Archive._tar('gz', source, output)
 
     @staticmethod
-    def bzip2(input, output=None, exclude=None) -> str:
+    def bzip2(source, output=None) -> str:
         """
         Perform bzip2 compression
 
-        :param input: file or directory to be archived
+        :param source: file or directory to be archived
         :param output: output file
-        :param exclude: exclude files and directories
         :return: output file path
         """
-        return Archive._tar('w:bz2', input, output, exclude)
+        return Archive._tar('bz2', source, output)
 
     @staticmethod
-    def lzma(input, output=None, exclude=None) -> str:
+    def lzma(source, output=None) -> str:
         """
         Perform lzma compression
 
-        :param input: file or directory to be archived
+        :param source: file or directory to be archived
         :param output: output file
-        :param exclude: exclude files and directories
         :return: output file path
         """
-        return Archive._tar('w:xz', input, output, exclude)
+        return Archive._tar('lzma', source, output)
 
     @staticmethod
-    def extract(input: str, output) -> None:
+    def extract(source: str, output) -> None:
         """
         Extract file
 
-        :param input: compressed file
+        :param source: compressed file
         :param output: output patch
         :return: None
         """
         logger.info("Extracting {} to {}".format(input, output))
-        with tarfile.open(name=input, mode='r:{}'.format(input.split('.')[-1])) as tar:
-            tar.extractall(path=output)
+        Shell.run('tar -axf {} -C {}'.format(source, output))
+
 
