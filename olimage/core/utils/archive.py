@@ -19,13 +19,14 @@ class Archive(object):
     }
 
     @staticmethod
-    def _tar(mode: str, source: str, output=None) -> str:
+    def _tar(mode: str, source: str, output=None, exclude=None) -> str:
         """
         Preform the actual compression
 
         :param mode: archive mode
         :param source: input file/directory
         :param output: output file
+        :param exclude: list with paths to exclude
         :return: output file path
         """
         basename = os.path.basename(source)
@@ -34,17 +35,23 @@ class Archive(object):
         if output is None:
             output = os.path.join(path, basename + '.tar.' + mode)
 
+        _exclude = ''
+        if exclude:
+            for e in exclude:
+                _exclude += '--exclude={} '.format(e)
+
         logger.info("Archiving {} to {}".format(source, output))
-        Shell.run('tar --{} -cf {} -C {} .'.format(Archive.modes[mode], output, source))
+        Shell.run('tar --{} -cf {} {} -C {} .'.format(Archive.modes[mode], _exclude, output, source))
         return output
 
     @staticmethod
-    def gzip(source, output=None) -> str:
+    def gzip(source, output=None, exclude=None) -> str:
         """
         Perform gzip compression
 
         :param source: file or directory to be archived
         :param output: output file
+        :param exclude: list with paths to exclude
         :return: output file path
         """
         return Archive._tar('gz', source, output)
@@ -72,7 +79,7 @@ class Archive(object):
         return Archive._tar('lzma', source, output)
 
     @staticmethod
-    def extract(source: str, output) -> None:
+    def extract(source: str, output: str) -> None:
         """
         Extract file
 

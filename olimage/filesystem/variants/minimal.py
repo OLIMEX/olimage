@@ -116,4 +116,4 @@ class VariantMinimal(FileSystemBase):
     @stamp
     def export(self):
         with Console("Creating archive: {}".format(os.path.basename(self._build_dir) + '.tar.gz')):
-            Utils.archive.gzip(self._build_dir)
+            Utils.archive.gzip(self._build_dir, exclude=['/dev/*', '/proc/*', '/run/*', '/tmp/*', '/sys/*'])
