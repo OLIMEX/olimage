@@ -54,7 +54,7 @@ class Archive(object):
         :param exclude: list with paths to exclude
         :return: output file path
         """
-        return Archive._tar('gz', source, output)
+        return Archive._tar('gz', source, output, exclude)
 
     @staticmethod
     def bzip2(source, output=None) -> str:
