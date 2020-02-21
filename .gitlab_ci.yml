@@ -1,0 +1,16 @@
+default:
+  image: debian:latest
+
+stages:
+  - build
+
+build:minimal:
+  before_script:
+    - apt-get update
+    - apt-get install -y debootstrap kpartx parted python-dev python3 python3-gdbm python3-pip python3-tk rsync qemu-user-static qemu-utils u-boot-tools udev
+    - pip3 install cerberus click halo jinja2 pinject pyyaml
+    - pip3 install http://deb.debian.org/debian/pool/main/p/python-cliapp/python-cliapp_1.20180812.1.orig.tar.xz
+
+  script:
+    - python3 -m olimage
+  stage: build

@@ -28,17 +28,14 @@ def prepare_logging():
             level=logging.DEBUG,
             handlers=[logging.StreamHandler(sys.stdout)]
         )
-        return
 
-    if environment.options['log'] is None:
-        return
-
-    logging.basicConfig(
-        filename=environment.options['log'],
-        filemode='w',
-        format='%(message)s',
-        level=logging.DEBUG,
-    )
+    if environment.options['log']:
+        logging.basicConfig(
+            filename=environment.options['log'],
+            filemode='w',
+            format='%(message)s',
+            level=logging.DEBUG,
+        )
 
 
 def prepare_tree():

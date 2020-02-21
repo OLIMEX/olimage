@@ -5,19 +5,8 @@ ENV DEBIAN_FRONTEND noninteractive
 # Install packages
 RUN apt-get update && \
     apt-get install -y \
-        bc \
-        bison \
-        cpio \
         debootstrap \
-        device-tree-compiler \
-        devscripts \
-        dosfstools \
-        gcc-aarch64-linux-gnu \
-        git \
-        flex \
-        kmod \
         kpartx \
-        libssl-dev \
         parted \
         python-dev \
         python3 \
@@ -25,7 +14,6 @@ RUN apt-get update && \
         python3-pip \
         python3-tk \
         rsync \
-        swig \
         qemu-user-static \
         qemu-utils \
         u-boot-tools \
@@ -36,7 +24,6 @@ RUN apt-get update && \
 RUN pip3 install \
     cerberus \
     click \
-    GitPython \
     halo \
     jinja2 \
     pinject \
