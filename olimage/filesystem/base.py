@@ -4,6 +4,7 @@ import shutil
 import olimage.environment as env
 from olimage.core.parsers import Board
 from olimage.core.parsers.packages import ParserPackages
+from olimage.core.utils import Utils
 
 
 class FileSystemBase(object):
@@ -29,6 +30,8 @@ class FileSystemBase(object):
 
         :return: None
         """
+        Utils.shell._unbind(self._build_dir)
+
         if os.path.exists(self._build_dir):
             shutil.rmtree(self._build_dir)
         os.mkdir(self._build_dir)

@@ -1,10 +1,13 @@
+import time
+
 import cliapp
 import logging
 import shlex
 
+
 import olimage.environment as env
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger()
 
 
 class Shell(object):
@@ -41,18 +44,36 @@ class Shell(object):
             raise _e
 
     @staticmethod
+    def _mountpoints():
+        mounts = []
+        with open('/proc/self/mountinfo', 'r') as f:
+            for line in f.readlines():
+                mounts.append(line.split()[4])
+        return mounts
+
+    @staticmethod
     def _bind(directory):
-        Shell.run("mount -t proc proc {}/proc".format(directory))
-        Shell.run("mount --bind /dev {}/dev".format(directory))
-        Shell.run("mount --bind /dev/pts {}/dev/pts".format(directory))
-        Shell.run("mount --bind /sys {}/sys".format(directory))
+        m = Shell._mountpoints()
+        if directory + '/proc' not in m:
+            Shell.run("mount -t proc proc {}/proc".format(directory))
+        if directory + '/dev' not in m:
+            Shell.run("mount --bind /dev {}/dev".format(directory))
+        if directory + '/dev/pts' not in m:
+            Shell.run("mount --bind /dev/pts {}/dev/pts".format(directory))
+        if directory + '/sys' not in m:
+            Shell.run("mount --bind /sys {}/sys".format(directory))
 
     @staticmethod
     def _unbind(directory):
-        Shell.run("umount {}/sys".format(directory))
-        Shell.run("umount {}/dev/pts".format(directory))
-        Shell.run("umount {}/dev".format(directory))
-        Shell.run("umount {}/proc".format(directory))
+        m = Shell._mountpoints()
+        if directory + '/sys' in m:
+            Shell.run("umount {}/sys".format(directory))
+        if directory + '/dev/pts' in m:
+            Shell.run("umount {}/dev/pts".format(directory))
+        if directory + '/dev' in m:
+            Shell.run("umount {}/dev".format(directory))
+        if directory + '/proc' in m:
+            Shell.run("umount {}/proc".format(directory))
 
     @staticmethod
     def chroot(command, directory=None, **kwargs):
@@ -66,11 +87,12 @@ class Shell(object):
             Shell.run("chroot {} ".format(directory) + command, **kwargs)
             Shell._unbind(directory)
         except KeyboardInterrupt:
-            Shell._unbind(directory)
             _e = KeyboardInterrupt
         except Exception as e:
-            Shell._unbind(directory)
             _e = e
+        finally:
+            time.sleep(0.1)
+            Shell._unbind(directory)
 
         if _e:
             raise _e
