@@ -1,23 +1,17 @@
-default:
-  image: debian:latest
-
 stages:
   - build
 
-build:minimal:
+build:minimal:buster:
   artifacts:
     paths:
       - result/*
-
   before_script:
     - apt-get update
-    - apt-get install -y debootstrap kpartx parted python-dev python3 python3-gdbm python3-pip python3-tk rsync qemu-user-static qemu-utils u-boot-tools udev
-    - pip3 install cerberus click halo jinja2 pinject pyyaml
-    - pip3 install http://deb.debian.org/debian/pool/main/p/python-cliapp/python-cliapp_1.20180812.1.orig.tar.xz
-    - apt-get install -y p7zip-full
-
+    - apt-get install -y p7zip-full uuid-runtime
   script:
-    - python3 -m olimage -v A20-OLinuXino-Lime buster minimal $(uuidgen).img
+    - python3 -m olimage -v image A20-OLinuXino-Lime buster minimal $(uuidgen).img
     - mkdir result
     - 7z -a result/minimal.7z output/images/*.img
   stage: build
+  tags:
+    - olimage
