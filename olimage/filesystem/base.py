@@ -23,6 +23,9 @@ class FileSystemBase(object):
         env.paths['build'] = self._build_dir
         env.objects['variant'] = ParserPackages().get_variant(self.variant)
 
+    def __del__(self):
+        Utils.shell.unbind(self._build_dir)
+
     def _prepare_build_dir(self) -> None:
         """
         Remove previous build directory and create
@@ -30,8 +33,7 @@ class FileSystemBase(object):
 
         :return: None
         """
-        Utils.shell._unbind(self._build_dir)
-
         if os.path.exists(self._build_dir):
             shutil.rmtree(self._build_dir)
+
         os.mkdir(self._build_dir)

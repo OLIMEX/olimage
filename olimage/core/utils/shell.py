@@ -44,36 +44,36 @@ class Shell(object):
             raise _e
 
     @staticmethod
-    def _mountpoints():
+    def _is_mounted(path):
         mounts = []
         with open('/proc/self/mountinfo', 'r') as f:
             for line in f.readlines():
                 mounts.append(line.split()[4])
-        return mounts
+
+        return path in mounts
 
     @staticmethod
-    def _bind(directory):
-        m = Shell._mountpoints()
-        if directory + '/proc' not in m:
-            Shell.run("mount -t proc proc {}/proc".format(directory))
-        if directory + '/dev' not in m:
-            Shell.run("mount --bind /dev {}/dev".format(directory))
-        if directory + '/dev/pts' not in m:
-            Shell.run("mount --bind /dev/pts {}/dev/pts".format(directory))
-        if directory + '/sys' not in m:
-            Shell.run("mount --bind /sys {}/sys".format(directory))
+    def bind(path):
+        if not Shell._is_mounted(path + '/proc'):
+            Shell.run("mount -t proc proc {}/proc".format(path))
+        if not Shell._is_mounted(path + '/dev'):
+            Shell.run("mount --bind /dev {}/dev".format(path))
+        if not Shell._is_mounted(path + '/dev/pts'):
+            Shell.run("mount --bind /dev/pts {}/dev/pts".format(path))
+        if not Shell._is_mounted(path + '/sys'):
+            Shell.run("mount --bind /sys {}/sys".format(path))
 
     @staticmethod
-    def _unbind(directory):
-        m = Shell._mountpoints()
-        if directory + '/sys' in m:
-            Shell.run("umount {}/sys".format(directory))
-        if directory + '/dev/pts' in m:
-            Shell.run("umount {}/dev/pts".format(directory))
-        if directory + '/dev' in m:
-            Shell.run("umount {}/dev".format(directory))
-        if directory + '/proc' in m:
-            Shell.run("umount {}/proc".format(directory))
+    def unbind(path):
+        for mount in ['/sys', '/dev/pts', '/dev', '/proc']:
+            if Shell._is_mounted(path + mount):
+                while True:
+                    try:
+                        Shell.run("umount {}".format(path + mount))
+                    except OSError:
+                        time.sleep(1)
+                        continue
+                    break
 
     @staticmethod
     def chroot(command, directory=None, **kwargs):
@@ -82,17 +82,15 @@ class Shell(object):
             directory = env.paths['build']
 
         _e = None
-        Shell._bind(directory)
+        Shell.bind(directory)
         try:
             Shell.run("chroot {} ".format(directory) + command, **kwargs)
-            Shell._unbind(directory)
         except KeyboardInterrupt:
             _e = KeyboardInterrupt
         except Exception as e:
             _e = e
-        finally:
-            time.sleep(0.1)
-            Shell._unbind(directory)
 
         if _e:
+            # time.sleep(2)
+            # Shell.unbind(directory)
             raise _e
