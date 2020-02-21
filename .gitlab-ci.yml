@@ -1,7 +1,7 @@
 stages:
-  - build
+  - minimal
 
-build:minimal:buster:
+minimal:buster:
   artifacts:
     paths:
       - result/*
@@ -12,6 +12,6 @@ build:minimal:buster:
     - python3 -m olimage -v image A20-OLinuXino-Lime buster minimal $(uuidgen).img
     - mkdir result
     - 7z -a result/minimal.7z output/images/*.img
-  stage: build
+  stage: minimal
   tags:
     - olimage
