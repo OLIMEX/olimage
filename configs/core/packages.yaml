@@ -47,7 +47,6 @@ variants:
       - parted
       - psmisc
       - resolvconf
-      - rng-tools
       - rsync
       - ssh
       - sudo
@@ -87,7 +86,6 @@ variants:
       - gnupg2
       - haveged
       - hdparm
-      - hostapd
       - html2text
       - ifenslave
       - iotop
@@ -121,101 +119,76 @@ variants:
       - unicode-data
       - unzip
 
-#  lite:
-#    description: "Build server-like) filesystem"
-#    packages:
-#      - apt-listchanges
-#      - avahi-daemon
-#      - bash-completion
-#      - build-essential
-#      - ca-certificates
-#      - cifs-utils
-#      - crda
-#      - curl
-#      - debconf-utils
-#      - dhcpcd5
-#      - dosfstools
-#      - dphys-swapfile
-#      - ed
-#      - ethtool
-#      - fake-hwclock
-#      - fbset
-#      - gdb
-#      - hardlink
-#      - htop
-#      - initramfs-tools
-#      - less
-#      - libfreetype6-dev
-#      - libmtp-runtime
-#      - lua5.1
-#      - luajit
-#      - man-db
-#      - manpages-dev
-#      - ncdu
-#      - nfs-common
-#      - net-tools
-#      - netbase
-#      - ntfs-3g
-#      - parted
-#      - pkg-config
-#      - policykit-1
-#      - psmisc
-#      - python
-#      - rsync
-#      - ssh
-#      - ssh-import-id
-#      - strace
-#      - sudo
-#      - u-boot-tools
-#      - unzip
-#      - usb-modeswitch
-#      - usbutils
-#      - v4l-utils
-#      - *olimex
+  base:
+    packages:
+      - xserver-xorg
+      - xserver-xorg-video-fbdev
+      - gvfs-backends
+      - gvfs-fuse
+      - xfonts-base
+      - xinit
+      - x11-xserver-utils
+      - xfce4
+      - lxtask
+      - xfce4-terminal
+      - thunar-volman
+      - gtk2-engines
+      - gtk2-engines-murrine
+      - gtk2-engines-pixbuf
+      - libgtk2.0-bin
+      - network-manager-gnome
+      - xfce4-notifyd
+      - gnome-keyring
+      - gcr
+      - libgck-1-0
+      - p11-kit
+      - pasystray
+      - pavucontrol
+      - pulseaudio
+      - pavumeter
+      - bluez
+      - bluez-tools
+      - pulseaudio-module-bluetooth
+      - blueman
+      - libpam-gnome-keyring
+      - libgl1-mesa-dri
+      - profile-sync-daemon
+      - gnome-orca
+      - numix-gtk-theme
+      - synaptic
+      - apt-xapian-index
+      - lightdm
+      - lightdm-gtk-greeter
+      - galculator
+      - hexchat
+      - xfce4-screenshooter
+      - network-manager-openvpn-gnome
+      - mpv
+      - fbi
+      - cups-pk-helper
+      - cups
+      - geany
+      - atril
+      - xarchiver
+      - paprefs
+      - dbus-x11
+      - numix-icon-theme
+      - onboard
+      - chromium
+      - system-config-printer-common
+      - system-config-printer
+      - mirage
 
-#  base:
-#    description: "Build base filesystem with X desktop"
-#    packages:
-##      - apt-xapian-index
-#      - *bluetooth
-#      - gnome-keyring
-#      - gnome-orca
-#      - gtk2-engines
-#      - gtk2-engines-murrine
-#      - gtk2-engines-pixbuf
-#      - gvfs-backends
-#      - gvfs-fuse
-#      - libgck-1-0
-#      - libgl1-mesa-dri
-#      - libgtk2.0-bin
-#      - libpam-gnome-keyring
-#      - lightdm
-#      - lightdm-gtk-greeter
-#      - lxtask
-#      - network-manager-gnome
-#      - numix-gtk-theme
-#      - p11-kit
-#      - pasystray
-#      - pavucontrol
-#      - pavumeter
-#      - policykit-1
-#      - profile-sync-daemon
-#      - pulseaudio
-#      - pulseaudio-module-bluetooth
-#      - synaptic
-#      - thunar-volman
-#      - x11-xserver-utils
-#      - xfonts-base
-#      - xinit
-#      - xserver-xorg
-#      - xserver-xorg-video-fbdev
-#      - *xfce4
-#
-#
-#  full:
-#    description: "Build base filesystem with X desktop"
-#    packages:
-#      - null
+  full:
+    packages:
+      - avahi-daemon transmission
+      - kazam
+      - libreoffice
+      - libreoffice-style-tango
+      - meld
+      - remmina
+      - thunderbird
+
 
 
 

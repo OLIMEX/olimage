@@ -13,7 +13,7 @@ from olimage.filesystem.base import FileSystemBase
 from olimage.filesystem.stamp import stamp
 
 
-class FileSystemMinimal(FileSystemBase):
+class VariantMinimal(FileSystemBase):
     stages = ['build', 'configure', 'cleanup', 'export']
     variant = 'minimal'
 
@@ -111,9 +111,6 @@ class FileSystemMinimal(FileSystemBase):
     @stamp
     def cleanup(self):
         with Console("APT sources"):
-            if env.options['apt_cacher']:
-                Service.apt_cache.disable()
-
             Utils.shell.chroot('apt-get clean')
 
     @stamp

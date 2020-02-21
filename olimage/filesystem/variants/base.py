@@ -10,9 +10,9 @@ from olimage.filesystem.base import FileSystemBase
 from olimage.filesystem.stamp import stamp
 
 
-class VariantLite(FileSystemBase):
+class VariantBase(FileSystemBase):
     stages = ['configure', 'cleanup', 'export']
-    variant = 'lite'
+    variant = 'base'
 
     @stamp
     def configure(self):
@@ -20,7 +20,7 @@ class VariantLite(FileSystemBase):
 
         # Extract fresh copy
         with Console("Extracting archive"):
-            Utils.archive.extract(self._build_dir.replace('lite', 'minimal') + '.tar.gz', self._build_dir)
+            Utils.archive.extract(self._build_dir.replace('base', 'lite') + '.tar.gz', self._build_dir)
 
         # Install packages
         with Console("Installing packages"):

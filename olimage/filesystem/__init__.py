@@ -4,10 +4,11 @@ import olimage.environment as env
 
 from olimage.core.parsers import (Boards, Board, Distributions)
 from olimage.core.io import Console
+from olimage.core.service import Service
 
 from .parameters import parameters
 
-from .variants import (FileSystemLite, FileSystemMinimal)
+from .variants import *
 
 
 def verify_options():
@@ -51,7 +52,7 @@ def build_filesystem(**kwargs):
     board: Board = Boards().get_board(kwargs['board'])
     env.objects['board'] = board
 
-    builders = [FileSystemMinimal, FileSystemLite]
+    builders = [VariantMinimal, VariantLite, VariantBase]
 
     for builder in builders:
         _builder = builder()
@@ -68,3 +69,5 @@ def build_filesystem(**kwargs):
         if builder.variant == env.options['variant']:
             break
 
+    if env.options['apt_cacher']:
+        Service.apt_cache.disable()
