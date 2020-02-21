@@ -44,8 +44,6 @@ docker build -t olimage "${DIR}"
 
 docker run --rm -it --privileged \
     --name "${CONTAINER_NAME}" \
-	--volume /tmp:/tmp \
-	--volume /dev:/dev \
 	--volume /proc:/proc \
 	--volume "$(pwd)":/olimage \
 	--net 'host' \

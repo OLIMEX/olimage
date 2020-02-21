@@ -14,23 +14,19 @@ class IBaseIO(metaclass=abc.ABCMeta):
     def __exit__(self, exc_type, exc_val, exc_tb):
         pass
 
-    @staticmethod
     @abc.abstractmethod
-    def info(message: str) -> None:
+    def info(self, message: str) -> None:
         pass
 
-    @staticmethod
     @abc.abstractmethod
-    def warning(message: str) -> None:
+    def warning(self, message: str) -> None:
         pass
 
-    @staticmethod
     @abc.abstractmethod
-    def error(message: str) -> None:
+    def error(self, message: str) -> None:
         pass
 
-    @staticmethod
     @abc.abstractmethod
-    def success(message: str) -> None:
+    def success(self, message: str) -> None:
         pass
 

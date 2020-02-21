@@ -1,6 +1,4 @@
-import sys
-
-from colorama import Back, Fore, Style
+from colorama import Fore, Style
 
 from .base import IBaseIO
 
@@ -16,25 +14,17 @@ class TerminalIO(IBaseIO):
     def __exit__(self, exc_type, exc_val, exc_tb):
         pass
 
-    @staticmethod
-    def _print(message: str) -> None:
-        print(message)
+    def info(self, message: str) -> None:
+        print("{}I: {}{}".format(Style.BRIGHT, message, Style.RESET_ALL))
 
-    @staticmethod
-    def info(message: str) -> None:
-        TerminalIO._print("{}I: {}{}".format(Style.BRIGHT, message, Style.RESET_ALL))
+    def warning(self, message: str) -> None:
+        print("{}W: {}{}".format(Style.BRIGHT + Fore.YELLOW, message, Style.RESET_ALL))
 
-    @staticmethod
-    def warning(message: str) -> None:
-        TerminalIO._print("{}W: {}{}".format(Style.BRIGHT + Fore.YELLOW, message, Style.RESET_ALL))
+    def error(self, message: str) -> None:
+        print("{}E: {}{}".format(Style.BRIGHT + Fore.RED, message, Style.RESET_ALL))
 
-    @staticmethod
-    def error(message: str) -> None:
-        TerminalIO._print("{}E: {}{}".format(Style.BRIGHT + Fore.RED, message, Style.RESET_ALL))
-
-    @staticmethod
-    def success(message: str) -> None:
-        TerminalIO._print("{}{}{}".format(Style.BRIGHT + Fore.GREEN, message, Style.RESET_ALL))
+    def success(self, message: str) -> None:
+        print("{}{}{}".format(Style.BRIGHT + Fore.GREEN, message, Style.RESET_ALL))
 
 
 

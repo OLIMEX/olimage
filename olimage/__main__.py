@@ -15,6 +15,7 @@ import olimage.environment as environment
 
 from olimage.core.io import Console
 
+
 def prepare_logging():
     """
     Configure logging module

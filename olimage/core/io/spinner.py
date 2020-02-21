@@ -217,27 +217,22 @@ class SpinnerIO(IBaseIO):
 
         return "{} {}{}{}".format(indent, style, message, Style.RESET_ALL)
 
-    @staticmethod
-    def _box(message: str, font) -> None:
+    def _box(self, message: str, font) -> None:
         message = ' ' * 2 + message + ' ' * 2
 
         print("{}{}{}".format(font, ' ' * len(message), Style.RESET_ALL))
         print("{}{}{}".format(font, message, Style.RESET_ALL))
         print("{}{}{}".format(font, ' ' * len(message), Style.RESET_ALL))
 
-    @staticmethod
-    def info(message: str) -> None:
+    def info(self, message: str) -> None:
         print("{}I: {}{}".format(Style.BRIGHT, message, Style.RESET_ALL))
 
-    @staticmethod
-    def warning(message: str) -> None:
+    def warning(self, message: str) -> None:
         print("{}W: {}{}".format(Style.BRIGHT + Fore.YELLOW, message, Style.RESET_ALL))
 
-    @staticmethod
-    def error(message: str) -> None:
+    def error(self, message: str) -> None:
         print("{}E: {}{}".format(Style.BRIGHT + Fore.RED, message, Style.RESET_ALL))
 
-    @staticmethod
-    def success(message: str) -> None:
+    def success(self, message: str) -> None:
         font = Back.GREEN + Fore.WHITE + Style.BRIGHT
-        SpinnerIO._box(message, font)
+        self._box(message, font)

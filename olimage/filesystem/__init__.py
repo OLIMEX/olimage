@@ -30,7 +30,7 @@ def verify_options():
         raise Exception("Target distribution \'{}\' not found in configuration files".format(release))
 
     if release != env.options['release']:
-        Console.warning("Using distribution stable release: \'{}\'".format(release))
+        Console().warning("Using distribution stable release: \'{}\'".format(release))
 
     env.options['release'] = release
 
@@ -57,7 +57,7 @@ def build_filesystem(**kwargs):
     for builder in builders:
         _builder = builder()
 
-        Console.info("Creating \'{}\' filesystem...".format(_builder.variant))
+        Console().info("Creating \'{}\' filesystem...".format(_builder.variant))
 
         for stage in _builder.stages:
             method = getattr(_builder, stage)
