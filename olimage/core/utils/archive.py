@@ -80,7 +80,7 @@ class Archive(object):
         :param output: output patch
         :return: None
         """
-        logger.info("Extracting {} to {}".format(input, output))
+        logger.info("Extracting {} to {}".format(source, output))
         Shell.run('tar -axf {} -C {}'.format(source, output))
 
 
