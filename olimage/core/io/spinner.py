@@ -4,8 +4,11 @@ import sys
 import time
 
 import halo
-from colorama import Fore, Style
+from colorama import Back, Fore, Style
 from halo._utils import encode_utf_8_text, get_terminal_columns
+
+from .base import IBaseIO
+from .exceptions import ConsoleException
 
 
 class Spinner(halo.Halo):
@@ -166,3 +169,75 @@ class Spinner(halo.Halo):
             self._write(encode_utf_8_text(output))
 
         return self
+
+
+_depth = 0
+_spinner = None
+
+
+class SpinnerIO(IBaseIO):
+    def __init__(self, text=None):
+        self._text = text
+
+        global _spinner
+        if _spinner and _depth != 0:
+            _spinner.succeed()
+        _spinner = Spinner()
+
+    def __enter__(self):
+        global _depth
+        if self._text:
+            _spinner.start(self._format(self._text, _depth))
+
+        _depth += 1
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        global _depth
+        _depth -= 1
+
+        global _spinner
+        if _spinner:
+            if isinstance(exc_type, Exception.__class__):
+                _spinner.fail()
+            else:
+                _spinner.succeed()
+            _spinner = None
+
+    @staticmethod
+    def _format(message: str, level: int) -> str:
+        if 0 > level > 4:
+            raise ConsoleException("Console print level must be between 0 and 4")
+
+        indent = '    ' * level + '-'
+
+        if level == 0:
+            style = Style.BRIGHT
+        else:
+            style = Style.RESET_ALL
+
+        return "{} {}{}{}".format(indent, style, message, Style.RESET_ALL)
+
+    @staticmethod
+    def _box(message: str, font) -> None:
+        message = ' ' * 2 + message + ' ' * 2
+
+        print("{}{}{}".format(font, ' ' * len(message), Style.RESET_ALL))
+        print("{}{}{}".format(font, message, Style.RESET_ALL))
+        print("{}{}{}".format(font, ' ' * len(message), Style.RESET_ALL))
+
+    @staticmethod
+    def info(message: str) -> None:
+        print("{}I: {}{}".format(Style.BRIGHT, message, Style.RESET_ALL))
+
+    @staticmethod
+    def warning(message: str) -> None:
+        print("{}W: {}{}".format(Style.BRIGHT + Fore.YELLOW, message, Style.RESET_ALL))
+
+    @staticmethod
+    def error(message: str) -> None:
+        print("{}E: {}{}".format(Style.BRIGHT + Fore.RED, message, Style.RESET_ALL))
+
+    @staticmethod
+    def success(message: str) -> None:
+        font = Back.GREEN + Fore.WHITE + Style.BRIGHT
+        SpinnerIO._box(message, font)

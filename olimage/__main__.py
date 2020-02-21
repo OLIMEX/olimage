@@ -21,6 +21,15 @@ def prepare_logging():
 
     :return: None
     """
+
+    if environment.options['verbose']:
+        logging.basicConfig(
+            format='%(message)s',
+            level=logging.DEBUG,
+            handlers=[logging.StreamHandler(sys.stdout)]
+        )
+        return
+
     if environment.options['log'] is None:
         return
 
@@ -28,7 +37,8 @@ def prepare_logging():
         filename=environment.options['log'],
         filemode='w',
         format='%(message)s',
-        level=logging.DEBUG if environment.options['verbose'] > 0 else logging.INFO)
+        level=logging.DEBUG,
+    )
 
 
 def prepare_tree():
@@ -67,7 +77,7 @@ def prepare_tree():
               type=int,
               help="Specify apt-cache service port")
 # Logging
-@click.option("-v", "--verbose", count=True, help="Increase logging verbosity.")
+@click.option("-v", "--verbose", is_flag=True, help="Increase logging verbosity.")
 @click.option("--log",
               help="Logging file.")
 @click.option("-V", "--version", is_flag=True, help="Show the current package version")
