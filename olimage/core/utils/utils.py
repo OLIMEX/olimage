@@ -5,7 +5,6 @@ import inspect
 import olimage.environment as env
 
 from .archive import Archive
-from .download import Download
 from .install import Install
 from .patch import Patch
 from .qemu import Qemu
@@ -51,7 +50,6 @@ class UtilsMeta(type):
 
 class Utils(object, metaclass=UtilsMeta):
     archive: Archive
-    download: Download
     install: Install
     patch: Patch
     qemu: Qemu
