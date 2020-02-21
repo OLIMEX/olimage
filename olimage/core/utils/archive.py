@@ -38,10 +38,10 @@ class Archive(object):
         _exclude = ''
         if exclude:
             for e in exclude:
-                _exclude += '--exclude={} '.format(e)
+                _exclude += '--exclude=.{} '.format(e)
 
         logger.info("Archiving {} to {}".format(source, output))
-        Shell.run('tar --{} -cf {} {} -C {} .'.format(Archive.modes[mode], _exclude, output, source))
+        Shell.run('tar --{} {} -cpf {} -C {} .'.format(Archive.modes[mode], _exclude, output, source))
         return output
 
     @staticmethod
@@ -89,5 +89,3 @@ class Archive(object):
         """
         logger.info("Extracting {} to {}".format(source, output))
         Shell.run('tar -axf {} -C {}'.format(source, output))
-
-
