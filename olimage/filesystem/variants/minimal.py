@@ -42,6 +42,7 @@ class VariantMinimal(FileSystemBase):
 
     @stamp
     def configure(self):
+        return
         self._prepare_build_dir()
 
         # Extract fresh copy
@@ -110,6 +111,7 @@ class VariantMinimal(FileSystemBase):
 
     @stamp
     def cleanup(self):
+        return
         with Console("APT sources"):
             Utils.shell.chroot('apt-get clean')
 
