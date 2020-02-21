@@ -15,3 +15,4 @@ minimal:buster:
   stage: minimal
   tags:
     - olimage
+  when: manual
