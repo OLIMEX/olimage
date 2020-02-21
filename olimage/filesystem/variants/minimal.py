@@ -42,6 +42,7 @@ class VariantMinimal(FileSystemBase):
 
     @stamp
     def configure(self):
+        return
         self._prepare_build_dir()
 
         # Extract fresh copy
@@ -110,10 +111,11 @@ class VariantMinimal(FileSystemBase):
 
     @stamp
     def cleanup(self):
+        return
         with Console("APT sources"):
             Utils.shell.chroot('apt-get clean')
 
     @stamp
     def export(self):
         with Console("Creating archive: {}".format(os.path.basename(self._build_dir) + '.tar.gz')):
-            Utils.archive.gzip(self._build_dir)
+            Utils.archive.gzip(self._build_dir, exclude=['/dev/*', '/proc/*', '/run/*', '/tmp/*', '/sys/*'])
