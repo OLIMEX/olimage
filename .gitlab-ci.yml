@@ -11,7 +11,7 @@ minimal:buster:
   script:
     - python3 -m olimage -v image A20-OLinuXino-Lime buster minimal $(uuidgen).img
     - mkdir result
-    - 7z -a result/minimal.7z output/images/*.img
+    - 7z a result/minimal.7z output/images/*.img
   stage: minimal
   tags:
     - olimage
