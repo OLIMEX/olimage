@@ -2,6 +2,7 @@ import os
 import shutil
 
 import olimage.environment as env
+from olimage.core.io import Console
 from olimage.core.parsers import Board
 from olimage.core.parsers.packages import ParserPackages
 from olimage.core.utils import Utils
@@ -37,3 +38,11 @@ class FileSystemBase(object):
             shutil.rmtree(self._build_dir)
 
         os.mkdir(self._build_dir)
+
+    def cleanup(self):
+        with Console("APT sources"):
+            Utils.shell.chroot('apt-get clean')
+
+    def export(self):
+        with Console("Creating archive: {}".format(os.path.basename(self._build_dir) + '.tar.gz')):
+            Utils.archive.gzip(self._build_dir, exclude=['/dev/*', '/proc/*', '/run/*', '/tmp/*', '/sys/*'])

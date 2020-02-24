@@ -110,10 +110,8 @@ class VariantMinimal(FileSystemBase):
 
     @stamp
     def cleanup(self):
-        with Console("APT sources"):
-            Utils.shell.chroot('apt-get clean')
+        super().cleanup()
 
     @stamp
     def export(self):
-        with Console("Creating archive: {}".format(os.path.basename(self._build_dir) + '.tar.gz')):
-            Utils.archive.gzip(self._build_dir, exclude=['/dev/*', '/proc/*', '/run/*', '/tmp/*', '/sys/*'])
+        super().export()

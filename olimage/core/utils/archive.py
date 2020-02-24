@@ -88,4 +88,4 @@ class Archive(object):
         :return: None
         """
         logger.info("Extracting {} to {}".format(source, output))
-        Shell.run('tar -axf {} -C {}'.format(source, output))
+        Shell.run('tar -axpf {} -C {}'.format(source, output))

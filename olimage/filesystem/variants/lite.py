@@ -22,6 +22,11 @@ class VariantLite(FileSystemBase):
         with Console("Extracting archive"):
             Utils.archive.extract(self._build_dir.replace('lite', 'minimal') + '.tar.gz', self._build_dir)
 
+        # Copy resolv.conf
+        with Console("Copying /etc/resolv.conf"):
+            Utils.shell.run('rm -vf {}/etc/resolv.conf'.format(self._build_dir), ignore_fail=True)
+            Utils.shell.run('cp -vf /etc/resolv.conf {}/etc/resolv.conf'.format(self._build_dir))
+
         # Install packages
         with Console("Installing packages"):
             variant: Variant = env.objects['variant']
@@ -30,10 +35,8 @@ class VariantLite(FileSystemBase):
 
     @stamp
     def cleanup(self):
-        with Console("APT sources"):
-            Utils.shell.chroot('apt-get clean')
+        super().cleanup()
 
     @stamp
     def export(self):
-        with Console("Creating archive: {}".format(os.path.basename(self._build_dir) + '.tar.gz')):
-            Utils.archive.gzip(self._build_dir)
+        super().export()
