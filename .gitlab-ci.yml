@@ -1,18 +1,36 @@
 stages:
   - minimal
+  - lite
 
-minimal:buster:
+.image:
+  allow_failure: false
   artifacts:
     paths:
-      - result/*
-  before_script:
-    - apt-get update
-    - apt-get install -y p7zip-full uuid-runtime
+      - output/*
   script:
-    - python3 -m olimage -v image A20-OLinuXino-Lime buster minimal $(uuidgen).img
-    - mkdir result
-    - 7z a result/minimal.7z output/images/*.img
-  stage: minimal
+    - python3 -m olimage -v image $BOARD $RELEASE $VARIANT $IMAGE
+    - 7z a output/images/$IMAGE.7z output/images/$IMAGE
   tags:
     - olimage
   when: manual
+
+A20:minimal:buster:
+  extends: .image
+  stage: minimal
+  variables:
+    BOARD: A20-OLinuXino-Lime
+    IMAGE: a20_olinuxino_minimal_$(date +%Y%m%d-%H%M%S).img
+    RELEASE: buster
+    VARIANT: minimal
+
+A20:lite:buster:
+  extends: .image
+  needs:
+    - job: "A20:minimal:buster"
+      artifacts: true
+  stage: lite
+  variables:
+    BOARD: A20-OLinuXino-Lime
+    IMAGE: a20_olinuxino_minimal_$(date +%Y%m%d-%H%M%S).img
+    RELEASE: buster
+    VARIANT: lite
