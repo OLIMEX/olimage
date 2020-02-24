@@ -11,6 +11,7 @@ stages:
     - echo "Building $OLIMAGE_VARIANT image for $OLIMAGE_BOARD based on $OLIMAGE_RELEASE as $OLIMAGE_IMAGE."
     - python3 -m olimage -v image $OLIMAGE_BOARD $OLIMAGE_RELEASE $OLIMAGE_VARIANT $OLIMAGE_IMAGE
     - 7z a output/images/$OLIMAGE_IMAGE.7z output/images/$OLIMAGE_IMAGE
+    - find output/filesystem/ -mindepth 1 -maxdepth 1 -type d -exec rm -rf {} \;
   tags:
     - olimage
   when: manual
