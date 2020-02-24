@@ -63,6 +63,7 @@ def prepare_tree():
 
 
 @click.group()
+@click.option("--output", help="Specify output directory")
 # Apt-cacher
 @click.option("--apt-cacher/--no-apt-cacher",
               default=False,
@@ -80,6 +81,13 @@ def prepare_tree():
               help="Logging file.")
 @click.option("-V", "--version", is_flag=True, help="Show the current package version")
 def cli(**kwargs):
+    """
+    Build system for the OLinuXino boards
+    \f
+
+    :param kwargs:
+    :return:
+    """
 
     # Check for package version
     if kwargs['version']:
@@ -88,6 +96,9 @@ def cli(**kwargs):
 
     # Update environment
     environment.options.update(kwargs)
+
+    if kwargs['output']:
+        environment.paths['output'] = kwargs['output']
 
     prepare_logging()
     prepare_tree()
