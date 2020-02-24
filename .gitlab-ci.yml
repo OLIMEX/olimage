@@ -2,6 +2,7 @@ stages:
 #  - clean
   - minimal
   - lite
+  - base
 
 .image:
   allow_failure: false
@@ -13,7 +14,7 @@ stages:
     - python3 -m olimage -v --output=/output image $OLIMAGE_BOARD $OLIMAGE_RELEASE $OLIMAGE_VARIANT $OLIMAGE_IMAGE
 
     # Archive the
-    - 7z a /output/images/$OLIMAGE_IMAGE.7z /output/images/$OLIMAGE_IMAGE
+#    - 7z a /output/images/$OLIMAGE_IMAGE.7z /output/images/$OLIMAGE_IMAGE
   tags:
     - olimage
   when: manual
@@ -37,10 +38,6 @@ A20:minimal:buster:
     OLIMAGE_VARIANT: minimal
 
 A20:lite:buster:
-  before_script:
-    - ls -la /output
-    - ls -la /output/filesystem/*
-    - ls -la /output/images/*
   extends: .image
   needs: ["A20:minimal:buster"]
   stage: lite
@@ -48,4 +45,14 @@ A20:lite:buster:
     OLIMAGE_BOARD: A20-OLinuXino
     OLIMAGE_IMAGE: A20-OLinuXino_lite_buster.img
     OLIMAGE_RELEASE: buster
-    OLIMAGE_VARIANT: minimal
+    OLIMAGE_VARIANT: lite
+
+A20:base:buster:
+  extends: .image
+  needs: ["A20:lite:buster"]
+  stage: base
+  variables:
+    OLIMAGE_BOARD: A20-OLinuXino
+    OLIMAGE_IMAGE: A20-OLinuXino_base_buster.img
+    OLIMAGE_RELEASE: buster
+    OLIMAGE_VARIANT: base
