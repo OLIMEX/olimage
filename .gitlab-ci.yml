@@ -1,5 +1,5 @@
 stages:
-  - clean
+#  - clean
   - minimal
   - lite
 
@@ -18,14 +18,14 @@ stages:
     - olimage
   when: manual
 
-clean:
-  allow_failure: false
-  script:
-    - python3 -m olimage -v --output=/output clean
-  stage: clean
-  tags:
-    - olimage
-  when: manual
+#clean:
+#  allow_failure: false
+#  script:
+#    - python3 -m olimage -v --output=/output clean
+#  stage: clean
+#  tags:
+#    - olimage
+#  when: manual
 
 A20:minimal:buster:
   extends: .image
