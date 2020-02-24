@@ -18,8 +18,8 @@ A20:minimal:buster:
   extends: .image
   stage: minimal
   variables:
-    BOARD: A20-OLinuXino-Lime
-    IMAGE: a20_olinuxino_minimal_$(date +%Y%m%d-%H%M%S).img
+    BOARD: A20-OLinuXino
+    IMAGE: A20-OLinuXino_minimal_buster.img
     RELEASE: buster
     VARIANT: minimal
 
@@ -30,7 +30,7 @@ A20:lite:buster:
       artifacts: true
   stage: lite
   variables:
-    BOARD: A20-OLinuXino-Lime
-    IMAGE: a20_olinuxino_minimal_$(date +%Y%m%d-%H%M%S).img
+    BOARD: A20-OLinuXino
+    IMAGE: A20-OLinuXino_lite_buster.img
     RELEASE: buster
-    VARIANT: lite
+    VARIANT: minimal
