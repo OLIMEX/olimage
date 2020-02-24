@@ -1,14 +1,29 @@
 stages:
+  - .pre
   - minimal
   - lite
 
 .image:
   allow_failure: false
   script:
+    # Announce build
     - echo "Building $OLIMAGE_VARIANT image for $OLIMAGE_BOARD based on $OLIMAGE_RELEASE as $OLIMAGE_IMAGE."
+
+    # Run the build
     - python3 -m olimage -v --output=/output image $OLIMAGE_BOARD $OLIMAGE_RELEASE $OLIMAGE_VARIANT $OLIMAGE_IMAGE
-    - 7z a output/images/$OLIMAGE_IMAGE.7z output/images/$OLIMAGE_IMAGE
+
+    # Archive the
+    - 7z a /output/images/$OLIMAGE_IMAGE.7z /output/images/$OLIMAGE_IMAGE
     - find output/filesystem/ -mindepth 1 -maxdepth 1 -type d -exec rm -rf {} \;
+  tags:
+    - olimage
+  when: manual
+
+clean:
+  allow_failure: false
+  script:
+    - python3 -m olimage -v --output=/output clean
+  stage: .pre
   tags:
     - olimage
   when: manual
