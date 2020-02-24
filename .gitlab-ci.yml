@@ -8,9 +8,9 @@ stages:
     paths:
       - output/*
   script:
-    - echo "Building $VARIANT image for $BOARD based on $RELEASE as $IMAGE."
-    - python3 -m olimage -v image $BOARD $RELEASE $VARIANT $IMAGE
-    - 7z a output/images/$IMAGE.7z output/images/$IMAGE
+    - echo "Building $OLIMAGE_VARIANT image for $OLIMAGE_BOARD based on $OLIMAGE_RELEASE as $OLIMAGE_IMAGE."
+    - python3 -m olimage -v image $OLIMAGE_BOARD $OLIMAGE_RELEASE $OLIMAGE_VARIANT $OLIMAGE_IMAGE
+    - 7z a output/images/$OLIMAGE_IMAGE.7z output/images/$OLIMAGE_IMAGE
   tags:
     - olimage
   when: manual
@@ -19,10 +19,10 @@ A20:minimal:buster:
   extends: .image
   stage: minimal
   variables:
-    BOARD: A20-OLinuXino
-    IMAGE: A20-OLinuXino_minimal_buster.img
-    RELEASE: buster
-    VARIANT: minimal
+    OLIMAGE_BOARD: A20-OLinuXino
+    OLIMAGE_IMAGE: A20-OLinuXino_minimal_buster.img
+    OLIMAGE_RELEASE: buster
+    OLIMAGE_VARIANT: minimal
 
 A20:lite:buster:
   extends: .image
@@ -31,7 +31,7 @@ A20:lite:buster:
       artifacts: true
   stage: lite
   variables:
-    BOARD: A20-OLinuXino
-    IMAGE: A20-OLinuXino_lite_buster.img
-    RELEASE: buster
-    VARIANT: minimal
+    OLIMAGE_BOARD: A20-OLinuXino
+    OLIMAGE_IMAGE: A20-OLinuXino_lite_buster.img
+    OLIMAGE_RELEASE: buster
+    OLIMAGE_VARIANT: minimal
