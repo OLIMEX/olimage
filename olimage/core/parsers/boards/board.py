@@ -35,13 +35,16 @@ class Board(object):
         return self._data['arch']
 
     @property
-    def soc(self) -> str:
+    def default(self) -> str:
         """
-        Get board SoC
+        Get default setting. Used when there is no model specified
 
-        :return: board soc
+        :return: string name
         """
-        return self._data['soc']
+        if 'default' in self._data:
+            return self._data['default']
+
+        return None
 
     @property
     def loading(self) -> BoardLoading:
@@ -55,6 +58,27 @@ class Board(object):
         :return: board models
         """
         return self._models
+
+    @property
+    def name(self) -> str:
+        """
+        Get board common name
+
+        :return: name string
+        """
+        if 'name' in self._data:
+            return self._data['name']
+
+        return None
+
+    @property
+    def soc(self) -> str:
+        """
+        Get board SoC
+
+        :return: board soc
+        """
+        return self._data['soc']
 
     @property
     def target(self) -> BoardModel:

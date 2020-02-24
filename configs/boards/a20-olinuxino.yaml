@@ -1,6 +1,7 @@
 boards:
   # Define boards architecture
   arch: 'armhf'
+  default: 'A20-OLinuXino-LIME'
 
   # Define load addresses
   loading:
@@ -299,4 +300,5 @@ boards:
       id: 10238
       fdt: 'sun7i-a20-olimex-som204-evb.dtb'
 
+  name: 'A20-OLinuXino'
   soc: 'sun7i-a20'
