@@ -28,7 +28,7 @@ class Boards(LoaderBase):
     def get_board(self, name: str) -> Board:
         for board in self._objects:
             # Check if the 'global name' is passed
-            if board.name.lower() == name.lower():
+            if board.name and board.name.lower() == name.lower():
                 name = board.default
                 if name is None:
                     raise Exception("Default setting is not set!")
