@@ -1,5 +1,5 @@
 stages:
-  - .pre
+  - clean
   - minimal
   - lite
 
@@ -14,7 +14,6 @@ stages:
 
     # Archive the
     - 7z a /output/images/$OLIMAGE_IMAGE.7z /output/images/$OLIMAGE_IMAGE
-    - find output/filesystem/ -mindepth 1 -maxdepth 1 -type d -exec rm -rf {} \;
   tags:
     - olimage
   when: manual
@@ -23,7 +22,7 @@ clean:
   allow_failure: false
   script:
     - python3 -m olimage -v --output=/output clean
-  stage: .pre
+  stage: clean
   tags:
     - olimage
   when: manual
