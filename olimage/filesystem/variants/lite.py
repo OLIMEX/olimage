@@ -25,6 +25,7 @@ class VariantLite(FileSystemBase):
         # Install packages
         with Console("Installing packages"):
             variant: Variant = env.objects['variant']
+            Utils.shell.chroot('apt-get update')
             Utils.shell.chroot('apt-get install -y {}'.format(' '.join(variant.packages)), self._build_dir)
 
     @stamp
