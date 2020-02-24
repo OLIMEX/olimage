@@ -109,7 +109,14 @@ def cli(**kwargs):
 
 @cli.command(name="clean")
 def clean():
-    shutil.rmtree(environment.paths['output'])
+    """
+    Remove all files in the OUTPUT folder.
+    \f
+
+    :return:
+    """
+    from olimage.core.utils import Utils
+    Utils.shell.run('rm -rf {}/*'.format(environment.paths['output']), shell=True)
 
 
 # Add external sub-commands
