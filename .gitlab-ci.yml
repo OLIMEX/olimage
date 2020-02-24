@@ -8,6 +8,7 @@ stages:
     paths:
       - output/*
   script:
+    - echo "Building $VARIANT image for $BOARD based on $RELEASE as $IMAGE."
     - python3 -m olimage -v image $BOARD $RELEASE $VARIANT $IMAGE
     - 7z a output/images/$IMAGE.7z output/images/$IMAGE
   tags:
