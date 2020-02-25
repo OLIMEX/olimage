@@ -5,7 +5,6 @@ import olimage.environment as env
 from olimage.core.io import Console
 from olimage.core.parsers import Board
 from olimage.core.parsers.packages import ParserPackages
-from olimage.core.parsers.packages.variant import Variant
 from olimage.core.utils import Utils
 
 
@@ -53,9 +52,6 @@ class FileSystemBase(object):
                 packages += self._release_packages.get_variant(str(self._variant_packages))
 
             Utils.shell.chroot('apt-get update')
-            Utils.shell.chroot('apt-get install -y ssl-cert')
-            import sys
-            sys.exit(1)
             Utils.shell.chroot('apt-get install -y {}'.format(' '.join(packages)), self._build_dir)
 
     def cleanup(self):

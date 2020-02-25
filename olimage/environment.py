@@ -25,6 +25,7 @@ options = {}
 objects = {}
 
 # Objects
+# TODO: Remove this
 obj_graph: pinject.object_graph.ObjectGraph = None
 
 

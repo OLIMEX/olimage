@@ -26,6 +26,12 @@ services:
     packages:
       - locales
 
+  olimage.core.setup.bluetooth:
+    packages:
+      - blueman
+      - bluez
+      - bluez-tools
+      - pulseaudio-module-bluetooth
 
 
 variants:
@@ -156,10 +162,6 @@ variants:
       - pavucontrol
       - pulseaudio
       - pavumeter
-      - bluez
-      - bluez-tools
-      - pulseaudio-module-bluetooth
-      - blueman
       - libpam-gnome-keyring
       - libgl1-mesa-dri
       - profile-sync-daemon
@@ -184,7 +186,6 @@ variants:
       - dbus-x11
       - numix-icon-theme
       - onboard
-#      - chromium
       - system-config-printer-common
       - system-config-printer
       - mirage

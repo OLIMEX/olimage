@@ -4,7 +4,6 @@ import olimage.environment as env
 
 from olimage.core.io import Console
 from olimage.core.parsers import Board, Distribution, Users
-from olimage.core.parsers.packages.variant import Variant
 from olimage.core.service import Service
 from olimage.core.setup import Setup
 from olimage.core.utils import Utils
@@ -65,15 +64,15 @@ class VariantMinimal(FileSystemBase):
             Setup.console(env.options['keyboard_keymap'], env.options['keyboard_layout'])
 
         # # Install packages
-        # self._install_packages()
+        self._install_packages()
 
-        # # Generate boot files
-        # with Console("Generating boot files"):
-        #     Setup.boot()
-        #
-        # # Install kernel
-        # with Console("Installing kernel"):
-        #     Utils.shell.chroot('apt-get install -y linux-image-5.5.2-olimex')
+        # Generate boot files
+        with Console("Generating boot files"):
+            Setup.boot()
+
+        # Install kernel
+        with Console("Installing kernel"):
+            Utils.shell.chroot('apt-get install -y linux-image-5.5.2-olimex')
 
         # Configure hostname
         hostname = str(env.objects['board'])

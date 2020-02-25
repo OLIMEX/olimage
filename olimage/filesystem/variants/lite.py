@@ -1,9 +1,4 @@
-import os
-
-import olimage.environment as env
-
 from olimage.core.io import Console
-from olimage.core.parsers.packages.variant import Variant
 from olimage.core.utils import Utils
 from olimage.filesystem.base import FileSystemBase
 

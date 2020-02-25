@@ -5,6 +5,7 @@ import inspect
 from .base import SetupAbstract
 
 from .apt import SetupApt
+from .bluetooth import SetupBluetooth
 from .boot import SetupBoot
 from .console import SetupConsole
 from .fstab import SetupFstab
@@ -54,6 +55,7 @@ class SetupMeta(type):
 
 class Setup(metaclass=SetupMeta):
     apt: SetupApt
+    bluetooth: SetupBluetooth
     boot: SetupBoot
     console: SetupConsole
     fstab: SetupFstab

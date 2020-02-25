@@ -68,11 +68,6 @@ class Shell(object):
                 else:
                     Shell.run("mount --bind {} {}".format(mount, path + mount))
 
-        with open('/proc/self/mountinfo', 'r') as f:
-            for line in f.readlines():
-                if "olimage" in line:
-                    print(line.split()[4])
-
     @staticmethod
     def unbind(path):
         for mount in reversed(Shell.mountpoints):
@@ -101,6 +96,4 @@ class Shell(object):
             _e = e
 
         if _e:
-            # time.sleep(2)
-            # Shell.unbind(directory)
             raise _e

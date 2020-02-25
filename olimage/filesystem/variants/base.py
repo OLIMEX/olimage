@@ -1,12 +1,7 @@
-import os
-
-import olimage.environment as env
-
 from olimage.core.io import Console
-from olimage.core.parsers.packages.variant import Variant
+from olimage.core.setup import Setup
 from olimage.core.utils import Utils
 from olimage.filesystem.base import FileSystemBase
-
 from olimage.filesystem.stamp import stamp
 
 
@@ -24,6 +19,10 @@ class VariantBase(FileSystemBase):
 
         # Install packages
         self._install_packages()
+
+        # Configure bluetooth
+        with Console("Configuring bluetooth"):
+            Setup.bluetooth()
 
     @stamp
     def cleanup(self):

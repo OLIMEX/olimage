@@ -5,7 +5,6 @@ import traceback
 
 import click
 import pinject
-import shutil
 
 import olimage.image
 import olimage.filesystem
@@ -14,6 +13,7 @@ import olimage
 import olimage.environment as environment
 
 from olimage.core.io import Console
+from olimage.core.utils import Utils
 
 
 def prepare_logging():
@@ -50,16 +50,6 @@ def prepare_tree():
     output = environment.paths['output']
     if not os.path.exists(output):
         os.mkdir(output)
-
-    # for directory in ['filesystem', 'images']:
-    #     path = os.path.join(output, directory)
-    #
-    #     # Create directory
-    #     if not os.path.exists(path):
-    #         os.mkdir(path)
-    #
-    #     # Append paths
-    #     environment.paths[directory] = path
 
 
 @click.group()
@@ -115,7 +105,6 @@ def clean():
 
     :return:
     """
-    from olimage.core.utils import Utils
     Utils.shell.run('rm -rf {}/*'.format(environment.paths['output']), shell=True)
 
 
