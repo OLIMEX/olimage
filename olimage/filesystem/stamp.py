@@ -4,7 +4,7 @@ import os
 
 import olimage.environment as env
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger()
 
 
 def stamp(func):
@@ -23,7 +23,7 @@ def stamp(func):
             if key not in env.paths:
                 raise Exception("The path \'{}\' not set in the global environment".format(key))
 
-        # Generate stamp for the exact filesystem: .stamp_<function_<arch>-<suite>-<variant>
+        # Generate stamp for the exact filesystem: .stamp_<function>_<suite>-<variant>
         file = os.path.join(
             env.paths['filesystem'],
             '.stamp_' + func.__name__.lstrip('_') + '_' + os.path.basename(env.paths['build']))

@@ -11,18 +11,18 @@ from olimage.core.utils import Utils
 
 from .mount import Mounter
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger()
 
 
 class Image(object):
-    def __init__(self, boards: Boards, partitions: Partitions):
+    def __init__(self, output: str):
 
         # Initialize dependency
-        self._board: Board = boards.get_board(env.options['board'])
-        self._partitions = partitions
+        self._board: Board = Boards().get_board(env.options['board'])
+        self._partitions: Partitions = Partitions()
 
         # Global data
-        self._output = env.options['output']
+        self._output = output
 
     def generate(self) -> None:
         """

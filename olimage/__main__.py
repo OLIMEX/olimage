@@ -51,15 +51,15 @@ def prepare_tree():
     if not os.path.exists(output):
         os.mkdir(output)
 
-    for directory in ['filesystem', 'images']:
-        path = os.path.join(output, directory)
-
-        # Create directory
-        if not os.path.exists(path):
-            os.mkdir(path)
-
-        # Append paths
-        environment.paths[directory] = path
+    # for directory in ['filesystem', 'images']:
+    #     path = os.path.join(output, directory)
+    #
+    #     # Create directory
+    #     if not os.path.exists(path):
+    #         os.mkdir(path)
+    #
+    #     # Append paths
+    #     environment.paths[directory] = path
 
 
 @click.group()

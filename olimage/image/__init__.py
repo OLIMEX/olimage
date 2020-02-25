@@ -2,7 +2,10 @@ import click
 import os
 
 import olimage.environment as env
+import olimage.filesystem
+
 from olimage.core.io import Console
+from olimage.core.parsers import Board
 
 from .image import Image
 from .parameters import parameters
@@ -17,36 +20,35 @@ __all__ = [
 @click.pass_context
 def build_image(ctx: click.Context, **kwargs):
 
-    kwargs['output'] = os.path.join(env.paths['images'], kwargs['output'])
-
     # Update env options
     env.options.update(kwargs)
 
     # Invoke build filesystem
-    import olimage.filesystem
     ctx.invoke(olimage.filesystem.build_filesystem, **kwargs)
 
-    _image: Image = env.obj_graph.provide(Image)
-    console = Console()
+    image = os.path.join(env.paths['images'], kwargs['output'])
 
-    console.info("Creating image \'{}\'...".format(os.path.basename(kwargs['output'])))
+    console: Console = Console()
+    builder: Image = Image(image)
+
+    console.info("Creating image \'{}\'...".format(os.path.basename(image)))
 
     with Console("Generating black image"):
-        _image.generate()
-        _image.partition()
-        _image.format()
-        _image.bootloader()
+        builder.generate()
+        builder.partition()
+        builder.format()
+        builder.bootloader()
 
     with Console("Copying target files"):
-        _image.copy()
+        builder.copy()
 
     with Console("Configuring"):
-        _image.configure()
+        builder.configure()
 
     if 'HOST_PWD' in env.env:
-        realpath = env.env['HOST_PWD'] + '/' + '/'.join(kwargs['output'].split('/')[2:])
+        realpath = env.env['HOST_PWD'] + '/' + '/'.join(image.split('/')[2:])
     else:
-        realpath = kwargs['output']
+        realpath = image
     console.success("Your image is ready at: {}".format(realpath))
 
 

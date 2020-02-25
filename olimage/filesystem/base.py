@@ -19,7 +19,7 @@ class FileSystemBase(object):
         release = env.options['release']
         board: Board = env.objects['board']
 
-        self._build_dir = os.path.join(env.paths['filesystem'], "{}-{}-{}".format(board.arch, release, self.variant))
+        self._build_dir = os.path.join(env.paths['filesystem'], "{}-{}".format(release, self.variant))
 
         env.paths['build'] = self._build_dir
         env.objects['variant'] = ParserPackages().get_variant(self.variant)

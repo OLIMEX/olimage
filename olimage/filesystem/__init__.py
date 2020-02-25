@@ -1,4 +1,5 @@
 import click
+import os
 
 import olimage.environment as env
 
@@ -47,10 +48,23 @@ def build_filesystem(**kwargs):
     verify_options()
 
     # Build filesystem
-    # root: Rootfs = env.obj_graph.provide(Rootfs)
-
     board: Board = Boards().get_board(kwargs['board'])
     env.objects['board'] = board
+
+    # Prepare build tree
+    env.paths['board'] = os.path.join(env.paths['output'], str(board).lower())
+    if not os.path.exists(env.paths['board']):
+        os.mkdir(env.paths['board'])
+
+    for directory in ['filesystem', 'images']:
+        path = os.path.join(env.paths['board'], directory)
+
+        # Create directory
+        if not os.path.exists(path):
+            os.mkdir(path)
+
+        # Append paths
+        env.paths[directory] = path
 
     builders = [VariantMinimal, VariantLite, VariantBase]
 
