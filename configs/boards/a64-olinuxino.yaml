@@ -1,5 +1,6 @@
 boards:
   arch: 'arm64'
+  default: 'A64-OLinuXino-1G'
 
   loading:
     kernel:   '0x40080000'
@@ -51,4 +52,5 @@ boards:
       id: 9849
       fdt: 'allwinner/sun50i-a64-olinuxino-emmc.dtb'
 
+  name: 'A64-OLinuXino'
   soc: 'sun50i-a64'

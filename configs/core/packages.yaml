@@ -2,6 +2,14 @@
   - olinuxino-overlays
   - u-boot-olinuxino
 
+releases:
+  bionic:
+    base:
+      - chromium-browser
+  buster:
+    base:
+      - chromium
+
 services:
   olimage.core.setup.apt:
     packages:
@@ -17,6 +25,8 @@ services:
   olimage.core.setup.locales:
     packages:
       - locales
+
+
 
 variants:
   minimal:
@@ -174,10 +184,11 @@ variants:
       - dbus-x11
       - numix-icon-theme
       - onboard
-      - chromium
+#      - chromium
       - system-config-printer-common
       - system-config-printer
       - mirage
+
 
   full:
     packages:

@@ -65,8 +65,7 @@ class VariantMinimal(FileSystemBase):
             Setup.console(env.options['keyboard_keymap'], env.options['keyboard_layout'])
 
         # Install packages
-        with Console("Installing packages"):
-            Utils.shell.chroot('apt-get install -y {}'.format(' '.join(env.objects['variant'].packages)))
+        self._install_packages()
 
         # Generate boot files
         with Console("Generating boot files"):

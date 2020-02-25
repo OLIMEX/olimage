@@ -23,10 +23,7 @@ class VariantBase(FileSystemBase):
             Utils.archive.extract(self._build_dir.replace('base', 'lite') + '.tar.gz', self._build_dir)
 
         # Install packages
-        with Console("Installing packages"):
-            variant: Variant = env.objects['variant']
-            Utils.shell.chroot('apt-get update')
-            Utils.shell.chroot('apt-get install -y {}'.format(' '.join(variant.packages)), self._build_dir)
+        self._install_packages()
 
     @stamp
     def cleanup(self):
