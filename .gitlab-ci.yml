@@ -47,3 +47,32 @@ A20:base:buster:
     OLIMAGE_IMAGE: A20-OLinuXino_base_buster.img
     OLIMAGE_RELEASE: buster
     OLIMAGE_VARIANT: base
+
+A20:minimal:bionic:
+  extends: .image
+  stage: minimal
+  variables:
+    OLIMAGE_BOARD: A20-OLinuXino
+    OLIMAGE_IMAGE: A20-OLinuXino_minimal_bionic.img
+    OLIMAGE_RELEASE: bionic
+    OLIMAGE_VARIANT: minimal
+
+A20:lite:bionic:
+  extends: .image
+  needs: ["A20:minimal:bionic"]
+  stage: lite
+  variables:
+    OLIMAGE_BOARD: A20-OLinuXino
+    OLIMAGE_IMAGE: A20-OLinuXino_lite_bionic.img
+    OLIMAGE_RELEASE: bionic
+    OLIMAGE_VARIANT: lite
+
+A20:base:bionic:
+  extends: .image
+  needs: ["A20:lite:bionic"]
+  stage: base
+  variables:
+    OLIMAGE_BOARD: A20-OLinuXino
+    OLIMAGE_IMAGE: A20-OLinuXino_base_bionic.img
+    OLIMAGE_RELEASE: bionic
+    OLIMAGE_VARIANT: base
