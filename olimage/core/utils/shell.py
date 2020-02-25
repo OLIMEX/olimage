@@ -1,4 +1,5 @@
 import time
+import os
 
 import cliapp
 import logging
@@ -11,6 +12,9 @@ logger = logging.getLogger()
 
 
 class Shell(object):
+    # mountpoints = ['/proc', '/dev', '/dev/pts', '/sys', '/run/dbus']
+    mountpoints = ['/proc', '/dev', '/dev/pts', '/sys']
+
     @staticmethod
     def run(command, **kwargs):
 
@@ -54,18 +58,24 @@ class Shell(object):
 
     @staticmethod
     def bind(path):
-        if not Shell._is_mounted(path + '/proc'):
-            Shell.run("mount -t proc proc {}/proc".format(path))
-        if not Shell._is_mounted(path + '/dev'):
-            Shell.run("mount --bind /dev {}/dev".format(path))
-        if not Shell._is_mounted(path + '/dev/pts'):
-            Shell.run("mount --bind /dev/pts {}/dev/pts".format(path))
-        if not Shell._is_mounted(path + '/sys'):
-            Shell.run("mount --bind /sys {}/sys".format(path))
+        for mount in Shell.mountpoints:
+            if not Shell._is_mounted(path + mount):
+                if not os.path.exists(path + mount):
+                    os.makedirs(path + mount, 0o755, exist_ok=True)
+
+                if mount == '/proc':
+                    Shell.run("mount -t proc proc {}/proc".format(path))
+                else:
+                    Shell.run("mount --bind {} {}".format(mount, path + mount))
+
+        with open('/proc/self/mountinfo', 'r') as f:
+            for line in f.readlines():
+                if "olimage" in line:
+                    print(line.split()[4])
 
     @staticmethod
     def unbind(path):
-        for mount in ['/sys', '/dev/pts', '/dev', '/proc']:
+        for mount in reversed(Shell.mountpoints):
             if Shell._is_mounted(path + mount):
                 while True:
                     try:
