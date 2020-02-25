@@ -4,6 +4,8 @@ import os
 
 import olimage.environment as env
 
+from .base import FileSystemBase
+
 logger = logging.getLogger()
 
 
@@ -17,6 +19,8 @@ def stamp(func):
 
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
+
+        fs: FileSystemBase = args[0]
 
         # Check if the environment keys are set
         for key in ['filesystem', 'build']:
@@ -32,6 +36,19 @@ def stamp(func):
         if os.path.isfile(file):
             logger.debug("Found existing stamp: {}. Skipping".format(file))
             return
+
+        # Remove follow-up stamps
+        stages = fs.stages
+        for stage in stages:
+            stages = stages[1:]
+            if stage == func.__name__:
+                break
+
+        for stage in stages:
+            path = os.path.join(env.paths['filesystem'], '.stamp_' + stage + '_' + os.path.basename(env.paths['build']))
+            if os.path.isfile(path):
+                logger.debug('Removing followup stamp: {}'.format(path))
+                os.remove(path)
 
         # Run function
         ret = func(*args, **kwargs)
