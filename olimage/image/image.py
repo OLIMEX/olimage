@@ -107,8 +107,17 @@ class Image(object):
                     x = ""
                     for e in exclude:
                         x += '--exclude={} '.format(e)
-                    Utils.shell.run('rsync -aHWXh {} {}/ {}/'.format(
-                        x,
-                        env.paths['build'] + partition.fstab.mount,
-                        m.mountpoint(partition)
-                    ))
+                    _e = None
+                    try:
+                        Utils.shell.run('rsync -aHWXh --log-file=rsync.log {} {}/ {}/'.format(
+                            x,
+                            env.paths['build'] + partition.fstab.mount,
+                            m.mountpoint(partition)
+                        ))
+                    except KeyboardInterrupt:
+                        _e = KeyboardInterrupt
+                    except Exception as e:
+                        _e = e
+
+                    if _e:
+                        raise _e

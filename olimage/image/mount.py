@@ -1,6 +1,7 @@
 import os
 import re
 import shutil
+import time
 
 import olimage.environment as env
 
@@ -87,7 +88,13 @@ class Mount(Map):
         Utils.shell.run('mount {} {}'.format(device['device'], device['mount']))
 
     def _umount(self, partition: dict):
-        Utils.shell.run('umount {}'.format(partition['mount']))
+        while True:
+            try:
+                Utils.shell.run('umount {}'.format(partition['mount']))
+            except OSError:
+                time.sleep(1)
+                continue
+            break
         shutil.rmtree(partition['mount'])
 
     def mountpoint(self, partition):

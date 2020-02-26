@@ -81,15 +81,15 @@ class Shell(object):
                     break
 
     @staticmethod
-    def chroot(command, directory=None, **kwargs):
+    def chroot(command, path=None, **kwargs):
         # This should use env
-        if directory is None:
+        if path is None:
             directory = env.paths['build']
 
         _e = None
-        Shell.bind(directory)
+        Shell.bind(path)
         try:
-            Shell.run("chroot {} ".format(directory) + command, **kwargs)
+            Shell.run("chroot {} ".format(path) + command, **kwargs)
         except KeyboardInterrupt:
             _e = KeyboardInterrupt
         except Exception as e:

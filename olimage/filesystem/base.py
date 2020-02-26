@@ -51,8 +51,26 @@ class FileSystemBase(object):
             if self._release_packages:
                 packages += self._release_packages.get_variant(str(self._variant_packages))
 
-            Utils.shell.chroot('apt-get update')
-            Utils.shell.chroot('apt-get install -y {}'.format(' '.join(packages)), self._build_dir)
+            # Try 5 times to install packages
+            count = 5
+            _e = None
+
+            while True:
+                try:
+                    Utils.shell.chroot('apt-get clean')
+                    Utils.shell.chroot('apt-get update')
+                    Utils.shell.chroot('apt-get install -y {}'.format(' '.join(packages)), log_error=False)
+                except Exception as e:
+                    _e = e
+                    count -= 1
+                    if count == 0:
+                        break
+
+                    Console().log("Retrying...")
+
+            if _e:
+                raise _e
+
 
     def cleanup(self):
         with Console("APT sources"):
