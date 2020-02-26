@@ -70,6 +70,10 @@ class VariantMinimal(FileSystemBase):
         with Console("Generating boot files"):
             Setup.boot()
 
+        if env.objects['board'].arch == 'arm64':
+            with Console("Installing ATF"):
+                Utils.shell.chroot('apt-get install -y arm-trusted-firmware-olinuxino')
+
         # Install kernel
         with Console("Installing kernel"):
             Utils.shell.chroot('apt-get install -y linux-image-5.5.2-olimex')
