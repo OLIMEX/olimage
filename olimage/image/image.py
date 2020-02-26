@@ -109,7 +109,7 @@ class Image(object):
                         x += '--exclude={} '.format(e)
                     _e = None
                     try:
-                        Utils.shell.run('rsync -aHWXh --log-file=rsync.log {} {}/ {}/'.format(
+                        Utils.shell.run('rsync -aHWXh {} {}/ {}'.format(
                             x,
                             env.paths['build'] + partition.fstab.mount,
                             m.mountpoint(partition)
