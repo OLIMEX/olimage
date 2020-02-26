@@ -1,6 +1,7 @@
 .olimex: &olimex
   - olinuxino-overlays
   - u-boot-olinuxino
+  - u-boot-tools-olinuxino
 
 releases:
   bionic:
@@ -68,7 +69,6 @@ variants:
       - sudo
       - sysfsutils
       - sysstat
-      - u-boot-tools
       - ucf
       - usbutils
       - wget
