@@ -84,7 +84,7 @@ class Shell(object):
     def chroot(command, path=None, **kwargs):
         # This should use env
         if path is None:
-            directory = env.paths['build']
+            path = env.paths['build']
 
         _e = None
         Shell.bind(path)
