@@ -6,7 +6,7 @@ stages:
 
 .image:
   script:
-    - python3 -m olimage -v --output=/output image $OLIMAGE_BOARD $OLIMAGE_RELEASE $OLIMAGE_VARIANT $OLIMAGE_IMAGE
+    - python3 -m olimage -v --output=/output image $OLIMAGE_BOARD $OLIMAGE_RELEASE $OLIMAGE_VARIANT $OLIMAGE_BOARD-$OLIMAGE_VARIANT-$OLIMAGE_RELEASE-$(date +%Y%m%d-%H%M%S).img
   tags:
     - olimage
 
@@ -24,7 +24,6 @@ A20:minimal:buster:
   stage: minimal
   variables:
     OLIMAGE_BOARD: A20-OLinuXino
-    OLIMAGE_IMAGE: A20-OLinuXino_minimal_buster.img
     OLIMAGE_RELEASE: buster
     OLIMAGE_VARIANT: minimal
 
@@ -34,7 +33,6 @@ A20:lite:buster:
   stage: lite
   variables:
     OLIMAGE_BOARD: A20-OLinuXino
-    OLIMAGE_IMAGE: A20-OLinuXino_lite_buster.img
     OLIMAGE_RELEASE: buster
     OLIMAGE_VARIANT: lite
 
@@ -44,7 +42,6 @@ A20:base:buster:
   stage: base
   variables:
     OLIMAGE_BOARD: A20-OLinuXino
-    OLIMAGE_IMAGE: A20-OLinuXino_base_buster.img
     OLIMAGE_RELEASE: buster
     OLIMAGE_VARIANT: base
 
@@ -53,7 +50,6 @@ A20:minimal:bionic:
   stage: minimal
   variables:
     OLIMAGE_BOARD: A20-OLinuXino
-    OLIMAGE_IMAGE: A20-OLinuXino_minimal_bionic.img
     OLIMAGE_RELEASE: bionic
     OLIMAGE_VARIANT: minimal
 
@@ -63,7 +59,6 @@ A20:lite:bionic:
   stage: lite
   variables:
     OLIMAGE_BOARD: A20-OLinuXino
-    OLIMAGE_IMAGE: A20-OLinuXino_lite_bionic.img
     OLIMAGE_RELEASE: bionic
     OLIMAGE_VARIANT: lite
 
@@ -73,6 +68,57 @@ A20:base:bionic:
   stage: base
   variables:
     OLIMAGE_BOARD: A20-OLinuXino
-    OLIMAGE_IMAGE: A20-OLinuXino_base_bionic.img
+    OLIMAGE_RELEASE: bionic
+    OLIMAGE_VARIANT: base
+
+A64:minimal:buster:
+  extends: .image
+  stage: minimal
+  variables:
+    OLIMAGE_BOARD: A64-OLinuXino
+    OLIMAGE_RELEASE: buster
+    OLIMAGE_VARIANT: minimal
+
+A64:lite:buster:
+  extends: .image
+  needs: ["A64:minimal:buster"]
+  stage: lite
+  variables:
+    OLIMAGE_BOARD: A64-OLinuXino
+    OLIMAGE_RELEASE: buster
+    OLIMAGE_VARIANT: lite
+
+A64:base:buster:
+  extends: .image
+  needs: ["A64:lite:buster"]
+  stage: base
+  variables:
+    OLIMAGE_BOARD: A64-OLinuXino
+    OLIMAGE_RELEASE: buster
+    OLIMAGE_VARIANT: base
+
+A64:minimal:bionic:
+  extends: .image
+  stage: minimal
+  variables:
+    OLIMAGE_BOARD: A64-OLinuXino
+    OLIMAGE_RELEASE: bionic
+    OLIMAGE_VARIANT: minimal
+
+A64:lite:bionic:
+  extends: .image
+  needs: ["A64:minimal:bionic"]
+  stage: lite
+  variables:
+    OLIMAGE_BOARD: A64-OLinuXino
+    OLIMAGE_RELEASE: bionic
+    OLIMAGE_VARIANT: lite
+
+A64:base:bionic:
+  extends: .image
+  needs: ["A64:lite:bionic"]
+  stage: base
+  variables:
+    OLIMAGE_BOARD: A64-OLinuXino
     OLIMAGE_RELEASE: bionic
     OLIMAGE_VARIANT: base
