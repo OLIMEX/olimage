@@ -1,4 +1,6 @@
-#!/bin/bash -e
+#!/bin/bash
+
+set -e
 
 version="$1"
 template="/usr/lib/olinuxino/kernel.its"
