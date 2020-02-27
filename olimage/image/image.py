@@ -39,8 +39,11 @@ class Image(object):
                 if not os.path.islink(fp):
                     size += os.path.getsize(fp)
 
-        # Get size and add 500MiB size
-        size = max((size >> 20) + 500, env.options['size'])
+        # Convert size to MiB
+        size = (size >> 20)
+
+        # Append at least 50% empty space
+        size += max((size // 2), env.options['size'])
 
         with Console("Generating blank image with size: {}MiB".format(size)):
             Utils.qemu.img(self._output, size)
@@ -109,7 +112,7 @@ class Image(object):
                         x += '--exclude={} '.format(e)
                     _e = None
                     try:
-                        Utils.shell.run('rsync -aHWXh {} {}/ {}'.format(
+                        Utils.shell.run('rsync -aHWXh {} {} {}/'.format(
                             x,
                             env.paths['build'] + partition.fstab.mount,
                             m.mountpoint(partition)

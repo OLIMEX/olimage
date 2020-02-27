@@ -7,7 +7,7 @@ _arguments += [
 ]
 
 _options += [
-    click.option("--size", default=500, help="Size in MiB")
+    click.option("--size", default=500, help="Additional size in MiB")
 ]
 
 
