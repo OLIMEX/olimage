@@ -62,7 +62,10 @@ def prepare(func):
 
         # Create empty build folder
         if os.path.exists(fs.build_dir):
+            # Make sure the target path is not mounted
+            Utils.shell.unbind(fs.build_dir)
             shutil.rmtree(fs.build_dir)
+
         os.mkdir(fs.build_dir)
 
         stage = func.__name__
