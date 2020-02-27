@@ -22,6 +22,5 @@ class Qemu(object):
     @staticmethod
     def img(file, size):
         logger.info("Creating {}".format(file))
-        Shell.run(
-            "qemu-img create -f raw {} {}M".format(file, size)
-        )
+        Shell.run("qemu-img create -f raw {} {}M".format(file, size))
+        Shell.run("qemu-img info {}".format(file))
