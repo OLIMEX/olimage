@@ -16,7 +16,8 @@ stages:
 prepare:
   allow_failure: false
   script:
-    - python3 -m olimage -v --output=/output clean
+    - cp -rvf /output ./
+#    - python3 -m olimage -v --output=/output clean
   stage: prepare
   when: manual
 
@@ -138,6 +139,7 @@ A64:base:bionic:
 
 deploy:
   script:
+    - rm -rf /output/*
     - cp -rvf ./output/* /output/
   stage: deploy
   when: manual
