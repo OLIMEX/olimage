@@ -17,6 +17,7 @@ run:
   tags:
     - olimage
   when: manual
+
 clean:
   allow_failure: false
   script:
@@ -34,6 +35,7 @@ A20:minimal:buster:
     OLIMAGE_BOARD: A20-OLinuXino
     OLIMAGE_RELEASE: buster
     OLIMAGE_VARIANT: minimal
+  when: always
 
 A20:lite:buster:
   extends: .image
@@ -63,6 +65,7 @@ A20:minimal:bionic:
     OLIMAGE_BOARD: A20-OLinuXino
     OLIMAGE_RELEASE: bionic
     OLIMAGE_VARIANT: minimal
+  when: always
 
 A20:lite:bionic:
   extends: .image
@@ -92,6 +95,7 @@ A64:minimal:buster:
     OLIMAGE_BOARD: A64-OLinuXino
     OLIMAGE_RELEASE: buster
     OLIMAGE_VARIANT: minimal
+  when: always
 
 A64:lite:buster:
   extends: .image
@@ -121,6 +125,7 @@ A64:minimal:bionic:
     OLIMAGE_BOARD: A64-OLinuXino
     OLIMAGE_RELEASE: bionic
     OLIMAGE_VARIANT: minimal
+  when: always
 
 A64:lite:bionic:
   extends: .image
