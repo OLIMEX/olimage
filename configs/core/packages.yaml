@@ -49,6 +49,7 @@ variants:
       - device-tree-compiler
       - dialog
       - htop
+      - ifupdown
       - initramfs-tools
       - fake-hwclock
       - fping
