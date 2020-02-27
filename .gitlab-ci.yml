@@ -1,5 +1,9 @@
+default:
+  tags:
+    - olimage
+
 stages:
-  - prepare
+  - clean
   - minimal
   - lite
   - base
@@ -7,16 +11,12 @@ stages:
 .image:
   script:
     - python3 -m olimage -v --output=/output image $OLIMAGE_BOARD $OLIMAGE_RELEASE $OLIMAGE_VARIANT $OLIMAGE_BOARD-$OLIMAGE_VARIANT-$OLIMAGE_RELEASE-$(date +%Y%m%d-%H%M%S).img
-  tags:
-    - olimage
 
-prepare:
+clean:
   script:
     - echo "Starting build..."
 #    - python3 -m olimage -v --output=/output clean
-  stage: prepare
-  tags:
-    - olimage
+  stage: clean
   when: manual
 
 A20:minimal:buster:
