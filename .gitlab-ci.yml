@@ -1,5 +1,5 @@
 stages:
-  - clean
+  - prepare
   - minimal
   - lite
   - base
@@ -10,11 +10,19 @@ stages:
   tags:
     - olimage
 
+run:
+  script:
+    - echo "Starting without cleaning"
+  stage: prepare
+  tags:
+    - olimage
+  when: manual
 clean:
   allow_failure: false
   script:
+    - echo "Cleaning old files"
     - python3 -m olimage -v --output=/output clean
-  stage: clean
+  stage: prepare
   tags:
     - olimage
   when: manual
@@ -29,7 +37,8 @@ A20:minimal:buster:
 
 A20:lite:buster:
   extends: .image
-  needs: ["A20:minimal:buster"]
+  needs:
+    - "A20:minimal:buster"
   stage: lite
   variables:
     OLIMAGE_BOARD: A20-OLinuXino
@@ -38,7 +47,9 @@ A20:lite:buster:
 
 A20:base:buster:
   extends: .image
-  needs: ["A20:lite:buster"]
+  needs:
+    - "A20:minimal:buster"
+    - "A20:lite:buster"
   stage: base
   variables:
     OLIMAGE_BOARD: A20-OLinuXino
@@ -55,7 +66,8 @@ A20:minimal:bionic:
 
 A20:lite:bionic:
   extends: .image
-  needs: ["A20:minimal:bionic"]
+  needs:
+    - "A20:minimal:bionic"
   stage: lite
   variables:
     OLIMAGE_BOARD: A20-OLinuXino
@@ -64,7 +76,9 @@ A20:lite:bionic:
 
 A20:base:bionic:
   extends: .image
-  needs: ["A20:lite:bionic"]
+  needs:
+    - "A20:minimal:bionic"
+    - "A20:lite:bionic"
   stage: base
   variables:
     OLIMAGE_BOARD: A20-OLinuXino
@@ -81,7 +95,8 @@ A64:minimal:buster:
 
 A64:lite:buster:
   extends: .image
-  needs: ["A64:minimal:buster"]
+  needs:
+    - "A64:minimal:buster"
   stage: lite
   variables:
     OLIMAGE_BOARD: A64-OLinuXino
@@ -90,7 +105,9 @@ A64:lite:buster:
 
 A64:base:buster:
   extends: .image
-  needs: ["A64:lite:buster"]
+  needs:
+    - "A64:minimal:buster"
+    - "A64:lite:buster"
   stage: base
   variables:
     OLIMAGE_BOARD: A64-OLinuXino
@@ -107,7 +124,8 @@ A64:minimal:bionic:
 
 A64:lite:bionic:
   extends: .image
-  needs: ["A64:minimal:bionic"]
+  needs:
+    - "A64:minimal:bionic"
   stage: lite
   variables:
     OLIMAGE_BOARD: A64-OLinuXino
@@ -116,7 +134,9 @@ A64:lite:bionic:
 
 A64:base:bionic:
   extends: .image
-  needs: ["A64:lite:bionic"]
+  needs:
+    - "A64:minimal:bionic"
+    - "A64:lite:bionic"
   stage: base
   variables:
     OLIMAGE_BOARD: A64-OLinuXino
