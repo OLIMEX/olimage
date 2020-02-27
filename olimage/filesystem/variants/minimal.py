@@ -1,5 +1,3 @@
-import os
-
 import olimage.environment as env
 
 from olimage.core.io import Console
@@ -9,16 +7,16 @@ from olimage.core.setup import Setup
 from olimage.core.utils import Utils
 
 from olimage.filesystem.base import FileSystemBase
-from olimage.filesystem.stamp import stamp
+from olimage.filesystem.decorators import export, prepare, stamp
 
 
 class VariantMinimal(FileSystemBase):
-    stages = ['build', 'configure', 'cleanup', 'export']
+    stages = ['build', 'configure', 'cleanup']
     variant = 'minimal'
 
     @stamp
+    @export
     def build(self):
-        self._prepare_build_dir()
 
         # Built a new file system
         with Console("Running qemu-debootstrap"):
@@ -35,17 +33,15 @@ class VariantMinimal(FileSystemBase):
                 include=None,
                 mirror=distribution.repository)
 
-        # Compress
-        with Console("Creating archive"):
-            Utils.archive.gzip(self._build_dir, self._build_dir + '.build.tar.gz')
-
     @stamp
+    @export
+    @prepare
     def configure(self):
-        self._prepare_build_dir()
 
-        # Extract fresh copy
-        with Console("Extracting archive"):
-            Utils.archive.extract(self._build_dir + '.build.tar.gz', self._build_dir)
+        # Copy resolv.conf
+        with Console("Copying /etc/resolv.conf"):
+            Utils.shell.run('rm -vf {}/etc/resolv.conf'.format(self._build_dir), ignore_fail=True)
+            Utils.shell.run('cp -vf /etc/resolv.conf {}/etc/resolv.conf'.format(self._build_dir))
 
         # Configure apt
         with Console("Configuring the APT repositories"):
@@ -114,9 +110,7 @@ class VariantMinimal(FileSystemBase):
                 Service.ssh.disable()
 
     @stamp
+    @export(final=True)
+    @prepare
     def cleanup(self):
         super().cleanup()
-
-    @stamp
-    def export(self):
-        super().export()

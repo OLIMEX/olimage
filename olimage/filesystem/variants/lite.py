@@ -1,21 +1,18 @@
 from olimage.core.io import Console
 from olimage.core.utils import Utils
-from olimage.filesystem.base import FileSystemBase
 
-from olimage.filesystem.stamp import stamp
+from olimage.filesystem.base import FileSystemBase
+from olimage.filesystem.decorators import export, prepare, stamp
 
 
 class VariantLite(FileSystemBase):
-    stages = ['configure', 'cleanup', 'export']
+    stages = ['configure', 'cleanup']
     variant = 'lite'
 
     @stamp
+    @export
+    @prepare
     def configure(self):
-        self._prepare_build_dir()
-
-        # Extract fresh copy
-        with Console("Extracting archive"):
-            Utils.archive.extract(self._build_dir.replace('lite', 'minimal') + '.tar.gz', self._build_dir)
 
         # Copy resolv.conf
         with Console("Copying /etc/resolv.conf"):
@@ -26,9 +23,7 @@ class VariantLite(FileSystemBase):
         self._install_packages()
 
     @stamp
+    @export(final=True)
+    @prepare
     def cleanup(self):
         super().cleanup()
-
-    @stamp
-    def export(self):
-        super().export()

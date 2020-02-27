@@ -29,17 +29,14 @@ class FileSystemBase(object):
     def __del__(self):
         Utils.shell.unbind(self._build_dir)
 
-    def _prepare_build_dir(self) -> None:
+    @property
+    def build_dir(self) -> str:
         """
-        Remove previous build directory and create
-        a new empty one
+        Get the current build directory
 
-        :return: None
+        :return: path to the current build directory
         """
-        if os.path.exists(self._build_dir):
-            shutil.rmtree(self._build_dir)
-
-        os.mkdir(self._build_dir)
+        return self._build_dir
 
     def _install_packages(self) -> None:
         # Install packages
@@ -57,9 +54,8 @@ class FileSystemBase(object):
 
             while True:
                 try:
-                    Utils.shell.chroot('apt-get clean')
-                    Utils.shell.chroot('apt-get update')
                     Utils.shell.chroot('apt-get install -y {}'.format(' '.join(packages)), log_error=False)
+                    break
                 except Exception as e:
                     _e = e
                     count -= 1
@@ -67,6 +63,8 @@ class FileSystemBase(object):
                         break
 
                     Console().log("Retrying...")
+                    Utils.shell.chroot('apt-get clean')
+                    Utils.shell.chroot('apt-get update')
 
             if _e:
                 raise _e
@@ -75,7 +73,3 @@ class FileSystemBase(object):
     def cleanup(self):
         with Console("APT sources"):
             Utils.shell.chroot('apt-get clean')
-
-    def export(self):
-        with Console("Creating archive: {}".format(os.path.basename(self._build_dir) + '.tar.gz')):
-            Utils.archive.gzip(self._build_dir, exclude=['/dev/*', '/proc/*', '/run/*', '/tmp/*', '/sys/*'])
