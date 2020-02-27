@@ -1,23 +1,23 @@
+default:
+  tags:
+    - olimage
+
 stages:
   - prepare
   - minimal
   - lite
   - base
+  - deploy
 
 .image:
   script:
-    - python3 -m olimage -v --output=/output image $OLIMAGE_BOARD $OLIMAGE_RELEASE $OLIMAGE_VARIANT $OLIMAGE_BOARD-$OLIMAGE_VARIANT-$OLIMAGE_RELEASE-$(date +%Y%m%d-%H%M%S).img
-  tags:
-    - olimage
+    - python3 -m olimage -v image $OLIMAGE_BOARD $OLIMAGE_RELEASE $OLIMAGE_VARIANT $OLIMAGE_BOARD-$OLIMAGE_VARIANT-$OLIMAGE_RELEASE-$(date +%Y%m%d-%H%M%S).img
 
 prepare:
   allow_failure: false
   script:
-    - echo "Starting build..."
-#    - python3 -m olimage -v --output=/output clean
+    - python3 -m olimage -v --output=/output clean
   stage: prepare
-  tags:
-    - olimage
   when: manual
 
 A20:minimal:buster:
@@ -135,3 +135,9 @@ A64:base:bionic:
     OLIMAGE_BOARD: A64-OLinuXino
     OLIMAGE_RELEASE: bionic
     OLIMAGE_VARIANT: base
+
+deploy:
+  script:
+    - cp -rvf ./output/* /output/
+  stage: deploy
+  when: manual
