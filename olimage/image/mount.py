@@ -65,8 +65,9 @@ class Mount(Map):
         for partition in self._partitions:
             device = self._devices[str(partition)]['device']
             uuid = Utils.shell.run('blkid -s UUID -o value {}'.format(device)).decode().splitlines()[0]
+            mount = Utils.shell.run('mktemp -d').decode().strip()
 
-            self._devices[str(partition)]['mount'] = env.paths['filesystem'] + '/.mnt_' + str(partition)
+            self._devices[str(partition)]['mount'] = mount
             self._devices[str(partition)]['uuid'] = uuid
 
             self._mount(self._devices[str(partition)])
@@ -91,10 +92,10 @@ class Mount(Map):
         while True:
             try:
                 Utils.shell.run('umount {}'.format(partition['mount']))
+                break
             except OSError:
                 time.sleep(1)
-                continue
-            break
+
         shutil.rmtree(partition['mount'])
 
     def mountpoint(self, partition):

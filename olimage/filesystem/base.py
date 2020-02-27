@@ -69,7 +69,6 @@ class FileSystemBase(object):
             if _e:
                 raise _e
 
-
     def cleanup(self):
         with Console("APT sources"):
             Utils.shell.chroot('apt-get clean')
