@@ -11,6 +11,7 @@ stages:
     - olimage
 
 prepare:
+  allow_failure: false
   script:
     - echo "Starting build..."
 #    - python3 -m olimage -v --output=/output clean
