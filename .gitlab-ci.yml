@@ -1,7 +1,3 @@
-default:
-  tags:
-    - olimage
-
 stages:
   - prepare
   - minimal
@@ -12,6 +8,8 @@ stages:
 .image:
   script:
     - python3 -m olimage -v image $OLIMAGE_BOARD $OLIMAGE_RELEASE $OLIMAGE_VARIANT $OLIMAGE_BOARD-$OLIMAGE_VARIANT-$OLIMAGE_RELEASE-$(date +%Y%m%d-%H%M%S).img
+  tags:
+    - olimage
 
 prepare:
   allow_failure: false
@@ -19,6 +17,8 @@ prepare:
     - cp -rvf /output ./
 #    - python3 -m olimage -v --output=/output clean
   stage: prepare
+  tags:
+    - olimage
   when: manual
 
 A20:minimal:buster:
@@ -142,4 +142,6 @@ deploy:
     - rm -rf /output/*
     - cp -rvf ./output/* /output/
   stage: deploy
+  tags:
+    - olimage
   when: manual
