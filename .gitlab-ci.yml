@@ -7,15 +7,16 @@ stages:
 
 .image:
   script:
-    - python3 -m olimage -v image $OLIMAGE_BOARD $OLIMAGE_RELEASE $OLIMAGE_VARIANT $OLIMAGE_BOARD-$OLIMAGE_VARIANT-$OLIMAGE_RELEASE-$(date +%Y%m%d-%H%M%S).img
+    - python3 -m olimage -v --output=/build image $OLIMAGE_BOARD $OLIMAGE_RELEASE $OLIMAGE_VARIANT $OLIMAGE_BOARD-$OLIMAGE_VARIANT-$OLIMAGE_RELEASE-$(date +%Y%m%d-%H%M%S).img
   tags:
     - olimage
 
 prepare:
   allow_failure: false
   script:
-    - cp -rvf /output ./
-#    - python3 -m olimage -v --output=/output clean
+    - echo "Starting build..."
+    - /bin/bash -c '[[ -d /build ]] && rm -rf /build/* || mkdir /build'
+    - cp -rf /output/* /build/
   stage: prepare
   tags:
     - olimage
@@ -140,7 +141,7 @@ A64:base:bionic:
 deploy:
   script:
     - rm -rf /output/*
-    - cp -rvf ./output/* /output/
+    - cp -rvf /build/* /output/
   stage: deploy
   tags:
     - olimage
