@@ -79,7 +79,6 @@ def prepare(func):
         else:
             variants = ['minimal', 'lite', 'base']
             _index = variants.index(fs.variant)
-            print(_index)
 
             if _index:
                 file = fs.build_dir + '.tar.gz'

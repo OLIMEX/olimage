@@ -62,9 +62,9 @@ class FileSystemBase(object):
                     if count == 0:
                         break
 
-                    Console().info("Retrying...")
-                    Utils.shell.chroot('apt-get clean')
-                    Utils.shell.chroot('apt-get update')
+                    with Console("Retrying..."):
+                        Utils.shell.chroot('apt-get clean')
+                        Utils.shell.chroot('apt-get update')
 
             if _e:
                 raise _e

@@ -40,9 +40,7 @@ class Shell(object):
         except KeyboardInterrupt as e:
             _e = e
         except cliapp.app.AppException as e:
-            msg: str = e.msg
-            logger.error(msg)
-            _e = Exception('\n'.join(msg.splitlines()))
+            _e = Exception(e.msg.splitlines()[0])
 
         if _e:
             raise _e
