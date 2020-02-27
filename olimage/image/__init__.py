@@ -6,6 +6,7 @@ import olimage.filesystem
 
 from olimage.core.io import Console
 from olimage.core.parsers import Board
+from olimage.core.utils import Utils
 
 from .image import Image
 from .parameters import parameters
@@ -30,6 +31,10 @@ def build_image(ctx: click.Context, **kwargs):
 
     console: Console = Console()
     builder: Image = Image(image)
+
+    if not os.path.exists(env.paths['build']):
+        os.mkdir(env.paths['build'])
+        Utils.archive.extract(env.paths['build'] + '.tar.gz', env.paths['build'])
 
     console.info("Creating image \'{}\'...".format(os.path.basename(image)))
 

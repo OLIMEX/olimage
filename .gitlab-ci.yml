@@ -1,3 +1,6 @@
+variables:
+  GIT_CLEAN_FLAGS: -ffdx -e output/
+
 stages:
   - prepare
   - minimal
@@ -7,7 +10,7 @@ stages:
 
 .image:
   script:
-    - python3 -m olimage -v --output=/build image $OLIMAGE_BOARD $OLIMAGE_RELEASE $OLIMAGE_VARIANT $OLIMAGE_BOARD-$OLIMAGE_VARIANT-$OLIMAGE_RELEASE-$(date +%Y%m%d-%H%M%S).img
+    - python3 -m olimage -v image $OLIMAGE_BOARD $OLIMAGE_RELEASE $OLIMAGE_VARIANT $OLIMAGE_BOARD-$OLIMAGE_VARIANT-$OLIMAGE_RELEASE-$(date +%Y%m%d-%H%M%S).img
   tags:
     - olimage
 
@@ -15,8 +18,9 @@ prepare:
   allow_failure: false
   script:
     - echo "Starting build..."
-    - /bin/bash -c '[[ -d /build ]] && rm -rf /build/* || mkdir /build'
-    - cp -rf /output/* /build/
+#    - rm -rf output || true
+#    - mkdir -p output/${OLIMAGE_BOARD,,} || true
+#    - /bin/bash -c "[[ -d /output/${OLIMAGE_BOARD,,}/filesystem ]] && cp -rv /output/${OLIMAGE_BOARD,,}/filesystem output/${OLIMAGE_BOARD,,}/"
   stage: prepare
   tags:
     - olimage
@@ -140,8 +144,8 @@ A64:base:bionic:
 
 deploy:
   script:
-    - rm -rf /output/*
-    - cp -rvf /build/* /output/
+    - find output/ -maxdepth 3 -mindepth 3 -type d -exec rm -rf {} \;
+    - cp -rvf output/* /output/
   stage: deploy
   tags:
     - olimage
