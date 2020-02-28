@@ -1,3 +1,6 @@
+from olimage.core.parsers import ParserException
+
+
 class PackagesBase(object):
     def __init__(self, name: str, data: dict) -> None:
         self._name = name
@@ -27,7 +30,7 @@ class PackagesBase(object):
                 elif isinstance(p, str):
                     _data.append(p)
                 else:
-                    raise Exception("Unsupported type: \'{}\'".format(type(p)))
+                    raise ParserException("Unsupported type: \'{}\'".format(type(p)))
             return _data
 
         return flat(self._data['packages'])

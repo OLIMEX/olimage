@@ -1,6 +1,7 @@
 import olimage.environment as env
 
 from olimage.core.parsers.parser import GenericLoader
+from olimage.core.parsers import ParserException
 
 from .release import Release
 from .service import Service
@@ -49,7 +50,7 @@ class ParserPackages(object):
             if name.lower() == str(service).lower():
                 return service
 
-        raise Exception("Service not found: \'{}\'".format(name))
+        raise ParserException("Service not found: \'{}\'".format(name))
 
     def get_variant(self, name: str) -> Variant:
         """
@@ -62,6 +63,6 @@ class ParserPackages(object):
             if name.lower() == str(variant).lower():
                 return variant
 
-        raise Exception("Variant not found: \'{}\'".format(name))
+        raise ParserException("Variant not found: \'{}\'".format(name))
 
 

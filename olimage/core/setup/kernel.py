@@ -19,8 +19,3 @@ class SetupKernel(SetupAbstract):
 
                 # Append new line at the end of file
                 f.write('\n')
-
-
-
-
-

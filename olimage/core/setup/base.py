@@ -1,16 +1,21 @@
 import abc
 
-from olimage.core.parsers import ParserPackages
+from olimage.core.parsers import ParserPackages, ParserException
 from olimage.core.parsers.packages.service import Service
 
 
 class SetupAbstract(object):
     def __init__(self):
-        self._parser = ParserPackages().get_service(self.__module__)
+        try:
+            self._parser = ParserPackages().get_service(self.__module__)
+        except ParserException:
+            self._parser = None
 
     @property
     def packages(self) -> list:
-        return self._parser.packages
+        if self._parser:
+            return self._parser.packages
+        return []
 
     @property
     def parser(self) -> Service:
