@@ -71,8 +71,8 @@ class VariantMinimal(FileSystemBase):
                 Utils.shell.chroot('apt-get install -y arm-trusted-firmware-olinuxino')
 
         # Install kernel
-        with Console("Installing kernel"):
-            Utils.shell.chroot('apt-get install -y linux-image-5.5.2-olimex')
+        with Console("Configuring kernel"):
+            Setup.kernel()
 
         # Configure hostname
         hostname = str(env.objects['board'])

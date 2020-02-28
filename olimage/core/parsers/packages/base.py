@@ -6,6 +6,12 @@ class PackagesBase(object):
     def __str__(self) -> str:
         return self._name
 
+    def __getattr__(self, item):
+        if item in self._data:
+            return self._data[item]
+
+        return super().__getattribute__(item)
+
     @property
     def packages(self) -> list:
         """

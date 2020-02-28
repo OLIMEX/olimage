@@ -10,6 +10,7 @@ from .boot import SetupBoot
 from .console import SetupConsole
 from .fstab import SetupFstab
 from .hostname import SetupHostname
+from .kernel import SetupKernel
 from .locales import SetupLocales
 from .timezone import SetupTimezone
 from .user import SetupUser
@@ -60,6 +61,7 @@ class Setup(metaclass=SetupMeta):
     console: SetupConsole
     fstab: SetupFstab
     hostname: SetupHostname
+    kernel: SetupKernel
     locales: SetupLocales
     timezone: SetupTimezone
     user: SetupUser

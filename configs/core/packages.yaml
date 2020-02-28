@@ -18,21 +18,27 @@ services:
       - ca-certificates
       - gnupg
 
-  olimage.core.setup.console:
-    packages:
-      - console-setup
-      - keyboard-configuration
-
-  olimage.core.setup.locales:
-    packages:
-      - locales
-
   olimage.core.setup.bluetooth:
     packages:
       - blueman
       - bluez
       - bluez-tools
       - pulseaudio-module-bluetooth
+
+  olimage.core.setup.console:
+    packages:
+      - console-setup
+      - keyboard-configuration
+
+  olimage.core.setup.kernel:
+    modules:
+      - g_serial
+    packages:
+      - linux-image-olimex
+
+  olimage.core.setup.locales:
+    packages:
+      - locales
 
 
 variants:
