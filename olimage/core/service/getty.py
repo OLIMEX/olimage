@@ -16,10 +16,7 @@ class ServiceGetty(ServiceBase):
             Utils.shell.chroot('systemctl --no-reload enable serial-getty@ttyGS0.service')
 
             # Configure ttyGS0
-            Utils.shell.chroot('echo "ttyGS0" >> /etc/securetty')
-
-            # The kernel module g_serial should be loaded before service start
-            Utils.shell.chroot('echo "g_serial" >> /etc/modules')
+            Utils.shell.chroot('/bin/bash -c "echo \'\n# USB-ACM tty serial console\nttyGS0\n\' >> /etc/securetty"')
 
     @staticmethod
     def disable() -> None:
