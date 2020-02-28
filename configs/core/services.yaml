@@ -24,6 +24,7 @@ services:
         - sun4i_gpadc
       enable:
         - g_serial
+        - sun4i_ts
 
     packages:
       - linux-image-olimex
