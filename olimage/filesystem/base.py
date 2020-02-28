@@ -57,9 +57,9 @@ class FileSystemBase(object):
                     Utils.shell.chroot('apt-get install -y {}'.format(' '.join(packages)), log_error=False)
                     break
                 except Exception as e:
-                    _e = e
                     count -= 1
                     if count == 0:
+                        _e = e
                         break
 
                     with Console("Retrying..."):
