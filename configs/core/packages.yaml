@@ -43,7 +43,7 @@ services:
 
 variants:
   minimal:
-    description: "Build minimal filesystem"
+    description: "Minimal filesystem"
     packages:
       - bc
       - bzip2
@@ -84,7 +84,7 @@ variants:
       - *olimex
 
   lite:
-    description: "TODO"
+    description: "Server-like filesystem"
     packages:
       - alsa-utils
       - aptitude
@@ -143,6 +143,7 @@ variants:
       - unzip
 
   base:
+    description: "Desktop filesystem"
     packages:
       - xserver-xorg
       - xserver-xorg-video-fbdev
@@ -196,6 +197,13 @@ variants:
       - system-config-printer-common
       - system-config-printer
       - mirage
+      - ffmpeg
+      - vlc
+      - hunspell-en-gb
+      - hyphen-en-gb
+      - wamerican
+      - wbritish
+      - tree
 
 
   full:
