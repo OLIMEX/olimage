@@ -1,0 +1,33 @@
+services:
+  olimage.core.setup.apt:
+    packages:
+      - apt-transport-https
+      - ca-certificates
+      - gnupg
+
+  olimage.core.setup.bluetooth:
+    packages:
+      - blueman
+      - bluez
+      - bluez-tools
+      - pulseaudio-module-bluetooth
+
+  olimage.core.setup.console:
+    packages:
+      - console-setup
+      - keyboard-configuration
+
+  olimage.core.setup.kernel:
+    modules:
+      blacklist:
+        - sun4i_gpadc_iio
+        - sun4i_gpadc
+      enable:
+        - g_serial
+
+    packages:
+      - linux-image-olimex
+
+  olimage.core.setup.locales:
+    packages:
+      - locales

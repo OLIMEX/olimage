@@ -3,6 +3,7 @@
   - u-boot-olinuxino
   - u-boot-tools-olinuxino
 
+# Release specific packages
 releases:
   bionic:
     base:
@@ -10,36 +11,6 @@ releases:
   buster:
     base:
       - chromium
-
-services:
-  olimage.core.setup.apt:
-    packages:
-      - apt-transport-https
-      - ca-certificates
-      - gnupg
-
-  olimage.core.setup.bluetooth:
-    packages:
-      - blueman
-      - bluez
-      - bluez-tools
-      - pulseaudio-module-bluetooth
-
-  olimage.core.setup.console:
-    packages:
-      - console-setup
-      - keyboard-configuration
-
-  olimage.core.setup.kernel:
-    modules:
-      - g_serial
-    packages:
-      - linux-image-olimex
-
-  olimage.core.setup.locales:
-    packages:
-      - locales
-
 
 variants:
   minimal:

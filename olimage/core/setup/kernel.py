@@ -14,8 +14,15 @@ class SetupKernel(SetupAbstract):
 
         with Console("Configuring modules"):
             with open(env.paths['build'] + '/etc/modules', 'a') as f:
-                for module in self.parser.modules:
+                for module in self.parser.modules['enable']:
                     f.write(module + '\n')
+
+                # Append new line at the end of file
+                f.write('\n')
+
+            with open(env.paths['build'] + '/etc/modprobe.d/blacklist-olinuxino.conf', 'w') as f:
+                for module in self.parser.modules['blacklist']:
+                    f.write("blacklist {}\n".format(module))
 
                 # Append new line at the end of file
                 f.write('\n')
