@@ -3,6 +3,7 @@
   - u-boot-olinuxino
   - u-boot-tools-olinuxino
 
+# Release specific packages
 releases:
   bionic:
     base:
@@ -11,33 +12,9 @@ releases:
     base:
       - chromium
 
-services:
-  olimage.core.setup.apt:
-    packages:
-      - apt-transport-https
-      - ca-certificates
-      - gnupg
-
-  olimage.core.setup.console:
-    packages:
-      - console-setup
-      - keyboard-configuration
-
-  olimage.core.setup.locales:
-    packages:
-      - locales
-
-  olimage.core.setup.bluetooth:
-    packages:
-      - blueman
-      - bluez
-      - bluez-tools
-      - pulseaudio-module-bluetooth
-
-
 variants:
   minimal:
-    description: "Build minimal filesystem"
+    description: "Minimal filesystem"
     packages:
       - bc
       - bzip2
@@ -78,7 +55,7 @@ variants:
       - *olimex
 
   lite:
-    description: "TODO"
+    description: "Server-like filesystem"
     packages:
       - alsa-utils
       - aptitude
@@ -137,6 +114,7 @@ variants:
       - unzip
 
   base:
+    description: "Desktop filesystem"
     packages:
       - xserver-xorg
       - xserver-xorg-video-fbdev
@@ -190,6 +168,13 @@ variants:
       - system-config-printer-common
       - system-config-printer
       - mirage
+      - ffmpeg
+      - vlc
+      - hunspell-en-gb
+      - hyphen-en-gb
+      - wamerican
+      - wbritish
+      - tree
 
 
   full:

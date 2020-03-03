@@ -12,7 +12,8 @@ from .base import SetupAbstract
 
 
 class SetupBoot(SetupAbstract):
-    def _generate_uboot_env(self, configs: dict = None) -> None:
+    @staticmethod
+    def _generate_uboot_env(board: Board, configs: dict = None) -> None:
         with Console("Generating /boot/uEnv.txt"):
             Utils.install('/boot/uEnv.txt')
             Utils.template.install(
@@ -24,7 +25,17 @@ class SetupBoot(SetupAbstract):
                 }
             )
 
-    def _generate_boot_cmd(self, board: Board) -> None:
+        with Console("Installing /etc/fw_env.config"):
+            Utils.install('/etc/fw_env.config')
+
+        with Console("Installing /uboot.env"):
+            src = env.paths['build'] + "/usr/lib/u-boot-olinuxino/{}/uboot.env".format(board.name.lower())
+            dest = env.paths['build'] + "/uboot.env"
+
+            Utils.shell.run('install -D -v -m {} {} {}'.format(644, src, dest))
+
+    @staticmethod
+    def _generate_boot_cmd(board: Board) -> None:
         with Console("Generating /boot/boot.scr"):
             Utils.install('/boot/boot.cmd')
 
@@ -68,7 +79,8 @@ class SetupBoot(SetupAbstract):
                 shell=True
             )
 
-    def _generate_fit(self, board):
+    @staticmethod
+    def _generate_fit(board):
         with Console("Generating /usr/lib/olinuxino/kernel.its"):
             Utils.install('/etc/kernel/postinst.d/uboot-fit', mode='755')
             Utils.install('/usr/lib/olinuxino/kernel.its')
@@ -125,7 +137,7 @@ class SetupBoot(SetupAbstract):
     def setup(self):
         board = env.objects['board']
 
-        self._generate_uboot_env()
+        self._generate_uboot_env(board)
         self._generate_boot_cmd(board)
         self._generate_fit(board)
 
