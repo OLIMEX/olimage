@@ -54,6 +54,7 @@ class FileSystemBase(object):
 
             while True:
                 try:
+                    Utils.shell.chroot('apt-get update')
                     Utils.shell.chroot('apt-get install -y {}'.format(' '.join(packages)), log_error=False)
                     break
                 except Exception as e:
@@ -64,11 +65,14 @@ class FileSystemBase(object):
 
                     with Console("Retrying..."):
                         Utils.shell.chroot('apt-get clean')
-                        Utils.shell.chroot('apt-get update')
 
             if _e:
                 raise _e
 
     def cleanup(self):
+        # It's possible mime database to be broken. This could resolve to broken lightdm
+        with Console("MIME database"):
+            Utils.shell.chroot('update-mime-database /usr/share/mime')
+
         with Console("APT sources"):
             Utils.shell.chroot('apt-get clean')

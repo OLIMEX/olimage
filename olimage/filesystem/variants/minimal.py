@@ -34,6 +34,8 @@ class VariantMinimal(FileSystemBase):
                 include=None,
                 mirror=distribution.repository)
 
+            # Utils.shell.run("ls -laR --time-style='+' {}/ > 1.txt".format(self._build_dir), shell=True)
+
     @stamp
     @export
     @prepare

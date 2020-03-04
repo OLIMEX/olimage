@@ -14,3 +14,4 @@ class SetupCommandNotFound(SetupAbstract):
         # Configure
         with Console("Updating database"):
             Utils.shell.chroot('update-command-not-found')
+            # Utils.shell.chroot('apt-file update')

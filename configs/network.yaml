@@ -1,0 +1,5 @@
+network:
+  interfaces:
+    eth0:
+      auto: true
+      hotplug: true
