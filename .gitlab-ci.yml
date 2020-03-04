@@ -18,9 +18,7 @@ prepare:
   allow_failure: false
   script:
     - echo "Starting build..."
-    - rm -rf output || true
-#    - mkdir -p output/${OLIMAGE_BOARD,,} || true
-#    - /bin/bash -c "[[ -d /output/${OLIMAGE_BOARD,,}/filesystem ]] && cp -rv /output/${OLIMAGE_BOARD,,}/filesystem output/${OLIMAGE_BOARD,,}/"
+    - python3 -m olimage clean
   stage: prepare
   tags:
     - olimage
