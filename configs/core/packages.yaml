@@ -65,7 +65,6 @@ variants:
       - bison
       - bridge-utils
       - build-essential
-      - command-not-found
       - curl
       - dnsutils
       - dosfstools

@@ -12,6 +12,10 @@ services:
       - bluez-tools
       - pulseaudio-module-bluetooth
 
+  olimage.core.setup.command_not_found:
+    packages:
+      - command-not-found
+
   olimage.core.setup.console:
     packages:
       - console-setup
