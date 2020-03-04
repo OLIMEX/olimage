@@ -125,13 +125,15 @@ variants:
       - xfce4
       - lxtask
       - xfce4-terminal
+      - xfce4-screenshooter
+      - xfce4-power-manager
+      - xfce4-notifyd
       - thunar-volman
       - gtk2-engines
       - gtk2-engines-murrine
       - gtk2-engines-pixbuf
       - libgtk2.0-bin
       - network-manager-gnome
-      - xfce4-notifyd
       - gnome-keyring
       - gcr
       - libgck-1-0
@@ -151,7 +153,6 @@ variants:
       - lightdm-gtk-greeter
       - galculator
       - hexchat
-      - xfce4-screenshooter
       - network-manager-openvpn-gnome
       - mpv
       - fbi
