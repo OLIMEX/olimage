@@ -1,5 +1,7 @@
-variables:
-  GIT_CLEAN_FLAGS: -ffdx -e output/
+cache:
+    key: "$CI_COMMIT_SHA"
+    paths:
+      - output/*
 
 stages:
   - prepare
@@ -11,6 +13,7 @@ stages:
 .image:
   script:
     - python3 -m olimage -v image $OLIMAGE_BOARD $OLIMAGE_RELEASE $OLIMAGE_VARIANT $OLIMAGE_BOARD-$OLIMAGE_VARIANT-$OLIMAGE_RELEASE-$(date +%Y%m%d-%H%M%S).img
+    - find output/ -maxdepth 3 -mindepth 3 -type d -exec rm -rf {} \;
   tags:
     - olimage
 
