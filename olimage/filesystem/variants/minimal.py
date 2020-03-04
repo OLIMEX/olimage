@@ -16,6 +16,7 @@ class VariantMinimal(FileSystemBase):
 
     @stamp
     @export
+    @prepare
     def build(self):
 
         # Built a new file system
@@ -59,7 +60,7 @@ class VariantMinimal(FileSystemBase):
         with Console("Configuring console"):
             Setup.console(env.options['keyboard_keymap'], env.options['keyboard_layout'])
 
-        # # Install packages
+        # Install packages
         self._install_packages()
 
         # Generate boot files
@@ -80,9 +81,6 @@ class VariantMinimal(FileSystemBase):
             hostname = env.options['hostname']
         with Console("Configuring hostname: \'{}\'".format(hostname)):
             Setup.hostname(hostname)
-
-        # Install packages
-        self._install_packages()
 
         # Configure users
         with Console("Configuring users"):
@@ -113,4 +111,5 @@ class VariantMinimal(FileSystemBase):
     @export(final=True)
     @prepare
     def cleanup(self):
+
         super().cleanup()
