@@ -6,6 +6,7 @@ boards:
   # Define load addresses
   loading:
     kernel:   '0x40080000'
+    uenv:     '0x44000000'
     fdt:      '0x4FA00000'
     overlays: '0x4FA10000'
     ramdisk:  '0x4FE00000'

@@ -55,7 +55,7 @@ class SetupBoot(SetupAbstract):
             # Generate template
             Utils.template.install(
                 env.paths['build'] + '/boot/boot.cmd',
-                arch=board.arch,
+                board=board,
                 bootargs={
                     'console': 'ttyS0,115200',
                     'panic': 10,
@@ -69,7 +69,11 @@ class SetupBoot(SetupAbstract):
                 stamp={
                     'date': str(datetime.datetime.now()),
                     'uuid': str(uuid.uuid4()),
-                }
+                },
+                uenv={
+                    'file': 'uEnv.txt',
+                    'load': board.loading.uenv,
+                },
             )
 
             # Generate boot.scr
