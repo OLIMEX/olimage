@@ -1,0 +1,14 @@
+---
+interfaces:
+  type: 'dict'
+  keysrules:
+    type: 'string'
+  valuesrules:
+    type: 'dict'
+    schema:
+      auto:
+        type: 'boolean'
+      allow_hotplug:
+        type: 'boolean'
+      dhcp:
+        type: 'boolean'

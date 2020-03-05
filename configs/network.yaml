@@ -1,5 +1,6 @@
-network:
-  interfaces:
-    eth0:
-      auto: true
-      hotplug: true
+interfaces:
+  eth0:
+    auto: false
+    allow_hotplug: true
+    dhcp: true
+

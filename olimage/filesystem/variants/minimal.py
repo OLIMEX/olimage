@@ -1,7 +1,7 @@
 import olimage.environment as env
 
 from olimage.core.io import Console
-from olimage.core.parsers import Board, Distribution, Users
+from olimage.core.parsers import Board, Distribution, Users, NetworkParser, Interface
 from olimage.core.service import Service
 from olimage.core.setup import Setup
 from olimage.core.utils import Utils
@@ -94,6 +94,9 @@ class VariantMinimal(FileSystemBase):
         with Console("Configuring timezone: \'{}\'".format(env.options['timezone'])):
             Setup.timezone(env.options['timezone'])
 
+        with Console("Configuring network"):
+            Setup.network()
+
         with Console("Configuring services"):
             # Disable useless services
             for service in ['hwclock.sh', 'nfs-common', 'rpcbind']:
@@ -113,5 +116,4 @@ class VariantMinimal(FileSystemBase):
     @export(final=True)
     @prepare
     def cleanup(self):
-
         super().cleanup()

@@ -1,0 +1,9 @@
+{% if interface.auto %}
+auto {{ interface }}
+{% endif %}
+{% if interface.allow_hotplug %}
+allow-hotplug {{ interface }}
+{% endif %}
+{% if interface.dhcp %}
+iface {{ interface }} inet dhcp
+{% endif %}

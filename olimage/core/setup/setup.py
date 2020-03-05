@@ -12,6 +12,7 @@ from .fstab import SetupFstab
 from .hostname import SetupHostname
 from .kernel import SetupKernel
 from .locales import SetupLocales
+from .network import SetupNetwork
 from .timezone import SetupTimezone
 from .command_not_found import SetupCommandNotFound
 from .user import SetupUser
@@ -64,6 +65,7 @@ class Setup(metaclass=SetupMeta):
     hostname: SetupHostname
     kernel: SetupKernel
     locales: SetupLocales
+    network: SetupNetwork
     timezone: SetupTimezone
     command_not_found: SetupCommandNotFound
     user: SetupUser
