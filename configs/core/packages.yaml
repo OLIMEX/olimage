@@ -33,6 +33,7 @@ variants:
       - libpam-systemd
       - lsof
       - mmc-utils
+      - mtd-utils
       - ncurses-term
       - net-tools
       - netcat-openbsd      -
