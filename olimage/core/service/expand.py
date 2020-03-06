@@ -10,6 +10,8 @@ class ServiceExpand(ServiceBase):
         with Console('Enabling: \'olinuxino-expand.service\''):
             Utils.install(
                 [
+                    '/usr/lib/olinuxino/library.sh',
+                    '/usr/lib/olinuxino/olinuxino-copy',
                     '/usr/lib/olinuxino/olinuxino-expand',
                     '/etc/systemd/system/olinuxino-expand.service'
                 ],
