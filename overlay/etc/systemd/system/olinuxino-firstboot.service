@@ -1,0 +1,13 @@
+[Unit]
+Description=Olinuxino FirstBoot
+Before=basic.target
+After=sysinit.target local-fs.target
+DefaultDependencies=no
+
+[Service]
+Type=oneshot
+ExecStart=/usr/lib/olinuxino/olinuxino-firstboot
+RemainAfterExit=True
+
+[Install]
+WantedBy=basic.target

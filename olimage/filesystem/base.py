@@ -70,9 +70,5 @@ class FileSystemBase(object):
                 raise _e
 
     def cleanup(self):
-        # It's possible mime database to be broken. This could resolve to broken lightdm
-        with Console("MIME database"):
-            Utils.shell.chroot('update-mime-database /usr/share/mime')
-
         with Console("APT sources"):
             Utils.shell.chroot('apt-get clean')
