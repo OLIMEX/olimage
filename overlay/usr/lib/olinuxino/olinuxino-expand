@@ -2,7 +2,8 @@
 
 set -e
 
-source ./library.sh
+ROOT_DIR=$(dirname "$0")
+source ${ROOT_DIR}/library.sh
 
 _root_partition=$(get_root_partition)
 if [[ -z ${_root_partition} ]]; then
