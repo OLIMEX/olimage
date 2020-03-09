@@ -15,11 +15,7 @@
                         type = "kernel";
                         arch = "{{ arch }}";
                         os = "linux";
-{% if arch == 'arm' %}
                         compression = "none";
-{% else %}
-                        compression = "gzip";
-{% endif %}
                         load = <{{ board.loading.kernel }}>;
                         entry = <{{ board.loading.kernel }}>;
                         hash-1 {
