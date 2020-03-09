@@ -125,5 +125,19 @@ sync
 rm -rf ${_mount}
 
 echo -e "\nWriting bootloader..."
-# TODO: Use u-boot scripts
-dd if=/lib/u-boot-olinuxino/${_board}/u-boot-sunxi-with-spl.bin of=${_emmc_device} bs=1k seek=8
+u-boot-install ${_emmc_device}
+
+# If the target device is A20-OLinuXino and there is MTD device, connected on spi0 bus
+# we presume that this is a board with both eMMC and SPI.
+# On some boards there is booting issue from eMMC, so a backup copy of the U-Boot must be written
+# to the SPI flash.
+if [[ "${_board}" == "a20-olinuxino" ]]; then
+    _mtd_device=""
+    while read line; do
+        grep -q "spi0.0" <<< ${line} && \
+            _mtd_device="/dev/$(cut -d':' -f1 <<< ${line})" && \
+            break
+    done <<< "$(cat /proc/mtd)"
+    [[ ! -z ${_mtd_device} ]] && u-boot-install ${_mtd_device}
+fi
+
