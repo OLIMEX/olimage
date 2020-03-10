@@ -12,6 +12,7 @@ releases:
       - chromium-browser
   buster:
     minimal:
+      - firmware-ralink
       - firmware-realtek
     base:
       - chromium
