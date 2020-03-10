@@ -1,0 +1,5 @@
+#!/bin/bash
+
+update-mime-database /usr/share/mime &>/dev/null || :
+
+systemctl disable olinuxino-firstboot.service

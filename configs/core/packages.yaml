@@ -6,9 +6,13 @@
 # Release specific packages
 releases:
   bionic:
+    minimal:
+      - linux-firmware
     base:
       - chromium-browser
   buster:
+    minimal:
+      - firmware-realtek
     base:
       - chromium
 
