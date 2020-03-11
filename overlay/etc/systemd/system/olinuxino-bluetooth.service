@@ -1,0 +1,9 @@
+[Unit]
+Description=Realtek H5 bluetooth support
+Before=bluetooth.service
+
+[Service]
+ExecStart=/usr/lib/olinuxino/olinuxino-bluetooth
+
+[Install]
+WantedBy=multi-user.target

@@ -1,5 +1,33 @@
 #!/bin/bash
 
+function get_board
+{
+    local BOARD=""
+
+    for comp in $(cat "/proc/device-tree/compatible" | tr '\0' '\n'); do
+	    if [[ "$comp" == "olimex,"* ]]; then
+		    BOARD=$(cut -d',' -f2 <<< $comp)
+		    break
+	    fi
+    done
+
+    echo ${BOARD}
+}
+
+function get_soc
+{
+    local SOC=""
+
+    for comp in $(cat "/proc/device-tree/compatible" | tr '\0' '\n'); do
+	    if [[ "$comp" == "allwinner,sun"* ]]; then
+		    SOC=$(cut -d',' -f2 <<< $comp)
+		    break
+	    fi
+    done
+
+    echo ${SOC}
+}
+
 function get_root_uuid
 {
     local UUID=""

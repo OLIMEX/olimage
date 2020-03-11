@@ -1,0 +1,15 @@
+#!/bin/bash
+
+set -e
+ROOT_DIR=$(dirname "$0")
+source ${ROOT_DIR}/library.sh
+
+# Detect board type
+_board=$(get_board)
+[[ -z ${_board} ]] && exit 0
+
+# This service should be enable only for A20-SOM204 and A64-OLinuXino
+[[ "${_board}" != "a20-olimex-som204-evb"* ]] && [[ "${_board}" != "a64-olinuxino"* ]] && exit 0
+
+# Attach
+/usr/sbin/rtk_hciattach -n -s 115200 /dev/ttyS1 rtk_h5
