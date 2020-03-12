@@ -20,12 +20,18 @@ class ServiceBluetooth(ServiceBase):
             Utils.install(
                 [
                     '/usr/lib/olinuxino/olinuxino-bluetooth',
-                    '/etc/systemd/system/olinuxino-bluetooth.service'
+                    '/etc/systemd/system/olinuxino-bluetooth.service',
                 ],
                 mode='755')
 
-            Utils.shell.chroot("systemctl enable olinuxino-bluetooth.service")
+            Utils.install(
+                [
+                    '/usr/lib/firmware/rtl_bt/rtl8723b_config.bin',
+                    '/usr/lib/firmware/rtl_bt/rtl8723b_fw.bin'
+                ]
+            )
 
+            Utils.shell.chroot("systemctl enable olinuxino-bluetooth.service")
 
     @staticmethod
     def disable() -> None:
