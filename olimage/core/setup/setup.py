@@ -14,7 +14,6 @@ from .kernel import SetupKernel
 from .locales import SetupLocales
 from .network import SetupNetwork
 from .timezone import SetupTimezone
-from .command_not_found import SetupCommandNotFound
 from .user import SetupUser
 
 pool = None
@@ -67,5 +66,4 @@ class Setup(metaclass=SetupMeta):
     locales: SetupLocales
     network: SetupNetwork
     timezone: SetupTimezone
-    command_not_found: SetupCommandNotFound
     user: SetupUser

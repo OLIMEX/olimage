@@ -1,5 +1,4 @@
 from olimage.core.io import Console
-from olimage.core.setup import Setup
 from olimage.core.utils import Utils
 
 from olimage.filesystem.base import FileSystemBase
@@ -22,10 +21,6 @@ class VariantLite(FileSystemBase):
 
         # Install packages
         self._install_packages()
-
-        # Update command-not-found database
-        with Console("Configuring command-not-found:"):
-            Setup.command_not_found()
 
     @stamp
     @export(final=True)
