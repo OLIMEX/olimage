@@ -5,7 +5,7 @@ services:
       - ca-certificates
       - gnupg
 
-  olimage.core.setup.bluetooth:
+  olimage.core.setup.blueman:
     packages:
       - blueman
       - bluez

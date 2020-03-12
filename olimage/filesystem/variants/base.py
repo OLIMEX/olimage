@@ -23,9 +23,9 @@ class VariantBase(FileSystemBase):
         # Install packages
         self._install_packages()
 
-        # Configure bluetooth
-        with Console("Configuring bluetooth"):
-            Setup.bluetooth()
+        # Configure blueman
+        with Console("Configuring blueman"):
+            Setup.blueman()
 
     @stamp
     @export(final=True)

@@ -6,7 +6,7 @@ from olimage.core.utils import Utils
 from .base import SetupAbstract
 
 
-class SetupBluetooth(SetupAbstract):
+class SetupBlueman(SetupAbstract):
     def setup(self):
 
         with Console("Installing packages"):
