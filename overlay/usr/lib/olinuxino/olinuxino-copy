@@ -46,7 +46,6 @@ case ${_soc} in
         ;;
 esac
 
-
 echo -e "\nDetecting the root device..."
 _root_partition=$(get_root_partition)
 if [[ -z ${_root_partition} ]]; then
@@ -96,7 +95,7 @@ sfdisk -q -d ${_root_device} | sfdisk -q --wipe=always ${_emmc_device}
 
 echo -e "\nResizing partition..."
 resize_partition ${_emmc_partition}
-e2fsck -f ${_emmc_partition}
+e2fsck -f -y ${_emmc_partition}
 resize2fs ${_emmc_partition}
 
 echo -e "\nFormating disk..."

@@ -28,9 +28,9 @@ function get_soc
     echo ${SOC}
 }
 
-function get_root_uuid
+function get_root_partuuid
 {
-    local UUID=""
+    local PARTUUID=""
 
     for arg in $(cat /proc/cmdline); do
         case $arg in
@@ -45,6 +45,21 @@ function get_root_uuid
         esac
     done
 
+    echo ${PARTUUID}
+}
+
+function get_root_uuid
+{
+    local UUID=""
+
+    while read line; do
+        _uuid=$(awk '{print $1}' <<< "$line")
+        _mount=$(awk '{print $2}' <<< "$line")
+        [[ "${_mount}" =~ ^[/]$ ]] && \
+            UUID="${_uuid#UUID=}" && \
+            break
+    done <<< $(grep -v ^# /etc/fstab)
+
     echo ${UUID}
 }
 
@@ -52,7 +67,14 @@ function get_partition_by_uuid
 {
     local UUID=$1
 
-    blkid | grep "${UUID#PARTUUID=}" | cut -d':' -f1
+    blkid | grep "${UUID#UUID=}" | cut -d':' -f1
+}
+
+function get_partition_by_partuuid
+{
+    local PARTUUID=$1
+
+    blkid | grep "${PARTUUID#PARTUUID=}" | cut -d':' -f1
 }
 
 function get_device_by_partition
