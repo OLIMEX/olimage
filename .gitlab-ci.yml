@@ -8,12 +8,12 @@ stages:
   - minimal
   - lite
   - base
-  - deploy
 
 .image:
   script:
     - python3 -m olimage -v image $OLIMAGE_BOARD $OLIMAGE_RELEASE $OLIMAGE_VARIANT $OLIMAGE_BOARD-$OLIMAGE_VARIANT-$OLIMAGE_RELEASE-$(date +%Y%m%d-%H%M%S).img
     - find output/ -maxdepth 3 -mindepth 3 -type d -exec rm -rf {} \;
+    - mv -vf output/*/images/$OLIMAGE_BOARD-$OLIMAGE_VARIANT-$OLIMAGE_RELEASE-*.img /output/
   tags:
     - olimage
 
@@ -200,12 +200,3 @@ A64:base:bionic:
     OLIMAGE_BOARD: A64-OLinuXino
     OLIMAGE_RELEASE: bionic
     OLIMAGE_VARIANT: base
-
-deploy:
-  script:
-    - find output/ -maxdepth 3 -mindepth 3 -type d -exec rm -rf {} \;
-    - cp -rvf output/* /output/
-  stage: deploy
-  tags:
-    - olimage
-  when: manual
