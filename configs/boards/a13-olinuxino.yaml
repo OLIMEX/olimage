@@ -1,0 +1,46 @@
+boards:
+  # Define boards architecture
+  arch: 'armhf'
+  default: 'A13-OLinuXino'
+
+  # Define load addresses
+  loading:
+    kernel:   '0x40080000'
+    uenv:     '0x44000000'  
+    fdt:      '0x4FA00000'
+    overlays: '0x4FA10000'
+    ramdisk:  '0x4FE00000'
+    fit:      '0x58000000'
+
+  # Define board models
+  models:
+    A13-OLinuXino:
+      id: 4432
+      fdt: 'sun5i-a13-olinuxino.dtb'
+
+    A13-OLinuXino-WiFi:
+      id: 4454
+      fdt: 'sun5i-a13-olinuxino-micro.dtb'
+
+    A13-OLinuXino-MICRO:
+      id: 4455
+      fdt: 'sun5i-a13-olinuxino-micro.dtb'
+
+    A13-SOM-256:
+      id: 4787
+      fdt: 'sun5i-a13-olinuxino-micro.dtb'
+
+    A13-SOM-512:
+      id: 4788
+      fdt: 'sun5i-a13-olinuxino-micro.dtb'
+
+    A13-SOM-WIFI:
+      id: 4786
+      fdt: 'sun5i-a13-olinuxino-micro.dtb'
+    
+    A13-SOM-WIFI-4G:
+      id: 7705
+      fdt: 'sun5i-a13-olinuxino-micro.dtb'
+ 
+  name: 'A13-OLinuXino'
+  soc: 'sun5i-a13'
