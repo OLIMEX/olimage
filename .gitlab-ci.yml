@@ -85,6 +85,64 @@ A20:base:bionic:
     OLIMAGE_RELEASE: bionic
     OLIMAGE_VARIANT: base
 
+A13:minimal:buster:
+  extends: .image
+  stage: minimal
+  variables:
+    OLIMAGE_BOARD: A13-OLinuXino
+    OLIMAGE_RELEASE: buster
+    OLIMAGE_VARIANT: minimal
+
+A13:lite:buster:
+  extends: .image
+  needs:
+    - "A13:minimal:buster"
+  stage: lite
+  variables:
+    OLIMAGE_BOARD: A13-OLinuXino
+    OLIMAGE_RELEASE: buster
+    OLIMAGE_VARIANT: lite
+
+A13:base:buster:
+  extends: .image
+  needs:
+    - "A13:minimal:buster"
+    - "A13:lite:buster"
+  stage: base
+  variables:
+    OLIMAGE_BOARD: A13-OLinuXino
+    OLIMAGE_RELEASE: buster
+    OLIMAGE_VARIANT: base
+
+A13:minimal:bionic:
+  extends: .image
+  stage: minimal
+  variables:
+    OLIMAGE_BOARD: A13-OLinuXino
+    OLIMAGE_RELEASE: bionic
+    OLIMAGE_VARIANT: minimal
+
+A13:lite:bionic:
+  extends: .image
+  needs:
+    - "A13:minimal:bionic"
+  stage: lite
+  variables:
+    OLIMAGE_BOARD: A13-OLinuXino
+    OLIMAGE_RELEASE: bionic
+    OLIMAGE_VARIANT: lite
+
+A13:base:bionic:
+  extends: .image
+  needs:
+    - "A13:minimal:bionic"
+    - "A13:lite:bionic"
+  stage: base
+  variables:
+    OLIMAGE_BOARD: A13-OLinuXino
+    OLIMAGE_RELEASE: bionic
+    OLIMAGE_VARIANT: base
+
 A64:minimal:buster:
   extends: .image
   stage: minimal
