@@ -5,23 +5,26 @@ repositories:
   # Each key will create additional file ini /etc/apt/lists.d/, so
   # the key must be unique
 
-#  olimex:
-#    # Repository components
-#    # Usually main, contrib, etc. If omitted, "main" will be used
-#    components:
-#      - "main"
-#
-#    # Specify key and keyserver for import
-#    key: "2BE33123120C50F2666530ED09271DCFB6350689"
-#    keyserver: "keyserver.ubuntu.com"
-#
-#    # Should deb-src be included?
-#    sources: false
-#
-#    # The repository url
-#    url: "http://repository.olimex.com"
+  olimex:
+    # Repository components
+    # Usually main, contrib, etc. If omitted, "main" will be used
+    components:
+      - "main"
+
+    # Specify key and keyserver for import
+    key: "2BE33123120C50F2666530ED09271DCFB6350689"
+    keyserver: "keyserver.ubuntu.com"
+
+    # Should deb-src be included?
+    sources: true
+
+    # The repository url
+    url: "http://repository.olimex.com"
 
   staging:
+    # do not use in release images
+    testing: true
+
     # Repository components
     # Usually main, contrib, etc. If omitted, "main" will be used
     components:
