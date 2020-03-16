@@ -17,6 +17,9 @@ class SetupApt(SetupAbstract):
         for repo in Repositories():
             repo: Repository
 
+            if repo.testing and env.options['releaseimage']:
+                continue
+
             with Console("Adding: \'{}\'".format(repo.url)):
                 file = '/etc/apt/sources.list.d/{}.list'.format(str(repo))
 

@@ -67,6 +67,7 @@ def prepare_tree():
               help="Specify apt-cache service port")
 # Logging
 @click.option("-v", "--verbose", is_flag=True, help="Increase logging verbosity.")
+@click.option("-r", "--releaseimage", is_flag=True, help="Build release image (do not use staging repository).")
 @click.option("--log",
               help="Logging file.")
 @click.option("-V", "--version", is_flag=True, help="Show the current package version")

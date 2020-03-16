@@ -10,6 +10,12 @@ class Repository(object):
         return self._name
 
     @property
+    def testing(self) -> bool:
+        if 'testing' in self._data:
+            return self._data['testing']
+        return False
+
+    @property
     def components(self) -> list:
         if 'components' in self._data:
             return self._data['components']

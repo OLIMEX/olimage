@@ -6,6 +6,8 @@ repositories:
   valuesrules:
     type: 'dict'
     schema:
+      testing:
+        type: 'boolean'
       components:
         type: 'list'
       key:
