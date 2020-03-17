@@ -55,6 +55,8 @@ A20:base:buster:
     OLIMAGE_BOARD: A20-OLinuXino
     OLIMAGE_RELEASE: buster
     OLIMAGE_VARIANT: base
+  cache:
+    policy: pull
 
 A20:minimal:bionic:
   extends: .image
@@ -84,6 +86,8 @@ A20:base:bionic:
     OLIMAGE_BOARD: A20-OLinuXino
     OLIMAGE_RELEASE: bionic
     OLIMAGE_VARIANT: base
+  cache:
+    policy: pull
 
 A13:minimal:buster:
   extends: .image
@@ -113,6 +117,8 @@ A13:base:buster:
     OLIMAGE_BOARD: A13-OLinuXino
     OLIMAGE_RELEASE: buster
     OLIMAGE_VARIANT: base
+  cache:
+    policy: pull
 
 A13:minimal:bionic:
   extends: .image
@@ -142,6 +148,8 @@ A13:base:bionic:
     OLIMAGE_BOARD: A13-OLinuXino
     OLIMAGE_RELEASE: bionic
     OLIMAGE_VARIANT: base
+  cache:
+    policy: pull
 
 A64:minimal:buster:
   extends: .image
@@ -171,6 +179,8 @@ A64:base:buster:
     OLIMAGE_BOARD: A64-OLinuXino
     OLIMAGE_RELEASE: buster
     OLIMAGE_VARIANT: base
+  cache:
+    policy: pull
 
 A64:minimal:bionic:
   extends: .image
@@ -200,3 +210,5 @@ A64:base:bionic:
     OLIMAGE_BOARD: A64-OLinuXino
     OLIMAGE_RELEASE: bionic
     OLIMAGE_VARIANT: base
+  cache:
+    policy: pull
