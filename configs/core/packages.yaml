@@ -30,18 +30,17 @@ variants:
       - debconf-utils
       - device-tree-compiler
       - dialog
+      - fake-hwclock
+      - fping
       - htop
       - ifupdown
       - initramfs-tools
-      - fake-hwclock
-      - fping
-      - libpam-systemd
       - lsof
       - mmc-utils
       - mtd-utils
       - ncurses-term
+      - netcat-openbsd
       - net-tools
-      - netcat-openbsd      -
       - network-manager
       - nocache
       - openssh-server
@@ -93,12 +92,12 @@ variants:
       - iputils-arping
       - libdigest-sha-perl
       - libfuse2
-      - libpam-systemd
-      - libproc-processtable-perl
-      - libssl-dev
       - libnl-3-dev
       - libnl-genl-3-dev
       - libnss-myhostname
+      - libpam-systemd
+      - libproc-processtable-perl
+      - libssl-dev
       - libwrap0-dev
       - man-db
       - networkd-dispatcher
@@ -112,88 +111,84 @@ variants:
       - software-properties-common
       - stress
       - sunxi-tools
-      - vim
-      - vlan
       - unattended-upgrades
       - unicode-data
       - unzip
+      - vim
+      - vlan
 
   base:
     description: "Desktop filesystem"
     packages:
-      - xserver-xorg
-      - xserver-xorg-video-fbdev
-      - gvfs-backends
-      - gvfs-fuse
-      - xfonts-base
-      - xinit
-      - x11-xserver-utils
-      - xfce4
-      - lxtask
-      - xfce4-goodies
-      - xfce4-terminal
-      - xfce4-screenshooter
-      - xfce4-power-manager
-      - xfce4-notifyd
-      - thunar-volman
+      - apt-xapian-index
+      - atril
+      - cups
+      - cups-pk-helper
+      - dbus-x11
+      - fbi
+      - ffmpeg
+      - galculator
+      - gcr
+      - geany
+      - gnome-keyring
+      - gnome-orca
       - gtk2-engines
       - gtk2-engines-murrine
       - gtk2-engines-pixbuf
-      - libgtk2.0-bin
-      - network-manager-gnome
-      - gnome-keyring
-      - gcr
-      - libgck-1-0
-      - p11-kit
-      - pasystray
-      - pavucontrol
-      - pulseaudio
-      - pavumeter
-      - libpam-gnome-keyring
-      - libgl1-mesa-dri
-      - profile-sync-daemon
-      - gnome-orca
-      - numix-gtk-theme
-      - synaptic
-      - apt-xapian-index
-      - lightdm
-      - lightdm-gtk-greeter
-      - galculator
+      - gvfs-backends
+      - gvfs-fuse
       - hexchat
-      - network-manager-openvpn-gnome
-      - mpv
-      - fbi
-      - cups-pk-helper
-      - cups
-      - geany
-      - atril
-      - xarchiver
-      - paprefs
-      - dbus-x11
-      - numix-icon-theme
-      - onboard
-      - system-config-printer-common
-      - system-config-printer
-      - mirage
-      - ffmpeg
-      - vlc
       - hunspell-en-gb
       - hyphen-en-gb
+      - libgck-1-0
+      - libgl1-mesa-dri
+      - libgtk2.0-bin
+      - libpam-gnome-keyring
+      - lightdm
+      - lightdm-gtk-greeter
+      - lxtask
+      - mirage
+      - mpv
+      - network-manager-gnome
+      - network-manager-openvpn-gnome
+      - numix-gtk-theme
+      - numix-icon-theme
+      - onboard
+      - p11-kit
+      - paprefs
+      - pasystray
+      - pavucontrol
+      - pavumeter
+      - profile-sync-daemon
+      - pulseaudio
+      - synaptic
+      - system-config-printer
+      - system-config-printer-common
+      - thunar-volman
+      - tree
+      - vlc
       - wamerican
       - wbritish
-      - tree
-
+      - x11-xserver-utils
+      - xarchiver
+      - xfce4
+      - xfce4-goodies
+      - xfce4-notifyd
+      - xfce4-power-manager
+      - xfce4-screenshooter
+      - xfce4-terminal
+      - xfonts-base
+      - xinit
+      - xserver-xorg
+      - xserver-xorg-video-fbdev
 
   full:
     packages:
-      - avahi-daemon transmission
+      - avahi-daemon
       - kazam
       - libreoffice
       - libreoffice-style-tango
       - meld
       - remmina
       - thunderbird
-
-
-
-
+      - transmission
