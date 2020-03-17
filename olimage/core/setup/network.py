@@ -14,6 +14,9 @@ class SetupNetwork(SetupAbstract):
         for interface in NetworkParser().interfaces:
             interface: Interface
 
+            with Console('Installing: \'/etc/network/interfaces\''):
+                Utils.install('/etc/network/interfaces')
+
             with Console("Configuring interface: \'{}\'".format(str(interface))):
                 file = '/etc/network/interfaces.d/{}'.format(str(interface))
 
