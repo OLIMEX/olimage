@@ -1,4 +1,4 @@
-cache:
+cache: &cache
     key: "$CI_COMMIT_SHA"
     paths:
       - output/*
@@ -56,6 +56,7 @@ A20:base:buster:
     OLIMAGE_RELEASE: buster
     OLIMAGE_VARIANT: base
   cache:
+    <<: *cache
     policy: pull
 
 A20:minimal:bionic:
@@ -87,6 +88,7 @@ A20:base:bionic:
     OLIMAGE_RELEASE: bionic
     OLIMAGE_VARIANT: base
   cache:
+    <<: *cache
     policy: pull
 
 A13:minimal:buster:
@@ -118,6 +120,7 @@ A13:base:buster:
     OLIMAGE_RELEASE: buster
     OLIMAGE_VARIANT: base
   cache:
+    <<: *cache
     policy: pull
 
 A13:minimal:bionic:
@@ -149,6 +152,7 @@ A13:base:bionic:
     OLIMAGE_RELEASE: bionic
     OLIMAGE_VARIANT: base
   cache:
+    <<: *cache
     policy: pull
 
 A64:minimal:buster:
@@ -180,6 +184,7 @@ A64:base:buster:
     OLIMAGE_RELEASE: buster
     OLIMAGE_VARIANT: base
   cache:
+    <<: *cache
     policy: pull
 
 A64:minimal:bionic:
@@ -211,4 +216,5 @@ A64:base:bionic:
     OLIMAGE_RELEASE: bionic
     OLIMAGE_VARIANT: base
   cache:
+    <<: *cache
     policy: pull
