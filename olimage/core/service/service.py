@@ -7,8 +7,6 @@ import olimage.environment as env
 from .apt_cache import ServiceAptCache
 from .bluetooth import ServiceBluetooth
 from .getty import ServiceGetty
-from .expand import ServiceExpand
-from .firstboot import ServiceFirstBoot
 from .ssh import ServiceSSH
 
 
@@ -54,6 +52,4 @@ class Service(metaclass=ServiceMeta):
     apt_cache: ServiceAptCache
     bluetooth: ServiceBluetooth
     getty: ServiceGetty
-    expand: ServiceExpand
-    firstboot: ServiceFirstBoot
     ssh: ServiceSSH
