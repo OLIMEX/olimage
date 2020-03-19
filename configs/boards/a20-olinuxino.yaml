@@ -18,260 +18,782 @@ boards:
     A20-OLinuXino-LIME:
       id: 7739
       fdt: 'sun7i-a20-olinuxino-lime.dtb'
-
+      overlays:
+        - 'sun7i-a20-i2c2.dtbo'
+        - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-spi1.dtbo'
+        - 'sun7i-a20-spi2.dtbo'
+        - 'sun7i-a20-uart3.dtbo'
+        - 'sun7i-a20-uart4.dtbo'
+        - 'sun7i-a20-uart5.dtbo'
+        - 'sun7i-a20-uart6.dtbo'
+        - 'sun7i-a20-uart7.dtbo'
+ 
     A20-OLinuXino-LIME-n4GB:
       id: 7743
       fdt: 'sun7i-a20-olinuxino-lime.dtb'
-
+      overlays:
+        - 'sun7i-a20-i2c2.dtbo'
+        - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-spi1.dtbo'
+        - 'sun7i-a20-spi2.dtbo'
+        - 'sun7i-a20-uart3.dtbo'
+        - 'sun7i-a20-uart4.dtbo'
+        - 'sun7i-a20-uart5.dtbo'
+        - 'sun7i-a20-uart6.dtbo'
+        - 'sun7i-a20-uart7.dtbo'
+        
     A20-OLinuXino-LIME-n8G:
       id: 8934
       fdt: 'sun7i-a20-olinuxino-lime.dtb'
-
+      overlays:
+        - 'sun7i-a20-i2c2.dtbo'
+        - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-spi1.dtbo'
+        - 'sun7i-a20-spi2.dtbo'
+        - 'sun7i-a20-uart3.dtbo'
+        - 'sun7i-a20-uart4.dtbo'
+        - 'sun7i-a20-uart5.dtbo'
+        - 'sun7i-a20-uart6.dtbo'
+        - 'sun7i-a20-uart7.dtbo'
+        
     A20-OLinuXino-LIME-s16MB:
       id: 9076
       fdt: 'sun7i-a20-olinuxino-lime.dtb'
       overlays:
+        - 'sun7i-a20-i2c2.dtbo'
         - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-spi1.dtbo'
+        - 'sun7i-a20-spi2.dtbo'
+        - 'sun7i-a20-uart3.dtbo'
+        - 'sun7i-a20-uart4.dtbo'
+        - 'sun7i-a20-uart5.dtbo'
+        - 'sun7i-a20-uart6.dtbo'
+        - 'sun7i-a20-uart7.dtbo'
         - 'spi0-spiflash.dtbo'
 
     A20-OLinuXino-LIME-e4GB:
       id: 9160
       fdt: 'sun7i-a20-olinuxino-lime-emmc.dtb'
+      overlays:
+        - 'sun7i-a20-i2c2.dtbo'
+        - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-spi1.dtbo'
+        - 'sun7i-a20-spi2.dtbo'
+        - 'sun7i-a20-uart3.dtbo'
+        - 'sun7i-a20-uart4.dtbo'
+        - 'sun7i-a20-uart5.dtbo'
+        - 'sun7i-a20-uart6.dtbo'
+        - 'sun7i-a20-uart7.dtbo'
 
     A20-OLinuXino-LIME-e16Gs16M:
       id: 9516
       fdt: 'sun7i-a20-olinuxino-lime-emmc.dtb'
       overlays:
+        - 'sun7i-a20-i2c2.dtbo'
         - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-spi1.dtbo'
+        - 'sun7i-a20-spi2.dtbo'
+        - 'sun7i-a20-uart3.dtbo'
+        - 'sun7i-a20-uart4.dtbo'
+        - 'sun7i-a20-uart5.dtbo'
+        - 'sun7i-a20-uart6.dtbo'
+        - 'sun7i-a20-uart7.dtbo'
         - 'spi0-spiflash.dtbo'
 
     A20-OLinuXino-LIME-e4Gs16M:
       id: 9696
       fdt: 'sun7i-a20-olinuxino-lime-emmc.dtb'
       overlays:
+        - 'sun7i-a20-i2c2.dtbo'
         - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-spi1.dtbo'
+        - 'sun7i-a20-spi2.dtbo'
+        - 'sun7i-a20-uart3.dtbo'
+        - 'sun7i-a20-uart4.dtbo'
+        - 'sun7i-a20-uart5.dtbo'
+        - 'sun7i-a20-uart6.dtbo'
+        - 'sun7i-a20-uart7.dtbo'
         - 'spi0-spiflash.dtbo'
 
     # T2-OLinuXino-LIME
     T2-OLinuXino-LIME-IND:
       id: 9211
       fdt: 'sun7i-a20-olinuxino-lime.dtb'
+      overlays:
+        - 'sun7i-a20-i2c2.dtbo'
+        - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-spi1.dtbo'
+        - 'sun7i-a20-spi2.dtbo'
+        - 'sun7i-a20-uart3.dtbo'
+        - 'sun7i-a20-uart4.dtbo'
+        - 'sun7i-a20-uart5.dtbo'
+        - 'sun7i-a20-uart6.dtbo'
+        - 'sun7i-a20-uart7.dtbo'
 
     T2-OLinuXino-LIME-s16MB-IND:
       id: 9215
       fdt: 'sun7i-a20-olinuxino-lime.dtb'
       overlays:
+        - 'sun7i-a20-i2c2.dtbo'
+        - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-spi1.dtbo'
+        - 'sun7i-a20-spi2.dtbo'
+        - 'sun7i-a20-uart3.dtbo'
+        - 'sun7i-a20-uart4.dtbo'
+        - 'sun7i-a20-uart5.dtbo'
+        - 'sun7i-a20-uart6.dtbo'
+        - 'sun7i-a20-uart7.dtbo'
         - 'sun7i-a20-spi0.dtbo'
         - 'spi0-spiflash.dtbo'
 
     T2-OLinuXino-LIME-e4G-IND:
       id: 9219
       fdt: 'sun7i-a20-olinuxino-lime-emmc.dtb'
-
+      overlays:
+        - 'sun7i-a20-i2c2.dtbo'
+        - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-spi1.dtbo'
+        - 'sun7i-a20-spi2.dtbo'
+        - 'sun7i-a20-uart3.dtbo'
+        - 'sun7i-a20-uart4.dtbo'
+        - 'sun7i-a20-uart5.dtbo'
+        - 'sun7i-a20-uart6.dtbo'
+        - 'sun7i-a20-uart7.dtbo'
+        
     T2-OLinuXino-LIME-e4Gs16M-IND:
       id: 9734
       fdt: 'sun7i-a20-olinuxino-lime-emmc.dtb'
+      overlays:
+        - 'sun7i-a20-i2c2.dtbo'
+        - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-spi1.dtbo'
+        - 'sun7i-a20-spi2.dtbo'
+        - 'sun7i-a20-uart3.dtbo'
+        - 'sun7i-a20-uart4.dtbo'
+        - 'sun7i-a20-uart5.dtbo'
+        - 'sun7i-a20-uart6.dtbo'
+        - 'sun7i-a20-uart7.dtbo'
+        - 'sun7i-a20-spi0.dtbo'
+        - 'spi0-spiflash.dtbo'
+        - 'lime2-sd.dtbo'
 
     # A20-OLinuXino-LIME2
     A20-OLinuXino-LIME2:
       id: 7701
       fdt: 'sun7i-a20-olinuxino-lime2.dtb'
-
+      overlays:
+        - 'sun7i-a20-i2c2.dtbo'
+        - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-spi1.dtbo'
+        - 'sun7i-a20-spi2.dtbo'
+        - 'sun7i-a20-uart3.dtbo'
+        - 'sun7i-a20-uart4.dtbo'
+        - 'sun7i-a20-uart5.dtbo'
+        - 'sun7i-a20-uart6.dtbo'
+        - 'sun7i-a20-uart7.dtbo'
+        - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-can.dtbo'
+        - 'spi0-spiflash.dtbo'
+        - 'lime2-sd.dtbo'
+        
     A20-OLinuXino-LIME2-e4GB:
       id: 8340
       fdt: 'sun7i-a20-olinuxino-lime2-emmc.dtb'
+      overlays:
+        - 'sun7i-a20-i2c2.dtbo'
+        - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-spi1.dtbo'
+        - 'sun7i-a20-spi2.dtbo'
+        - 'sun7i-a20-uart3.dtbo'
+        - 'sun7i-a20-uart4.dtbo'
+        - 'sun7i-a20-uart5.dtbo'
+        - 'sun7i-a20-uart6.dtbo'
+        - 'sun7i-a20-uart7.dtbo'
+        - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-can.dtbo'
+        - 'lime2-sd.dtbo'
 
     A20-OLinuXino-LIME2-e16GB:
       id: 9166
       fdt: 'sun7i-a20-olinuxino-lime2-emmc.dtb'
-
+      overlays:
+        - 'sun7i-a20-i2c2.dtbo'
+        - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-spi1.dtbo'
+        - 'sun7i-a20-spi2.dtbo'
+        - 'sun7i-a20-uart3.dtbo'
+        - 'sun7i-a20-uart4.dtbo'
+        - 'sun7i-a20-uart5.dtbo'
+        - 'sun7i-a20-uart6.dtbo'
+        - 'sun7i-a20-uart7.dtbo'
+        - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-can.dtbo'
+        - 'lime2-sd.dtbo'
+      
     A20-OLinuXino-LIME2-n4GB:
       id: 7624
       fdt: 'sun7i-a20-olinuxino-lime2.dtb'
-
+      overlays:
+        - 'sun7i-a20-i2c2.dtbo'
+        - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-spi1.dtbo'
+        - 'sun7i-a20-spi2.dtbo'
+        - 'sun7i-a20-uart3.dtbo'
+        - 'sun7i-a20-uart4.dtbo'
+        - 'sun7i-a20-uart5.dtbo'
+        - 'sun7i-a20-uart6.dtbo'
+        - 'sun7i-a20-uart7.dtbo'
+        - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-can.dtbo'
+        - 'spi0-spiflash.dtbo'
+        - 'lime2-sd.dtbo'
+    
     A20-OLinuXino-LIME2-n8GB:
       id: 8910
       fdt: 'sun7i-a20-olinuxino-lime2.dtb'
+      overlays:
+        - 'sun7i-a20-i2c2.dtbo'
+        - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-spi1.dtbo'
+        - 'sun7i-a20-spi2.dtbo'
+        - 'sun7i-a20-uart3.dtbo'
+        - 'sun7i-a20-uart4.dtbo'
+        - 'sun7i-a20-uart5.dtbo'
+        - 'sun7i-a20-uart6.dtbo'
+        - 'sun7i-a20-uart7.dtbo'
+        - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-can.dtbo'
+        - 'spi0-spiflash.dtbo'
+        - 'lime2-sd.dtbo'
 
     A20-OLinuXino-LIME2-s16M:
       id: 8946
       fdt: 'sun7i-a20-olinuxino-lime2.dtb'
       overlays:
+        - 'sun7i-a20-i2c2.dtbo'
         - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-spi1.dtbo'
+        - 'sun7i-a20-spi2.dtbo'
+        - 'sun7i-a20-uart3.dtbo'
+        - 'sun7i-a20-uart4.dtbo'
+        - 'sun7i-a20-uart5.dtbo'
+        - 'sun7i-a20-uart6.dtbo'
+        - 'sun7i-a20-uart7.dtbo'
+        - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-can.dtbo'
         - 'spi0-spiflash.dtbo'
-
+        
     A20-OLinuXino-LIME2-e16Gs16M:
       id: 9604
       fdt: 'sun7i-a20-olinuxino-lime2-emmc.dtb'
       overlays:
+        - 'sun7i-a20-i2c2.dtbo'
         - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-spi1.dtbo'
+        - 'sun7i-a20-spi2.dtbo'
+        - 'sun7i-a20-uart3.dtbo'
+        - 'sun7i-a20-uart4.dtbo'
+        - 'sun7i-a20-uart5.dtbo'
+        - 'sun7i-a20-uart6.dtbo'
+        - 'sun7i-a20-uart7.dtbo'
+        - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-can.dtbo'
         - 'spi0-spiflash.dtbo'
-
+        - 'lime2-sd.dtbo'
+        
     A20-OLinuXino-LIME2-e4Gs16M:
       id: 9613
       fdt: 'sun7i-a20-olinuxino-lime2-emmc.dtb'
       overlays:
+        - 'sun7i-a20-i2c2.dtbo'
         - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-spi1.dtbo'
+        - 'sun7i-a20-spi2.dtbo'
+        - 'sun7i-a20-uart3.dtbo'
+        - 'sun7i-a20-uart4.dtbo'
+        - 'sun7i-a20-uart5.dtbo'
+        - 'sun7i-a20-uart6.dtbo'
+        - 'sun7i-a20-uart7.dtbo'
+        - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-can.dtbo'
         - 'spi0-spiflash.dtbo'
-
+        - 'lime2-sd.dtbo'
+        
     A20-OLinuXino-LIME2-G2:
       id: 9905
       fdt: 'sun7i-a20-olinuxino-lime2.dtb'
-
+      overlays:
+        - 'sun7i-a20-i2c2.dtbo'
+        - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-spi1.dtbo'
+        - 'sun7i-a20-spi2.dtbo'
+        - 'sun7i-a20-uart3.dtbo'
+        - 'sun7i-a20-uart4.dtbo'
+        - 'sun7i-a20-uart5.dtbo'
+        - 'sun7i-a20-uart6.dtbo'
+        - 'sun7i-a20-uart7.dtbo'
+        - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-can.dtbo'
+        - 'spi0-spiflash.dtbo'
+        
     # T2-OLinuXino-LIME2
     T2-OLinuXino-LIME2-IND:
       id: 9239
       fdt: 'sun7i-a20-olinuxino-lime2.dtb'
-
+      overlays:
+        - 'sun7i-a20-i2c2.dtbo'
+        - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-spi1.dtbo'
+        - 'sun7i-a20-spi2.dtbo'
+        - 'sun7i-a20-uart3.dtbo'
+        - 'sun7i-a20-uart4.dtbo'
+        - 'sun7i-a20-uart5.dtbo'
+        - 'sun7i-a20-uart6.dtbo'
+        - 'sun7i-a20-uart7.dtbo'
+        - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-can.dtbo'
+      
     T2-OLinuXino-LIME2-s16M-IND:
       id: 9247
       fdt: 'sun7i-a20-olinuxino-lime2.dtb'
       overlays:
+        - 'sun7i-a20-i2c2.dtbo'
         - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-spi1.dtbo'
+        - 'sun7i-a20-spi2.dtbo'
+        - 'sun7i-a20-uart3.dtbo'
+        - 'sun7i-a20-uart4.dtbo'
+        - 'sun7i-a20-uart5.dtbo'
+        - 'sun7i-a20-uart6.dtbo'
+        - 'sun7i-a20-uart7.dtbo'
+        - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-can.dtbo'
         - 'spi0-spiflash.dtbo'
-
+        
     T2-OLinuXino-LIME2-e8Gs16M-IND:
       id: 9243
       fdt: 'sun7i-a20-olinuxino-lime2-emmc.dtb'
       overlays:
+        - 'sun7i-a20-i2c2.dtbo'
         - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-spi1.dtbo'
+        - 'sun7i-a20-spi2.dtbo'
+        - 'sun7i-a20-uart3.dtbo'
+        - 'sun7i-a20-uart4.dtbo'
+        - 'sun7i-a20-uart5.dtbo'
+        - 'sun7i-a20-uart6.dtbo'
+        - 'sun7i-a20-uart7.dtbo'
+        - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-can.dtbo'
         - 'spi0-spiflash.dtbo'
-
+        - 'lime2-sd.dtbo'
+        
     # A20-OLinuXino-MICRO
     A20-OLinuXino-MICRO:
       id: 4614
       fdt: 'sun7i-a20-olinuxino-micro.dtb'
-
+      overlays:
+        - 'sun7i-a20-i2c2.dtbo'
+        - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-spi1.dtbo'
+        - 'sun7i-a20-spi2.dtbo'
+        - 'sun7i-a20-uart3.dtbo'
+        - 'sun7i-a20-uart4.dtbo'
+        - 'sun7i-a20-uart5.dtbo'
+        - 'sun7i-a20-uart6.dtbo'
+        - 'sun7i-a20-uart7.dtbo'
+        - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-can.dtbo'
+        
     A20-OLinuXino-MICRO-n4GB:
       id: 4615
       fdt: 'sun7i-a20-olinuxino-micro.dtb'
+      overlays:
+        - 'sun7i-a20-i2c2.dtbo'
+        - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-spi1.dtbo'
+        - 'sun7i-a20-spi2.dtbo'
+        - 'sun7i-a20-uart3.dtbo'
+        - 'sun7i-a20-uart4.dtbo'
+        - 'sun7i-a20-uart5.dtbo'
+        - 'sun7i-a20-uart6.dtbo'
+        - 'sun7i-a20-uart7.dtbo'
+        - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-can.dtbo'
 
     A20-OLinuXino-MICRO-e4GB-IND:
       id: 8661
       fdt: 'sun7i-a20-olinuxino-micro-emmc.dtb'
+      overlays:
+        - 'sun7i-a20-i2c2.dtbo'
+        - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-spi1.dtbo'
+        - 'sun7i-a20-spi2.dtbo'
+        - 'sun7i-a20-uart3.dtbo'
+        - 'sun7i-a20-uart4.dtbo'
+        - 'sun7i-a20-uart5.dtbo'
+        - 'sun7i-a20-uart6.dtbo'
+        - 'sun7i-a20-uart7.dtbo'
+        - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-can.dtbo'
 
     A20-OLinuXino-MICRO-IND:
       id: 8828
       fdt: 'sun7i-a20-olinuxino-micro.dtb'
+      overlays:
+        - 'sun7i-a20-i2c2.dtbo'
+        - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-spi1.dtbo'
+        - 'sun7i-a20-spi2.dtbo'
+        - 'sun7i-a20-uart3.dtbo'
+        - 'sun7i-a20-uart4.dtbo'
+        - 'sun7i-a20-uart5.dtbo'
+        - 'sun7i-a20-uart6.dtbo'
+        - 'sun7i-a20-uart7.dtbo'
+        - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-can.dtbo'
 
     A20-OLinuXino-MICRO-e4GB:
       id: 8832
       fdt: 'sun7i-a20-olinuxino-micro-emmc.dtb'
+      overlays:
+        - 'sun7i-a20-i2c2.dtbo'
+        - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-spi1.dtbo'
+        - 'sun7i-a20-spi2.dtbo'
+        - 'sun7i-a20-uart3.dtbo'
+        - 'sun7i-a20-uart4.dtbo'
+        - 'sun7i-a20-uart5.dtbo'
+        - 'sun7i-a20-uart6.dtbo'
+        - 'sun7i-a20-uart7.dtbo'
+        - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-can.dtbo'
 
     A20-OLinuXino-MICRO-n8G:
       id: 8918
       fdt: 'sun7i-a20-olinuxino-micro.dtb'
+      overlays:
+        - 'sun7i-a20-i2c2.dtbo'
+        - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-spi1.dtbo'
+        - 'sun7i-a20-spi2.dtbo'
+        - 'sun7i-a20-uart3.dtbo'
+        - 'sun7i-a20-uart4.dtbo'
+        - 'sun7i-a20-uart5.dtbo'
+        - 'sun7i-a20-uart6.dtbo'
+        - 'sun7i-a20-uart7.dtbo'
+        - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-can.dtbo'
 
     A20-OLinuXino-MICRO-e16G:
       id: 9042
       fdt: 'sun7i-a20-olinuxino-micro-emmc.dtb'
+      overlays:
+        - 'sun7i-a20-i2c2.dtbo'
+        - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-spi1.dtbo'
+        - 'sun7i-a20-spi2.dtbo'
+        - 'sun7i-a20-uart3.dtbo'
+        - 'sun7i-a20-uart4.dtbo'
+        - 'sun7i-a20-uart5.dtbo'
+        - 'sun7i-a20-uart6.dtbo'
+        - 'sun7i-a20-uart7.dtbo'
+        - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-can.dtbo'
 
     A20-OLinuXino-MICRO-s16M:
       id: 9231
       fdt: 'sun7i-a20-olinuxino-micro.dtb'
       overlays:
+        - 'sun7i-a20-i2c2.dtbo'
         - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-spi1.dtbo'
+        - 'sun7i-a20-spi2.dtbo'
+        - 'sun7i-a20-uart3.dtbo'
+        - 'sun7i-a20-uart4.dtbo'
+        - 'sun7i-a20-uart5.dtbo'
+        - 'sun7i-a20-uart6.dtbo'
+        - 'sun7i-a20-uart7.dtbo'
+        - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-can.dtbo'
         - 'spi0-spiflash.dtbo'
-
+        
     A20-OLinuXino-MICRO-e4Gs16M:
       id: 9684
       fdt: 'sun7i-a20-olinuxino-micro-emmc.dtb'
       overlays:
+        - 'sun7i-a20-i2c2.dtbo'
         - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-spi1.dtbo'
+        - 'sun7i-a20-spi2.dtbo'
+        - 'sun7i-a20-uart3.dtbo'
+        - 'sun7i-a20-uart4.dtbo'
+        - 'sun7i-a20-uart5.dtbo'
+        - 'sun7i-a20-uart6.dtbo'
+        - 'sun7i-a20-uart7.dtbo'
+        - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-can.dtbo'
         - 'spi0-spiflash.dtbo'
-
+        
     A20-OLinuXino-MICRO-e16Gs16M:
       id: 9689
       fdt: 'sun7i-a20-olinuxino-micro-emmc.dtb'
       overlays:
+        - 'sun7i-a20-i2c2.dtbo'
         - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-spi1.dtbo'
+        - 'sun7i-a20-spi2.dtbo'
+        - 'sun7i-a20-uart3.dtbo'
+        - 'sun7i-a20-uart4.dtbo'
+        - 'sun7i-a20-uart5.dtbo'
+        - 'sun7i-a20-uart6.dtbo'
+        - 'sun7i-a20-uart7.dtbo'
+        - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-can.dtbo'
         - 'spi0-spiflash.dtbo'
-
+        
     # T2-OLinuXino-MICRO
     T2-OLinuXino-MICRO-IND:
       id: 9223
       fdt: 'sun7i-a20-olinuxino-micro.dtb'
+      overlays:
+        - 'sun7i-a20-i2c2.dtbo'
+        - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-spi1.dtbo'
+        - 'sun7i-a20-spi2.dtbo'
+        - 'sun7i-a20-uart3.dtbo'
+        - 'sun7i-a20-uart4.dtbo'
+        - 'sun7i-a20-uart5.dtbo'
+        - 'sun7i-a20-uart6.dtbo'
+        - 'sun7i-a20-uart7.dtbo'
+        - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-can.dtbo'
 
     T2-OLinuXino-MICRO-e4G-IND:
       id: 9227
       fdt: 'sun7i-a20-olinuxino-micro-emmc.dtb'
+      overlays:
+        - 'sun7i-a20-i2c2.dtbo'
+        - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-spi1.dtbo'
+        - 'sun7i-a20-spi2.dtbo'
+        - 'sun7i-a20-uart3.dtbo'
+        - 'sun7i-a20-uart4.dtbo'
+        - 'sun7i-a20-uart5.dtbo'
+        - 'sun7i-a20-uart6.dtbo'
+        - 'sun7i-a20-uart7.dtbo'
+        - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-can.dtbo'
 
     T2-OLinuXino-MICRO-s16M-IND:
       id: 9235
       fdt: 'sun7i-a20-olinuxino-micro.dtb'
       overlays:
+        - 'sun7i-a20-i2c2.dtbo'
         - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-spi1.dtbo'
+        - 'sun7i-a20-spi2.dtbo'
+        - 'sun7i-a20-uart3.dtbo'
+        - 'sun7i-a20-uart4.dtbo'
+        - 'sun7i-a20-uart5.dtbo'
+        - 'sun7i-a20-uart6.dtbo'
+        - 'sun7i-a20-uart7.dtbo'
+        - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-can.dtbo'
         - 'spi0-spiflash.dtbo'
-
+        
     T2-OLinuXino-MICRO-e4Gs16M-IND:
       id: 9739
       fdt: 'sun7i-a20-olinuxino-micro-emmc.dtb'
       overlays:
+        - 'sun7i-a20-i2c2.dtbo'
         - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-spi1.dtbo'
+        - 'sun7i-a20-spi2.dtbo'
+        - 'sun7i-a20-uart3.dtbo'
+        - 'sun7i-a20-uart4.dtbo'
+        - 'sun7i-a20-uart5.dtbo'
+        - 'sun7i-a20-uart6.dtbo'
+        - 'sun7i-a20-uart7.dtbo'
+        - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-can.dtbo'
         - 'spi0-spiflash.dtbo'
-
+        
     T2-OLinuXino-MICRO-e8Gs16M-IND:
       id: 9789
       fdt: 'sun7i-a20-olinuxino-micro-emmc.dtb'
       overlays:
+        - 'sun7i-a20-i2c2.dtbo'
         - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-spi1.dtbo'
+        - 'sun7i-a20-spi2.dtbo'
+        - 'sun7i-a20-uart3.dtbo'
+        - 'sun7i-a20-uart4.dtbo'
+        - 'sun7i-a20-uart5.dtbo'
+        - 'sun7i-a20-uart6.dtbo'
+        - 'sun7i-a20-uart7.dtbo'
+        - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-can.dtbo'
         - 'spi0-spiflash.dtbo'
-
+        
     # A20-SOM
     A20-SOM-n4GB:
       id: 4673
       fdt: 'sun7i-a20-olimex-som-evb.dtb'
+      overlays:
+        - 'sun7i-a20-i2c2.dtbo'
+        - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-spi1.dtbo'
+        - 'sun7i-a20-spi2.dtbo'
+        - 'sun7i-a20-uart3.dtbo'
+        - 'sun7i-a20-uart4.dtbo'
+        - 'sun7i-a20-uart5.dtbo'
+        - 'sun7i-a20-uart6.dtbo'
+        - 'sun7i-a20-uart7.dtbo'
 
     A20-SOM:
       id: 7664
       fdt: 'sun7i-a20-olimex-som-evb.dtb'
+      overlays:
+        - 'sun7i-a20-i2c2.dtbo'
+        - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-spi1.dtbo'
+        - 'sun7i-a20-spi2.dtbo'
+        - 'sun7i-a20-uart3.dtbo'
+        - 'sun7i-a20-uart4.dtbo'
+        - 'sun7i-a20-uart5.dtbo'
+        - 'sun7i-a20-uart6.dtbo'
+        - 'sun7i-a20-uart7.dtbo'
 
     A20-SOM-IND:
       id: 8849
       fdt: 'sun7i-a20-olimex-som-evb.dtb'
+      overlays:
+        - 'sun7i-a20-i2c2.dtbo'
+        - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-spi1.dtbo'
+        - 'sun7i-a20-spi2.dtbo'
+        - 'sun7i-a20-uart3.dtbo'
+        - 'sun7i-a20-uart4.dtbo'
+        - 'sun7i-a20-uart5.dtbo'
+        - 'sun7i-a20-uart6.dtbo'
+        - 'sun7i-a20-uart7.dtbo'
 
     A20-SOM-n8GB:
       id: 8922
       fdt: 'sun7i-a20-olimex-som-evb.dtb'
+      overlays:
+        - 'sun7i-a20-i2c2.dtbo'
+        - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-spi1.dtbo'
+        - 'sun7i-a20-spi2.dtbo'
+        - 'sun7i-a20-uart3.dtbo'
+        - 'sun7i-a20-uart4.dtbo'
+        - 'sun7i-a20-uart5.dtbo'
+        - 'sun7i-a20-uart6.dtbo'
+        - 'sun7i-a20-uart7.dtbo'
 
     A20-SOM-e16Gs16M:
       id: 9047
       fdt: 'sun7i-a20-olimex-som-evb-emmc.dtb'
       overlays:
+        - 'sun7i-a20-i2c2.dtbo'
         - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-spi1.dtbo'
+        - 'sun7i-a20-spi2.dtbo'
+        - 'sun7i-a20-uart3.dtbo'
+        - 'sun7i-a20-uart4.dtbo'
+        - 'sun7i-a20-uart5.dtbo'
+        - 'sun7i-a20-uart6.dtbo'
+        - 'sun7i-a20-uart7.dtbo'
         - 'spi0-spiflash.dtbo'
 
     A20-SOM-e16GB-IND:
       id: 9148
       fdt: 'sun7i-a20-olimex-som-evb-emmc.dtb'
-
+      overlays:
+        - 'sun7i-a20-i2c2.dtbo'
+        - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-spi1.dtbo'
+        - 'sun7i-a20-spi2.dtbo'
+        - 'sun7i-a20-uart3.dtbo'
+        - 'sun7i-a20-uart4.dtbo'
+        - 'sun7i-a20-uart5.dtbo'
+        - 'sun7i-a20-uart6.dtbo'
+        - 'sun7i-a20-uart7.dtbo'
+        
     A20-SOM-e16GB:
       id: 9155
       fdt: 'sun7i-a20-olimex-som-evb-emmc.dtb'
+      overlays:
+        - 'sun7i-a20-i2c2.dtbo'
+        - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-spi1.dtbo'
+        - 'sun7i-a20-spi2.dtbo'
+        - 'sun7i-a20-uart3.dtbo'
+        - 'sun7i-a20-uart4.dtbo'
+        - 'sun7i-a20-uart5.dtbo'
+        - 'sun7i-a20-uart6.dtbo'
+        - 'sun7i-a20-uart7.dtbo'
 
     # T2-SOM
     T2-SOM-IND:
       id: 9259
       fdt: 'sun7i-a20-olimex-som-evb.dtb'
+      overlays:
+        - 'sun7i-a20-i2c2.dtbo'
+        - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-spi1.dtbo'
+        - 'sun7i-a20-spi2.dtbo'
+        - 'sun7i-a20-uart3.dtbo'
+        - 'sun7i-a20-uart4.dtbo'
+        - 'sun7i-a20-uart5.dtbo'
+        - 'sun7i-a20-uart6.dtbo'
+        - 'sun7i-a20-uart7.dtbo'
 
     T2-SOM-e8Gs16M-IND:
       id: 9827
       fdt: 'sun7i-a20-olimex-som-evb-emmc.dtb'
       overlays:
+        - 'sun7i-a20-i2c2.dtbo'
         - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-spi1.dtbo'
+        - 'sun7i-a20-spi2.dtbo'
+        - 'sun7i-a20-uart3.dtbo'
+        - 'sun7i-a20-uart4.dtbo'
+        - 'sun7i-a20-uart5.dtbo'
+        - 'sun7i-a20-uart6.dtbo'
+        - 'sun7i-a20-uart7.dtbo'
         - 'spi0-spiflash.dtbo'
 
     # A20-SOM204
     A20-SOM204-1G:
       id: 8991
       fdt: 'sun7i-a20-olimex-som204-evb.dtb'
+      overlays:
+        - 'sun7i-a20-i2c2.dtbo'
+        - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-spi1.dtbo'
+        - 'sun7i-a20-spi2.dtbo'
+        - 'sun7i-a20-uart3.dtbo'
+        - 'sun7i-a20-uart4.dtbo'
+        - 'sun7i-a20-uart7.dtbo'
+        - 'sun7i-a20-can.dtbo'
 
     A20-SOM204-1Gs16Me16G-MC:
       id: 8958
       fdt: 'sun7i-a20-olimex-som204-evb-emmc.dtb'
       overlays:
-        - 'sun7i-a20-som204-atecc508a.dtbo'
+        - 'sun7i-a20-i2c2.dtbo'
         - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-spi1.dtbo'
+        - 'sun7i-a20-spi2.dtbo'
+        - 'sun7i-a20-uart3.dtbo'
+        - 'sun7i-a20-uart4.dtbo'
+        - 'sun7i-a20-uart7.dtbo'
+        - 'sun7i-a20-can.dtbo'
+        - 'sun7i-a20-som204-atecc508a.dtbo'
         - 'spi0-spiflash.dtbo'
 
     A20-SOM204-1G-M:
@@ -279,27 +801,58 @@ boards:
       fdt: 'sun7i-a20-olimex-som204-evb.dtb'
       overlays:
         - 'sun7i-a20-som204-emac.dtbo'
+        - 'sun7i-a20-i2c2.dtbo'
+        - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-spi1.dtbo'
+        - 'sun7i-a20-spi2.dtbo'
+        - 'sun7i-a20-uart3.dtbo'
+        - 'sun7i-a20-uart4.dtbo'
+        - 'sun7i-a20-uart7.dtbo'
+        - 'sun7i-a20-can.dtbo'
 
     # T2-SOM204
     T2-SOM204-1Gs16Me4G-C-I:
       id: 10157
       fdt: 'sun7i-a20-olimex-som204-evb-emmc.dtb'
       overlays:
-        - 'sun7i-a20-som204-atecc508a.dtbo'
+        - 'sun7i-a20-i2c2.dtbo'
         - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-spi1.dtbo'
+        - 'sun7i-a20-spi2.dtbo'
+        - 'sun7i-a20-uart3.dtbo'
+        - 'sun7i-a20-uart4.dtbo'
+        - 'sun7i-a20-uart7.dtbo'
+        - 'sun7i-a20-can.dtbo'
+        - 'sun7i-a20-som204-atecc508a.dtbo'
         - 'spi0-spiflash.dtbo'
 
     T2-SOM204-1Gs16Me8G-MC-I:
       id: 10234
       fdt: 'sun7i-a20-olimex-som204-evb-emmc.dtb'
       overlays:
-        - 'sun7i-a20-som204-atecc508a.dtbo'
+        - 'sun7i-a20-i2c2.dtbo'
         - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-spi1.dtbo'
+        - 'sun7i-a20-spi2.dtbo'
+        - 'sun7i-a20-uart3.dtbo'
+        - 'sun7i-a20-uart4.dtbo'
+        - 'sun7i-a20-uart7.dtbo'
+        - 'sun7i-a20-can.dtbo'
+        - 'sun7i-a20-som204-atecc508a.dtbo'
         - 'spi0-spiflash.dtbo'
 
     T2-SOM204-1G-I:
       id: 10238
       fdt: 'sun7i-a20-olimex-som204-evb.dtb'
+      overlays:
+        - 'sun7i-a20-i2c2.dtbo'
+        - 'sun7i-a20-spi0.dtbo'
+        - 'sun7i-a20-spi1.dtbo'
+        - 'sun7i-a20-spi2.dtbo'
+        - 'sun7i-a20-uart3.dtbo'
+        - 'sun7i-a20-uart4.dtbo'
+        - 'sun7i-a20-uart7.dtbo'
+        - 'sun7i-a20-can.dtbo'
 
   name: 'A20-OLinuXino'
   soc: 'sun7i-a20'
