@@ -2,6 +2,7 @@
   - olinuxino-overlays
   - u-boot-olinuxino
   - u-boot-tools-olinuxino
+  - olinuxino-tools
 
 # Release specific packages
 releases:
