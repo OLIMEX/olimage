@@ -9,6 +9,8 @@
 # load_legacy - Don't load FIT image,
 # optargs - Optional arguments passed to the kernel
 
+fdtoverlays=
+
 {% if configs %}
 {% for key, value in configs.items() %}
 {{ key }}={{ value }}
