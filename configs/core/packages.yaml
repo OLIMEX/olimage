@@ -34,11 +34,13 @@ variants:
       - fake-hwclock
       - fping
       - htop
+      - i2c-tools
       - ifupdown
       - initramfs-tools
       - lsof
       - mmc-utils
       - mtd-utils
+      - nano
       - ncurses-term
       - netcat-openbsd
       - net-tools
