@@ -28,23 +28,13 @@ class MyTestCase(unittest.TestCase):
             print(list(common))
         self.assertFalse(bool(common))
 
-    def test_lite(self):
-        minimal = self._parser.get_variant('lite').packages
+    def test_base(self):
+        minimal = self._parser.get_variant('base').packages
         installed = self.load_packages('../docs/versions/minimal.txt')
 
         common = set(minimal) & set(installed)
         if common:
-            print("Common packages between minimal and lite")
-            print(list(common))
-        self.assertFalse(bool(common))
-
-    def test_base(self):
-        minimal = self._parser.get_variant('base').packages
-        installed = self.load_packages('../docs/versions/lite.txt')
-
-        common = set(minimal) & set(installed)
-        if common:
-            print("Common packages between lite and base")
+            print("Common packages between minimal and base")
             print(list(common))
         self.assertFalse(bool(common))
 

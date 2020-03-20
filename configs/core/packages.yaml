@@ -62,83 +62,66 @@ variants:
       - wireless-tools
       - *olimex
 
-  lite:
-    description: "Server-like filesystem"
+  base:
+    description: "Desktop filesystem"
     packages:
       - alsa-utils
       - aptitude
+      - apt-xapian-index
+      - atril
       - automake
       - avahi-autoipd
       - bash-completion
       - bridge-utils
       - build-essential
+      - cups
+      - cups-pk-helper
       - curl
+      - dbus-x11
       - dnsutils
       - dosfstools
       - ethtool
       - evtest
       - f3
-      - fbset
-      - git
-      - gnupg2
-      - haveged
-      - hdparm
-      - ifenslave
-      - iotop
-      - iozone3
-      - iperf3
-      - iputils-arping
-      - libnss-myhostname
-      - libpam-systemd
-      - man-db
-      - networkd-dispatcher
-      - ntfs-3g
-      - pciutils
-      - pv
-      - qrencode
-      - rfkill
-      - screen
-      - software-properties-common
-      - stress
-      - sunxi-tools
-      - unattended-upgrades
-      - unicode-data
-      - unzip
-      - vim
-      - vlan
-
-  base:
-    description: "Desktop filesystem"
-    packages:
-      - apt-xapian-index
-      - atril
-      - cups
-      - cups-pk-helper
-      - dbus-x11
       - fbi
+      - fbset
       - ffmpeg
       - galculator
       - gcr
       - geany
+      - git
       - gnome-keyring
       - gnome-orca
+      - gnupg2
       - gtk2-engines
       - gtk2-engines-murrine
       - gtk2-engines-pixbuf
       - gvfs-backends
       - gvfs-fuse
+      - haveged
+      - hdparm
       - hexchat
       - hunspell-en-gb
       - hyphen-en-gb
+      - ifenslave
+      - iotop
+      - iozone3
+      - iperf3
+      - iputils-arping
       - libgl1-mesa-dri
+      - libnss-myhostname
       - libpam-gnome-keyring
+      - libpam-systemd
       - lightdm
       - lightdm-gtk-greeter
       - lxtask
+      - man-db
       - mirage
       - mpv
+      - networkd-dispatcher
       - network-manager-gnome
       - network-manager-openvpn-gnome
+      - ntfs-3g
       - numix-gtk-theme
       - numix-icon-theme
       - onboard
@@ -147,13 +130,26 @@ variants:
       - pasystray
       - pavucontrol
       - pavumeter
+      - pciutils
       - profile-sync-daemon
       - pulseaudio
+      - pv
+      - qrencode
+      - rfkill
+      - screen
+      - software-properties-common
+      - stress
+      - sunxi-tools
       - synaptic
       - system-config-printer
       - system-config-printer-common
       - thunar-volman
       - tree
+      - unattended-upgrades
+      - unicode-data
+      - unzip
+      - vim
+      - vlan
       - vlc
       - wamerican
       - wbritish

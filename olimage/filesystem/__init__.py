@@ -66,7 +66,7 @@ def build_filesystem(**kwargs):
         # Append paths
         env.paths[directory] = path
 
-    builders = [VariantMinimal, VariantLite, VariantBase]
+    builders = [VariantMinimal, VariantBase]
 
     for builder in builders:
         _builder = builder()

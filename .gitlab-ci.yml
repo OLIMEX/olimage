@@ -7,7 +7,6 @@ cache: &cache
 stages:
   - prepare
   - minimal
-  - lite
   - base
 
 .image:
@@ -35,21 +34,10 @@ A20:minimal:buster:
     OLIMAGE_RELEASE: buster
     OLIMAGE_VARIANT: minimal
 
-A20:lite:buster:
-  extends: .image
-  needs:
-    - "A20:minimal:buster"
-  stage: lite
-  variables:
-    OLIMAGE_BOARD: A20-OLinuXino
-    OLIMAGE_RELEASE: buster
-    OLIMAGE_VARIANT: lite
-
 A20:base:buster:
   extends: .image
   needs:
     - "A20:minimal:buster"
-    - "A20:lite:buster"
   stage: base
   variables:
     OLIMAGE_BOARD: A20-OLinuXino
@@ -67,21 +55,10 @@ A20:minimal:bionic:
     OLIMAGE_RELEASE: bionic
     OLIMAGE_VARIANT: minimal
 
-A20:lite:bionic:
-  extends: .image
-  needs:
-    - "A20:minimal:bionic"
-  stage: lite
-  variables:
-    OLIMAGE_BOARD: A20-OLinuXino
-    OLIMAGE_RELEASE: bionic
-    OLIMAGE_VARIANT: lite
-
 A20:base:bionic:
   extends: .image
   needs:
     - "A20:minimal:bionic"
-    - "A20:lite:bionic"
   stage: base
   variables:
     OLIMAGE_BOARD: A20-OLinuXino
@@ -99,21 +76,10 @@ A13:minimal:buster:
     OLIMAGE_RELEASE: buster
     OLIMAGE_VARIANT: minimal
 
-A13:lite:buster:
-  extends: .image
-  needs:
-    - "A13:minimal:buster"
-  stage: lite
-  variables:
-    OLIMAGE_BOARD: A13-OLinuXino
-    OLIMAGE_RELEASE: buster
-    OLIMAGE_VARIANT: lite
-
 A13:base:buster:
   extends: .image
   needs:
     - "A13:minimal:buster"
-    - "A13:lite:buster"
   stage: base
   variables:
     OLIMAGE_BOARD: A13-OLinuXino
@@ -131,21 +97,10 @@ A13:minimal:bionic:
     OLIMAGE_RELEASE: bionic
     OLIMAGE_VARIANT: minimal
 
-A13:lite:bionic:
-  extends: .image
-  needs:
-    - "A13:minimal:bionic"
-  stage: lite
-  variables:
-    OLIMAGE_BOARD: A13-OLinuXino
-    OLIMAGE_RELEASE: bionic
-    OLIMAGE_VARIANT: lite
-
 A13:base:bionic:
   extends: .image
   needs:
     - "A13:minimal:bionic"
-    - "A13:lite:bionic"
   stage: base
   variables:
     OLIMAGE_BOARD: A13-OLinuXino
@@ -163,21 +118,10 @@ A64:minimal:buster:
     OLIMAGE_RELEASE: buster
     OLIMAGE_VARIANT: minimal
 
-A64:lite:buster:
-  extends: .image
-  needs:
-    - "A64:minimal:buster"
-  stage: lite
-  variables:
-    OLIMAGE_BOARD: A64-OLinuXino
-    OLIMAGE_RELEASE: buster
-    OLIMAGE_VARIANT: lite
-
 A64:base:buster:
   extends: .image
   needs:
     - "A64:minimal:buster"
-    - "A64:lite:buster"
   stage: base
   variables:
     OLIMAGE_BOARD: A64-OLinuXino
@@ -195,21 +139,10 @@ A64:minimal:bionic:
     OLIMAGE_RELEASE: bionic
     OLIMAGE_VARIANT: minimal
 
-A64:lite:bionic:
-  extends: .image
-  needs:
-    - "A64:minimal:bionic"
-  stage: lite
-  variables:
-    OLIMAGE_BOARD: A64-OLinuXino
-    OLIMAGE_RELEASE: bionic
-    OLIMAGE_VARIANT: lite
-
 A64:base:bionic:
   extends: .image
   needs:
     - "A64:minimal:bionic"
-    - "A64:lite:bionic"
   stage: base
   variables:
     OLIMAGE_BOARD: A64-OLinuXino

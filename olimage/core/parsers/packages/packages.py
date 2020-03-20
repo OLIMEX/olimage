@@ -55,7 +55,7 @@ class ParserPackages(object):
         """
         Get variant packages
 
-        :param name: variant name, e.g. lite, base, full, etc...
+        :param name: variant name, e.g. minimal, base, full, etc...
         :return: Variant object
         """
         for variant in self._variants:
