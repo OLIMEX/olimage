@@ -17,30 +17,16 @@ boards:
     A13-OLinuXino:
       id: 4432
       fdt: 'sun5i-a13-olinuxino.dtb'
-
-    A13-OLinuXino-WiFi:
-      id: 4454
-      fdt: 'sun5i-a13-olinuxino-micro.dtb'
-
-    A13-OLinuXino-MICRO:
-      id: 4455
-      fdt: 'sun5i-a13-olinuxino-micro.dtb'
-
+      overlays:
+        - 'sun5i-a13-spi2.dbo'
+    
     A13-SOM-256:
       id: 4787
-      fdt: 'sun5i-a13-olinuxino-micro.dtb'
+      fdt: 'sun5i-a13-som-256.dtb'
 
     A13-SOM-512:
       id: 4788
-      fdt: 'sun5i-a13-olinuxino-micro.dtb'
+      fdt: 'sun5i-a13-som-512.dtb'
 
-    A13-SOM-WIFI:
-      id: 4786
-      fdt: 'sun5i-a13-olinuxino-micro.dtb'
-    
-    A13-SOM-WIFI-4G:
-      id: 7705
-      fdt: 'sun5i-a13-olinuxino-micro.dtb'
- 
   name: 'A13-OLinuXino'
   soc: 'sun5i-a13'
