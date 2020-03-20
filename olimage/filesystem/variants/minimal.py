@@ -104,7 +104,7 @@ class VariantMinimal(FileSystemBase):
                     Utils.systemctl.disable(service)
 
             # Enable the custom services
-            for s in [Service.getty, Service.bluetooth]:
+            for s in [Service.getty]:
                 s.enable()
 
             if env.options['ssh']:

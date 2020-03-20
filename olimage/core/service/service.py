@@ -5,7 +5,6 @@ import os
 import olimage.environment as env
 
 from .apt_cache import ServiceAptCache
-from .bluetooth import ServiceBluetooth
 from .getty import ServiceGetty
 from .ssh import ServiceSSH
 
@@ -50,6 +49,5 @@ class Service(metaclass=ServiceMeta):
         pass
 
     apt_cache: ServiceAptCache
-    bluetooth: ServiceBluetooth
     getty: ServiceGetty
     ssh: ServiceSSH
