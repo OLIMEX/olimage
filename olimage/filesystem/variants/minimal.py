@@ -97,6 +97,9 @@ class VariantMinimal(FileSystemBase):
         with Console("Configuring network"):
             Setup.network()
 
+        with Console("Install additional files"):
+            Setup.extra()
+
         with Console("Configuring services"):
             # Disable useless services
             for service in ['hwclock.sh', 'nfs-common', 'rpcbind']:

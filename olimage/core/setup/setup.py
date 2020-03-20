@@ -15,6 +15,7 @@ from .locales import SetupLocales
 from .network import SetupNetwork
 from .timezone import SetupTimezone
 from .user import SetupUser
+from .extra import SetupExtra
 
 pool = None
 
@@ -67,3 +68,4 @@ class Setup(metaclass=SetupMeta):
     network: SetupNetwork
     timezone: SetupTimezone
     user: SetupUser
+    extra: SetupExtra
