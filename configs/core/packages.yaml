@@ -23,17 +23,12 @@ variants:
     description: "Minimal filesystem"
     packages:
       - bc
-      - bzip2
-      - chrony
       - cpufrequtils
       - crda
-      - dbus
       - debconf-utils
       - device-tree-compiler
       - dialog
       - fake-hwclock
-      - fping
-      - htop
       - i2c-tools
       - ifupdown
       - initramfs-tools
@@ -41,7 +36,6 @@ variants:
       - mmc-utils
       - mtd-utils
       - nano
-      - ncurses-term
       - netcat-openbsd
       - net-tools
       - network-manager
@@ -49,7 +43,6 @@ variants:
       - openssh-server
       - parted
       - psmisc
-      - resolvconf
       - rsync
       - ssh
       - sudo
@@ -118,7 +111,6 @@ variants:
       - man-db
       - mirage
       - mpv
-      - networkd-dispatcher
       - network-manager-gnome
       - network-manager-openvpn-gnome
       - ntfs-3g
