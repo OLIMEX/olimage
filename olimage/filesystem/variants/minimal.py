@@ -41,11 +41,6 @@ class VariantMinimal(FileSystemBase):
     @prepare
     def configure(self):
 
-        # Copy resolv.conf
-        with Console("Copying /etc/resolv.conf"):
-            Utils.shell.run('rm -vf {}/etc/resolv.conf'.format(self._build_dir), ignore_fail=True)
-            Utils.shell.run('cp -vf /etc/resolv.conf {}/etc/resolv.conf'.format(self._build_dir))
-
         # Configure apt
         with Console("Configuring the APT repositories"):
             if env.options['apt_cacher']:
