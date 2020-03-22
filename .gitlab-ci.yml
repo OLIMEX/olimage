@@ -184,7 +184,7 @@ A10:minimal:bionic:
 A10:base:bionic:
   extends: .image
   needs:
-    - "A13:minimal:bionic"
+    - "A10:minimal:bionic"
   stage: base
   variables:
     OLIMAGE_BOARD: A10-OLinuXino
