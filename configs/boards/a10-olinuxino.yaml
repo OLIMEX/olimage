@@ -1,0 +1,23 @@
+boards:
+  # Define boards architecture
+  arch: 'armhf'
+  default: 'A10-OLinuXino-Lime'
+
+  # Define load addresses
+  loading:
+    kernel:   '0x40080000'
+    uenv:     '0x44000000'  
+    fdt:      '0x4FA00000'
+    overlays: '0x4FA10000'
+    ramdisk:  '0x4FE00000'
+    fit:      '0x58000000'
+
+  # Define board models
+  models:
+    A10-OLinuXino-LIME:
+      id: 9999
+      fdt: 'sun4i-a10-olinuxino-lime.dtb'
+      overlays:
+    
+  name: 'A10-OLinuXino'
+  soc: 'sun4i-a10'
