@@ -151,3 +151,46 @@ A64:base:bionic:
   cache:
     <<: *cache
     policy: pull
+
+A10:minimal:buster:
+  extends: .image
+  stage: minimal
+  variables:
+    OLIMAGE_BOARD: A10-OLinuXino
+    OLIMAGE_RELEASE: buster
+    OLIMAGE_VARIANT: minimal
+
+A10:base:buster:
+  extends: .image
+  needs:
+    - "A10:minimal:buster"
+  stage: base
+  variables:
+    OLIMAGE_BOARD: A10-OLinuXino
+    OLIMAGE_RELEASE: buster
+    OLIMAGE_VARIANT: base
+  cache:
+    <<: *cache
+    policy: pull
+
+A10:minimal:bionic:
+  extends: .image
+  stage: minimal
+  variables:
+    OLIMAGE_BOARD: A10-OLinuXino
+    OLIMAGE_RELEASE: bionic
+    OLIMAGE_VARIANT: minimal
+
+A10:base:bionic:
+  extends: .image
+  needs:
+    - "A13:minimal:bionic"
+  stage: base
+  variables:
+    OLIMAGE_BOARD: A10-OLinuXino
+    OLIMAGE_RELEASE: bionic
+    OLIMAGE_VARIANT: base
+  cache:
+    <<: *cache
+    policy: pull
+
