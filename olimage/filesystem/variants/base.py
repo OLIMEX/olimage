@@ -15,6 +15,11 @@ class VariantBase(FileSystemBase):
     @prepare
     def configure(self):
 
+        # Copy resolv.conf
+        with Console("Copying /etc/resolv.conf"):
+            Utils.shell.run('rm -vf {}/etc/resolv.conf'.format(self._build_dir), ignore_fail=True)
+            Utils.shell.run('cp -vf /etc/resolv.conf {}/etc/resolv.conf'.format(self._build_dir))
+
         # Install packages
         self._install_packages()
 
