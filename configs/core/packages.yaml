@@ -43,6 +43,7 @@ variants:
       - openssh-server
       - parted
       - psmisc
+      - resolvconf
       - rsync
       - ssh
       - sudo
