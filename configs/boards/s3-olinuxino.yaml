@@ -1,0 +1,23 @@
+boards:
+  # Define boards architecture
+  arch: 'armhf'
+  default: 'S3-OLinuXino'
+
+  # Define load addresses
+  loading:
+    kernel:   '0x40080000'
+    uenv:     '0x44000000'  
+    fdt:      '0x4FA00000'
+    overlays: '0x4FA10000'
+    ramdisk:  '0x4FE00000'
+    fit:      '0x58000000'
+
+  # Define board models
+  models:
+    S3-OLinuXino:
+      id: 9999
+      fdt: 'sun8i-s3-olinuxino.dtb'
+      overlays:
+    
+  name: 'S3-OLinuXino'
+  soc: 'sun8i-s3'
