@@ -11,6 +11,7 @@ from .qemu import Qemu
 from .shell import Shell
 from .systemctl import Systemctl
 from .template import Template
+from .packagelist import Packagelist
 
 
 class UtilsMeta(type):
@@ -56,3 +57,4 @@ class Utils(object, metaclass=UtilsMeta):
     shell: Shell
     systemctl: Systemctl
     template: Template
+    packagelist: Packagelist
