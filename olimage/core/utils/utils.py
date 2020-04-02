@@ -12,6 +12,7 @@ from .shell import Shell
 from .systemctl import Systemctl
 from .template import Template
 from .packagelist import Packagelist
+from .md5 import Md5
 
 
 class UtilsMeta(type):
@@ -58,3 +59,4 @@ class Utils(object, metaclass=UtilsMeta):
     systemctl: Systemctl
     template: Template
     packagelist: Packagelist
+    md5: Md5

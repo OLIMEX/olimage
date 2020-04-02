@@ -53,6 +53,9 @@ def build_image(ctx: click.Context, **kwargs):
     with Console("Generating Package List"):
         Utils.packagelist(image + '.list')
 
+    with Console("Generating MD5 sum"):
+        Utils.md5(image, image + '.md5')
+
     if 'HOST_PWD' in env.env:
         realpath = env.env['HOST_PWD'] + '/' + '/'.join(image.split('/')[2:])
     else:
