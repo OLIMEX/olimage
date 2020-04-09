@@ -27,6 +27,10 @@ class VariantBase(FileSystemBase):
         with Console("Configuring blueman"):
             Setup.blueman()
 
+        # Enabling auto-login
+        with Console("Enabling auto-login"):
+            Utils.install('/etc/lightdm/lightdm.conf')
+
     @stamp
     @export(final=True)
     @prepare
