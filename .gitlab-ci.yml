@@ -11,7 +11,7 @@ stages:
 
 .image:
   script:
-    - python3 -m olimage -v image $OLIMAGE_BOARD $OLIMAGE_RELEASE $OLIMAGE_VARIANT $OLIMAGE_BOARD-$OLIMAGE_RELEASE-$OLIMAGE_VARIANT-$(date +%Y%m%d-%H%M%S).img
+    - python3 -m olimage $ARGS -v image $OLIMAGE_BOARD $OLIMAGE_RELEASE $OLIMAGE_VARIANT $OLIMAGE_BOARD-$OLIMAGE_RELEASE-$OLIMAGE_VARIANT-$(date +%Y%m%d-%H%M%S).img
     - mv -vf output/*/images/$OLIMAGE_BOARD-$OLIMAGE_RELEASE-$OLIMAGE_VARIANT-*.img* /output/
   tags:
     - olimage
