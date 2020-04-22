@@ -29,6 +29,7 @@ variants:
       - device-tree-compiler
       - dialog
       - fake-hwclock
+      - gdisk
       - i2c-tools
       - ifupdown
       - initramfs-tools
