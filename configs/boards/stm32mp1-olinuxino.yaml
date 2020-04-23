@@ -1,0 +1,22 @@
+boards:
+  # Define boards architecture
+  arch: 'armhf'
+  default: 'STM32MP1xx-OLinuXino'
+
+  # Define load addresses
+  loading:
+    kernel:   '0xc0000000'
+    uenv:     '0xc1000000'
+    fdt:      '0xc4000000'
+    overlays: '0xc4200000'
+    ramdisk:  '0xc4400000'
+    fit:      '0xc2000000'
+
+  # Define board models
+  models:
+    STM32MP1xx-OLinuXino:
+      id: 1001
+      fdt: 'stm32mp1xx-olinuxino.dtb'
+
+  name: 'STM32MP1-OLinuXino'
+  soc: 'stm32mp1xx'

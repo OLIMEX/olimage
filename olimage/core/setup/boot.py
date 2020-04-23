@@ -32,7 +32,8 @@ class SetupBoot(SetupAbstract):
             src = env.paths['build'] + "/usr/lib/u-boot-olinuxino/{}/uboot.env".format(board.name.lower())
             dest = env.paths['build'] + "/uboot.env"
 
-            Utils.shell.run('install -D -v -m {} {} {}'.format(644, src, dest))
+            if board.soc != "stm32mp1xx":
+                Utils.shell.run('install -D -v -m {} {} {}'.format(644, src, dest))
 
     @staticmethod
     def _generate_boot_cmd(board: Board) -> None:
@@ -45,6 +46,12 @@ class SetupBoot(SetupAbstract):
                 'boot': 1,
                 'root': 1
             }
+            if board.soc == "stm32mp1xx":
+                parts = {
+                    'boot': 4,
+                    'root': 4
+                }
+
             # for i in range(len(partitions)):
             #     partition = partitions[i]
             #     if partition.fstab.mount == '/':
@@ -53,14 +60,21 @@ class SetupBoot(SetupAbstract):
             #         parts['boot'] = i + 1
 
             # Generate template
+            bootargs={
+                'console': 'ttyS0,115200',
+                'panic': 10,
+                'loglevel': 4,
+            }
+            if board.soc == "stm32mp1xx":
+                bootargs={
+                    'console': 'ttySTM0,115200',
+                    'panic': 10,
+                    'loglevel': 10,
+                }
             Utils.template.install(
                 env.paths['build'] + '/boot/boot.cmd',
                 board=board,
-                bootargs={
-                    'console': 'ttyS0,115200',
-                    'panic': 10,
-                    'loglevel': 4,
-                },
+                bootargs=bootargs,
                 fit={
                     'file': 'kernel.itb',
                     'load': board.loading.fit,

@@ -5,6 +5,7 @@ import time
 
 import olimage.environment as env
 
+from olimage.core.parsers import (Board, Boards)
 from olimage.core.parsers.partitions import Partition
 from olimage.core.utils import Utils
 
@@ -12,6 +13,7 @@ from olimage.core.utils import Utils
 class Map(object):
     def __init__(self, image, partitions):
 
+        self._board: Board = Boards().get_board(env.options['board'])
         self._image = image
         self._partitions = partitions
 
@@ -26,12 +28,17 @@ class Map(object):
                 device = os.path.join('/dev/mapper', w[2])
                 index = int(re.match(r'^loop\d+p(\d+)$', w[2])[1])
 
-                # Get partition and set device
-                partition: Partition
-                partition = self._partitions[index - 1]
-                self._devices[str(partition)] = {
-                        'device': device,
-                    }
+                if self._board.soc == "stm32mp1xx":
+                    self._devices["root"] = {
+                            'device': device,
+                        }
+                else:
+                    # Get partition and set device
+                    partition: Partition
+                    partition = self._partitions[index - 1]
+                    self._devices[str(partition)] = {
+                            'device': device,
+                        }
 
         return self
 

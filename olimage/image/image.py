@@ -55,20 +55,31 @@ class Image(object):
         :return: None
         """
 
-        # Create label
-        with Console("Creating msdos partition table"):
-            Utils.shell.run('parted -s {} mklabel msdos'.format(self._output))
+        if self._board.soc == "stm32mp1xx":
+            with Console("Creating gpt partition table"):
+                Utils.shell.run('sgdisk -o {}'.format(self._output))
+                Utils.shell.run('sgdisk --resize-table=128 -a 1' +
+                                ' -n 1:34:545    -c 1:fsbl1' +
+                                ' -n 2:546:1057  -c 2:fsbl2' +
+                                ' -n 3:1058:5153 -c 3:ssbl' +
+                                ' -n 4:5154:     -c 4:rootfs' +
+                                ' -p {}'.format(self._output))
+                Utils.shell.run('sgdisk -A 4:set:2 {}'.format(self._output))
+        else:
+            # Create label
+            with Console("Creating msdos partition table"):
+                Utils.shell.run('parted -s {} mklabel msdos'.format(self._output))
 
-        # Create partitions
-        for partition in self._partitions:
-            with Console("Creating partition: \'{}\'".format(str(partition))):
-                Utils.shell.run(
-                    'parted -s {} mkpart primary {} {} {}'.format(
-                        self._output, partition.parted.type,
-                        partition.parted.start,
-                        partition.parted.end
+            # Create partitions
+            for partition in self._partitions:
+                with Console("Creating partition: \'{}\'".format(str(partition))):
+                    Utils.shell.run(
+                        'parted -s {} mkpart primary {} {} {}'.format(
+                            self._output, partition.parted.type,
+                            partition.parted.start,
+                            partition.parted.end
+                        )
                     )
-                )
 
     def format(self):
 

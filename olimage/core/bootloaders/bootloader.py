@@ -4,6 +4,7 @@ import sys
 from olimage.core.parsers import (Board)
 
 from .allwinner import *
+from .stm import *
 from .base import BootloaderAbstract
 from .exceptions import BootloaderException
 
