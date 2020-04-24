@@ -11,12 +11,20 @@ releases:
       - linux-firmware
     base:
       - chromium-browser
+      - mirage
+  focal:
+    minimal:
+      - linux-firmware
+    base:
+      - firefox
+      - eom
   buster:
     minimal:
       - firmware-ralink
       - firmware-realtek
     base:
       - chromium
+      - mirage
 
 variants:
   minimal:
@@ -111,7 +119,6 @@ variants:
       - lightdm-gtk-greeter
       - lxtask
       - man-db
-      - mirage
       - mpv
       - network-manager-gnome
       - network-manager-openvpn-gnome

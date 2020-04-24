@@ -11,4 +11,5 @@ distributions:
     recommended: 'bionic'
     releases:
       - 'bionic'
+      - 'focal'
     repository: 'http://ports.ubuntu.com/'
