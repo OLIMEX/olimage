@@ -31,6 +31,10 @@ class VariantBase(FileSystemBase):
         with Console("Enabling auto-login"):
             Utils.install('/etc/lightdm/lightdm.conf')
 
+        # Set default displaymanager
+        with Console("Setting default display-manager"):
+            Setup.displaymanager("lightdm")
+
     @stamp
     @export(final=True)
     @prepare

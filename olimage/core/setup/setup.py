@@ -16,6 +16,7 @@ from .network import SetupNetwork
 from .timezone import SetupTimezone
 from .user import SetupUser
 from .extra import SetupExtra
+from .displaymanager import SetupDisplayManager
 
 pool = None
 
@@ -69,3 +70,4 @@ class Setup(metaclass=SetupMeta):
     timezone: SetupTimezone
     user: SetupUser
     extra: SetupExtra
+    displaymanager: SetupDisplayManager
