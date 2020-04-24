@@ -1,4 +1,7 @@
-FROM debian:latest
+FROM ubuntu:focal
+
+ENV LANG=C.UTF-8
+ENV LC_ALL=C.UTF-8
 
 ENV DEBIAN_FRONTEND noninteractive
 
