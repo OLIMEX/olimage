@@ -42,8 +42,8 @@ class Image(object):
         # Convert size to MiB
         size = (size >> 20)
 
-        # Append at least 50% empty space
-        size += max((size // 2), env.options['size'])
+        # Append at least 25% empty space
+        size += max((size // 4), env.options['size'])
 
         with Console("Generating blank image with size: {}MiB".format(size)):
             Utils.qemu.img(self._output, size)
