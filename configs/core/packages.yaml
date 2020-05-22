@@ -30,6 +30,7 @@ variants:
   minimal:
     description: "Minimal filesystem"
     packages:
+      - alsa-utils
       - bc
       - cpufrequtils
       - crda
@@ -68,7 +69,6 @@ variants:
   base:
     description: "Desktop filesystem"
     packages:
-      - alsa-utils
       - aptitude
       - apt-xapian-index
       - atril
