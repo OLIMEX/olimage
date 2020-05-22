@@ -29,6 +29,7 @@ class BootloaderA64(BootloaderAbstract):
             temp = Utils.shell.run('mktemp -d').decode().strip()
             Utils.shell.run(
                 'cp -vf {build}/usr/lib/arm-trusted-firmware-olinuxino/sun50i_a64/bl31.bin '
+                '{source}/sun50i-a64-olinuxino-emmc.dtb '
                 '{source}/sun50i-a64-olinuxino.dtb '
                 '{source}/u-boot-nodtb.bin '
                 '{source}/u-boot.bin '
