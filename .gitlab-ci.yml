@@ -68,6 +68,29 @@ A20:base:bionic:
     <<: *cache
     policy: pull
 
+A20:minimal:focal:
+  extends: .image
+  stage: minimal
+  variables:
+    OLIMAGE_BOARD: A20-OLinuXino
+    OLIMAGE_RELEASE: focal
+    OLIMAGE_VARIANT: minimal
+  when: manual
+
+A20:base:focal:
+  extends: .image
+  needs:
+    - "A20:minimal:focal"
+  stage: base
+  variables:
+    OLIMAGE_BOARD: A20-OLinuXino
+    OLIMAGE_RELEASE: focal
+    OLIMAGE_VARIANT: base
+  cache:
+    <<: *cache
+    policy: pull
+  when: manual
+
 A13:minimal:buster:
   extends: .image
   stage: minimal
@@ -151,6 +174,29 @@ A64:base:bionic:
   cache:
     <<: *cache
     policy: pull
+
+A64:minimal:focal:
+  extends: .image
+  stage: minimal
+  variables:
+    OLIMAGE_BOARD: A64-OLinuXino
+    OLIMAGE_RELEASE: focal
+    OLIMAGE_VARIANT: minimal
+  when: manual
+
+A64:base:focal:
+  extends: .image
+  needs:
+    - "A64:minimal:focal"
+  stage: base
+  variables:
+    OLIMAGE_BOARD: A64-OLinuXino
+    OLIMAGE_RELEASE: focal
+    OLIMAGE_VARIANT: base
+  cache:
+    <<: *cache
+    policy: pull
+  when: manual
 
 A10:minimal:buster:
   extends: .image
