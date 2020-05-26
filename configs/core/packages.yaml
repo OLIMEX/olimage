@@ -10,12 +10,14 @@ releases:
     minimal:
       - linux-firmware
     base:
+      - adwaita-icon-theme-full
       - chromium-browser
       - mirage
   focal:
     minimal:
       - linux-firmware
     base:
+      - adwaita-icon-theme-full
       - firefox
       - eom
   buster:
@@ -69,6 +71,7 @@ variants:
   base:
     description: "Desktop filesystem"
     packages:
+      - adwaita-icon-theme
       - aptitude
       - apt-xapian-index
       - atril
