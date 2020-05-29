@@ -34,6 +34,7 @@ variants:
     packages:
       - alsa-utils
       - bc
+      - can-utils
       - cpufrequtils
       - crda
       - debconf-utils
