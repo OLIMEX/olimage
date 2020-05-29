@@ -23,10 +23,18 @@ for prefix in ${boot_prefixes}; do
         echo "Loaded environment from ${prefix}{{ uenv.file }}"
         env import -t {{ uenv.load }} ${filesize}
     fi
+    if test "${devtype}" = "scsi"; then
+        if test -e scsi ${scsi_bootdev}:{{ partitions.boot }} ${prefix}{{ uenv.file }}; then
+            load scsi ${scsi_bootdev}:1 {{ uenv.load }} ${prefix}{{ uenv.file }}
+            echo "Loaded environment from ${prefix}{{ uenv.file }}"
+            env import -t {{ uenv.load }} ${filesize}
+        fi
+    fi
 done
 
 # Get partuuid
 if test "${devtype}" = "mmc"; then part uuid mmc ${mmc_bootdev}:{{ partitions.root }} partuuid; fi
+if test "${devtype}" = "scsi"; then part uuid scsi ${scsi_bootdev}:{{ partitions.root }} partuuid; fi
 
 # Set bootargs
 setenv bootargs "root=PARTUUID=${partuuid} rootwait{% for key, value in bootargs.items() %} {{ key }}={{ '${' }}{{ key }}{{ '}' }}{% endfor %} ${optargs}"
@@ -44,6 +52,17 @@ if test -n ${load_legacy} && ${load_legacy}; then
             bootz ${kernel_addr_r} - ${fdt_addr_r}
 {% endif %}
         fi
+        if test "${devtype}" = "scsi"; then
+            if test -e scsi ${scsi_bootdev}:{{ partitions.boot }} ${prefix}Image; then
+                load scsi ${scsi_bootdev}:{{ partitions.boot }} ${kernel_addr_r} ${prefix}Image
+                load scsi ${scsi_bootdev}:{{ partitions.boot }} ${fdt_addr_r} ${fdtfile}
+{% if board.arch == 'arm64' %}
+                booti ${kernel_addr_r} - ${fdt_addr_r}
+{% else %}
+                bootz ${kernel_addr_r} - ${fdt_addr_r}
+{% endif %}
+            fi
+        fi
     done
 fi
 
@@ -56,6 +75,16 @@ for prefix in ${boot_prefixes}; do
             bootm {{ fit.load }}#${boot_config}
         else
             bootm {{ fit.load }}
+        fi
+    fi
+    if test "${devtype}" = "scsi"; then
+        if test -e scsi ${scsi_bootdev}:{{ partitions.boot }} ${prefix}{{ fit.file }}; then
+            load scsi ${scsi_bootdev}:{{ partitions.boot }} {{ fit.load }} ${prefix}{{ fit.file }}
+            if test -n ${boot_config}; then
+                bootm {{ fit.load }}#${boot_config}
+            else
+                bootm {{ fit.load }}
+            fi
         fi
     fi
 done
