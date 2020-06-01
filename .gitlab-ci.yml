@@ -75,7 +75,6 @@ A20:minimal:focal:
     OLIMAGE_BOARD: A20-OLinuXino
     OLIMAGE_RELEASE: focal
     OLIMAGE_VARIANT: minimal
-  when: manual
 
 A20:base:focal:
   extends: .image
@@ -89,7 +88,6 @@ A20:base:focal:
   cache:
     <<: *cache
     policy: pull
-  when: manual
 
 A13:minimal:buster:
   extends: .image
@@ -182,7 +180,6 @@ A64:minimal:focal:
     OLIMAGE_BOARD: A64-OLinuXino
     OLIMAGE_RELEASE: focal
     OLIMAGE_VARIANT: minimal
-  when: manual
 
 A64:base:focal:
   extends: .image
@@ -196,7 +193,6 @@ A64:base:focal:
   cache:
     <<: *cache
     policy: pull
-  when: manual
 
 A10:minimal:buster:
   extends: .image
