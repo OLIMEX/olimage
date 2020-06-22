@@ -84,6 +84,9 @@ class VariantMinimal(FileSystemBase):
         with Console("Configuring hostname: \'{}\'".format(hostname)):
             Setup.hostname(hostname)
 
+        with Console("Install additional files"):
+            Setup.extra()
+
         # Configure users
         with Console("Configuring users"):
             for user in Users():
@@ -96,9 +99,6 @@ class VariantMinimal(FileSystemBase):
 
         with Console("Configuring network"):
             Setup.network()
-
-        with Console("Install additional files"):
-            Setup.extra()
 
         with Console("Configuring services"):
             # Disable useless services
