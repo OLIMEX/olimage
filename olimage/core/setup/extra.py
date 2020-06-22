@@ -9,5 +9,6 @@ from .base import SetupAbstract
 class SetupExtra(SetupAbstract):
 
     def setup(self):
+        Utils.install('/etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-power-manager.xml')
         Utils.install('/etc/modprobe.d/rtl8192cu.conf')
         Utils.install('/etc/modprobe.d/rtl8723bs.conf')
