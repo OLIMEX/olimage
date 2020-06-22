@@ -35,6 +35,10 @@ class VariantBase(FileSystemBase):
         with Console("Setting default display-manager"):
             Setup.displaymanager("lightdm")
 
+        # post-install
+        with Console("Post-install tasks"):
+            Utils.shell.chroot("/bin/bash -c 'echo -en > /etc/modules-load.d/cups-filters.conf'", ignore_fail=True)
+
     @stamp
     @export(final=True)
     @prepare
