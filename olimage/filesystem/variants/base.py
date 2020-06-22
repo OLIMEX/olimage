@@ -39,6 +39,9 @@ class VariantBase(FileSystemBase):
         with Console("Post-install tasks"):
             Utils.shell.chroot("/bin/bash -c 'echo -en > /etc/modules-load.d/cups-filters.conf'", ignore_fail=True)
 
+            # meh broken light-locker in focal
+            Utils.shell.chroot('apt-get -y --purge remove light-locker', log_error=False)
+
     @stamp
     @export(final=True)
     @prepare
