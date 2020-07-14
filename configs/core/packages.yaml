@@ -105,7 +105,6 @@ variants:
       - gtk2-engines-pixbuf
       - gvfs-backends
       - gvfs-fuse
-      - haveged
       - hdparm
       - hexchat
       - hunspell-en-gb
