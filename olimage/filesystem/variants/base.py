@@ -42,6 +42,11 @@ class VariantBase(FileSystemBase):
             # meh broken light-locker in focal
             Utils.shell.chroot('apt-get -y --purge remove light-locker', log_error=False)
 
+        # restore resolv.conf
+        with Console("Restore /etc/resolv.conf"):
+            Utils.shell.run('rm -vf {}/etc/resolv.conf'.format(self._build_dir), ignore_fail=True)
+            Utils.shell.run('ln -nsf ../run/resolvconf/resolv.conf {}/etc/resolv.conf'.format(self._build_dir))
+
     @stamp
     @export(final=True)
     @prepare
