@@ -167,6 +167,7 @@ variants:
       - xfce4-terminal
       - xfonts-base
       - xinit
+      - xinput-calibrator
       - xserver-xorg
       - xserver-xorg-video-fbdev
 
