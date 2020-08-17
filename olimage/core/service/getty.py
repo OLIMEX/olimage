@@ -15,9 +15,6 @@ class ServiceGetty(ServiceBase):
             Utils.shell.chroot('mkdir -p /etc/systemd/system/serial-getty@ttyGS0.service.d')
             Utils.shell.chroot('systemctl --no-reload enable serial-getty@ttyGS0.service')
 
-            # Configure ttyGS0
-            Utils.shell.chroot('/bin/bash -c "echo \'\n# USB-ACM tty serial console\nttyGS0\n\' >> /etc/securetty"')
-
     @staticmethod
     def disable() -> None:
         with Console('Removing: \'getty@tty1.service.d/noclear.conf\''):
