@@ -72,6 +72,10 @@ boards:
       id: 9734
       fdt: 'sun7i-a20-olinuxino-lime-emmc.dtb'
 
+    T2-OLinuXino-LIME-e8Gs16M-IND:
+      id: 10481
+      fdt: 'sun7i-a20-olinuxino-lime-emmc.dtb'
+
     # A20-OLinuXino-LIME2
     A20-OLinuXino-LIME2:
       id: 7701
