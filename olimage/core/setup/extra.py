@@ -12,3 +12,4 @@ class SetupExtra(SetupAbstract):
         Utils.install('/etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-power-manager.xml')
         Utils.install('/etc/modprobe.d/rtl8192cu.conf')
         Utils.install('/etc/modprobe.d/rtl8723bs.conf')
+        Utils.shell.run('sed -i "s/^#DefaultTimeoutStopSec.*/DefaultTimeoutStopSec=15s/g" {}/etc/systemd/system.conf'.format(env.paths['build']))
