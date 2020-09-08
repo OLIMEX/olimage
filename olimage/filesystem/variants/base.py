@@ -42,6 +42,11 @@ class VariantBase(FileSystemBase):
             # meh broken light-locker in focal
             Utils.shell.chroot('apt-get -y --purge remove light-locker', log_error=False)
 
+            # set xfce background
+            Utils.shell.run('dpkg-divert --rename --add --divert /usr/share/backgrounds/xfce/xfce-blue.jpg.real /usr/share/backgrounds/xfce/xfce-blue.jpg')
+            Utils.install('/usr/share/backgrounds/xfce/xfce-blue.jpg')
+            Utils.install('/usr/share/backgrounds/xfce/xfce-red.jpg')
+
         # restore resolv.conf
         with Console("Restore /etc/resolv.conf"):
             Utils.shell.run('rm -vf {}/etc/resolv.conf'.format(self._build_dir), ignore_fail=True)
