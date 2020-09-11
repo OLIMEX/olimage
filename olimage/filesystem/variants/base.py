@@ -43,7 +43,9 @@ class VariantBase(FileSystemBase):
             Utils.shell.chroot('apt-get -y --purge remove light-locker', log_error=False)
 
             # set xfce background
+            Utils.shell.run('dpkg-divert --rename --add --divert /usr/share/backgrounds/xfce/xfce-stripes.png.real /usr/share/backgrounds/xfce/xfce-stripes.png')
             Utils.shell.run('dpkg-divert --rename --add --divert /usr/share/backgrounds/xfce/xfce-blue.jpg.real /usr/share/backgrounds/xfce/xfce-blue.jpg')
+            Utils.install('/usr/share/backgrounds/xfce/xfce-stripes.png')
             Utils.install('/usr/share/backgrounds/xfce/xfce-blue.jpg')
             Utils.install('/usr/share/backgrounds/xfce/xfce-red.jpg')
 
