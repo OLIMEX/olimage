@@ -33,15 +33,19 @@ boards:
     A64-OLinuXino-1Ge4GW:
       id : 8367
       fdt: 'allwinner/sun50i-a64-olinuxino-1Ge4GW.dtb'
-
+      overlays:
+        - 'sun50i-a64-i2c0.dtbo'
+       
     A64-OLinuXino-1G:
       id: 8857
       fdt: 'allwinner/sun50i-a64-olinuxino.dtb'
+      overlays:
+        - 'sun50i-a64-i2c0.dtbo'
 
     A64-OLinuXino-2Ge8G-IND:
       id: 8861
       fdt: 'allwinner/sun50i-a64-olinuxino-2Ge8G.dtb'
-
+        
     A64-OLinuXino-1Gs16M:
       id: 9065
       fdt: 'allwinner/sun50i-a64-olinuxino-1Gs16M.dtb'
@@ -52,6 +56,8 @@ boards:
     A64-OLinuXino-1Ge16GW:
       id: 9849
       fdt: 'allwinner/sun50i-a64-olinuxino-1Ge16GW.dtb'
+      overlays:
+        - 'sun50i-a64-i2c0.dtbo'
 
   name: 'A64-OLinuXino'
   soc: 'sun50i-a64'
