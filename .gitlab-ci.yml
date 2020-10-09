@@ -1,8 +1,8 @@
 cache: &cache
-    key: "$CI_COMMIT_SHA"
-    paths:
-      - output/**/filesystem/*.tar.gz
-      - output/**/filesystem/.stamp*
+  key: "$CI_COMMIT_SHA"
+  paths:
+    - output/**/filesystem/*.tar.gz
+    - output/**/filesystem/.stamp*
 
 stages:
   - prepare
@@ -11,8 +11,12 @@ stages:
 
 .image:
   script:
-    - python3 -m olimage $ARGS -v image $OLIMAGE_BOARD $OLIMAGE_RELEASE $OLIMAGE_VARIANT $OLIMAGE_BOARD-$OLIMAGE_RELEASE-$OLIMAGE_VARIANT-$(date +%Y%m%d-%H%M%S).img
-    - mv -vf output/*/images/$OLIMAGE_BOARD-$OLIMAGE_RELEASE-$OLIMAGE_VARIANT-*.img* /output/
+    - JOB_NAME=( $CI_JOB_NAME )
+    - BOARD=${JOB_NAME[0]}
+    - VARIANT=${JOB_NAME[1]}
+    - RELEASE=${JOB_NAME[2]}
+    - python3 -m olimage $ARGS -v image $BOARD $RELEASE $VARIANT $BOARD-$RELEASE-$VARIANT-$DATE.img
+    - mv -vf output/*/images/$BOARD-$RELEASE-$VARIANT-$DATE.img* /output/
   tags:
     - olimage
 
@@ -20,219 +24,142 @@ prepare:
   allow_failure: false
   script:
     - echo "Starting build..."
+    - echo "DATE=$(date +%Y%m%d-%H%M%S)" >> build.env
     - python3 -m olimage clean
   stage: prepare
   tags:
     - olimage
+  artifacts:
+    reports:
+      dotenv: build.env
   when: manual
 
-A20:minimal:buster:
+A20-OLinuXino minimal buster:
   extends: .image
   stage: minimal
-  variables:
-    OLIMAGE_BOARD: A20-OLinuXino
-    OLIMAGE_RELEASE: buster
-    OLIMAGE_VARIANT: minimal
 
-A20:base:buster:
+A20-OLinuXino base buster:
+  stage: base
   extends: .image
   needs:
-    - "A20:minimal:buster"
-  stage: base
-  variables:
-    OLIMAGE_BOARD: A20-OLinuXino
-    OLIMAGE_RELEASE: buster
-    OLIMAGE_VARIANT: base
+    - "A20-OLinuXino minimal buster"
   cache:
     <<: *cache
     policy: pull
 
-A20:minimal:bionic:
-  extends: .image
+A20-OLinuXino minimal bionic:
   stage: minimal
-  variables:
-    OLIMAGE_BOARD: A20-OLinuXino
-    OLIMAGE_RELEASE: bionic
-    OLIMAGE_VARIANT: minimal
+  extends: .image
 
-A20:base:bionic:
+A20-OLinuXino base bionic:
+  stage: base
   extends: .image
   needs:
-    - "A20:minimal:bionic"
-  stage: base
-  variables:
-    OLIMAGE_BOARD: A20-OLinuXino
-    OLIMAGE_RELEASE: bionic
-    OLIMAGE_VARIANT: base
+    - "A20-OLinuXino minimal bionic"
   cache:
     <<: *cache
     policy: pull
 
-A20:minimal:focal:
-  extends: .image
+A20-OLinuXino minimal focal:
   stage: minimal
-  variables:
-    OLIMAGE_BOARD: A20-OLinuXino
-    OLIMAGE_RELEASE: focal
-    OLIMAGE_VARIANT: minimal
-
-A20:base:focal:
   extends: .image
-  needs:
-    - "A20:minimal:focal"
+
+A20-OLinuXino base focal:
+  extends: .image
   stage: base
-  variables:
-    OLIMAGE_BOARD: A20-OLinuXino
-    OLIMAGE_RELEASE: focal
-    OLIMAGE_VARIANT: base
+  needs:
+    - "A20-OLinuXino minimal focal"
   cache:
     <<: *cache
     policy: pull
 
-A13:minimal:buster:
-  extends: .image
+A13-OLinuXino minimal buster:
   stage: minimal
-  variables:
-    OLIMAGE_BOARD: A13-OLinuXino
-    OLIMAGE_RELEASE: buster
-    OLIMAGE_VARIANT: minimal
+  extends: .image
 
-A13:base:buster:
+A13-OLinuXino base buster:
+  stage: base
   extends: .image
   needs:
-    - "A13:minimal:buster"
-  stage: base
-  variables:
-    OLIMAGE_BOARD: A13-OLinuXino
-    OLIMAGE_RELEASE: buster
-    OLIMAGE_VARIANT: base
+    - "A13-OLinuXino minimal buster"
   cache:
     <<: *cache
     policy: pull
 
-A13:minimal:bionic:
-  extends: .image
+A13-OLinuXino minimal bionic:
   stage: minimal
-  variables:
-    OLIMAGE_BOARD: A13-OLinuXino
-    OLIMAGE_RELEASE: bionic
-    OLIMAGE_VARIANT: minimal
+  extends: .image
 
-A13:base:bionic:
+A13-OLinuXino base bionic:
+  stage: base
   extends: .image
   needs:
-    - "A13:minimal:bionic"
-  stage: base
-  variables:
-    OLIMAGE_BOARD: A13-OLinuXino
-    OLIMAGE_RELEASE: bionic
-    OLIMAGE_VARIANT: base
+    - "A13-OLinuXino minimal bionic"
   cache:
     <<: *cache
     policy: pull
 
-A64:minimal:buster:
-  extends: .image
+A64-OLinuXino minimal buster:
   stage: minimal
-  variables:
-    OLIMAGE_BOARD: A64-OLinuXino
-    OLIMAGE_RELEASE: buster
-    OLIMAGE_VARIANT: minimal
+  extends: .image
 
-A64:base:buster:
+A64-OLinuXino base buster:
+  stage: base
   extends: .image
   needs:
-    - "A64:minimal:buster"
-  stage: base
-  variables:
-    OLIMAGE_BOARD: A64-OLinuXino
-    OLIMAGE_RELEASE: buster
-    OLIMAGE_VARIANT: base
+    - "A64-OLinuXino minimal buster"
   cache:
     <<: *cache
     policy: pull
 
-A64:minimal:bionic:
-  extends: .image
+A64-OLinuXino minimal bionic:
   stage: minimal
-  variables:
-    OLIMAGE_BOARD: A64-OLinuXino
-    OLIMAGE_RELEASE: bionic
-    OLIMAGE_VARIANT: minimal
+  extends: .image
 
-A64:base:bionic:
+A64-OLinuXino base bionic:
+  stage: base
   extends: .image
   needs:
-    - "A64:minimal:bionic"
-  stage: base
-  variables:
-    OLIMAGE_BOARD: A64-OLinuXino
-    OLIMAGE_RELEASE: bionic
-    OLIMAGE_VARIANT: base
+    - "A64-OLinuXino minimal bionic"
   cache:
     <<: *cache
     policy: pull
 
-A64:minimal:focal:
-  extends: .image
+A64-OLinuXino minimal focal:
   stage: minimal
-  variables:
-    OLIMAGE_BOARD: A64-OLinuXino
-    OLIMAGE_RELEASE: focal
-    OLIMAGE_VARIANT: minimal
+  extends: .image
 
-A64:base:focal:
+A64-OLinuXino base focal:
+  stage: base
   extends: .image
   needs:
-    - "A64:minimal:focal"
-  stage: base
-  variables:
-    OLIMAGE_BOARD: A64-OLinuXino
-    OLIMAGE_RELEASE: focal
-    OLIMAGE_VARIANT: base
+    - "A64-OLinuXino minimal focal"
   cache:
     <<: *cache
     policy: pull
 
-A10:minimal:buster:
-  extends: .image
+A10-OLinuXino minimal buster:
   stage: minimal
-  variables:
-    OLIMAGE_BOARD: A10-OLinuXino
-    OLIMAGE_RELEASE: buster
-    OLIMAGE_VARIANT: minimal
+  extends: .image
 
-A10:base:buster:
+A10-OLinuXino base buster:
+  stage: base
   extends: .image
   needs:
-    - "A10:minimal:buster"
-  stage: base
-  variables:
-    OLIMAGE_BOARD: A10-OLinuXino
-    OLIMAGE_RELEASE: buster
-    OLIMAGE_VARIANT: base
+    - "A10-OLinuXino minimal buster"
   cache:
     <<: *cache
     policy: pull
 
-A10:minimal:bionic:
-  extends: .image
+A10-OLinuXino minimal bionic:
   stage: minimal
-  variables:
-    OLIMAGE_BOARD: A10-OLinuXino
-    OLIMAGE_RELEASE: bionic
-    OLIMAGE_VARIANT: minimal
+  extends: .image
 
-A10:base:bionic:
+A10-OLinuXino base bionic:
+  stage: base
   extends: .image
   needs:
-    - "A10:minimal:bionic"
-  stage: base
-  variables:
-    OLIMAGE_BOARD: A10-OLinuXino
-    OLIMAGE_RELEASE: bionic
-    OLIMAGE_VARIANT: base
+    - "A10-OLinuXino minimal bionic"
   cache:
     <<: *cache
     policy: pull
-
