@@ -9,16 +9,26 @@ stages:
   - minimal
   - base
 
-.image:
+.image: &image
   script:
     - JOB_NAME=( $CI_JOB_NAME )
     - BOARD=${JOB_NAME[0]}
     - VARIANT=${JOB_NAME[1]}
     - RELEASE=${JOB_NAME[2]}
+    - echo "DATE=$DATE" >> build.env
     - python3 -m olimage $ARGS -v image $BOARD $RELEASE $VARIANT $BOARD-$RELEASE-$VARIANT-$DATE.img
     - mv -vf output/*/images/$BOARD-$RELEASE-$VARIANT-$DATE.img* /output/
   tags:
     - olimage
+  artifacts:
+    reports:
+      dotenv: build.env
+
+.base: &base
+  <<: *image
+  cache:
+    <<: *cache
+    policy: pull
 
 prepare:
   allow_failure: false
@@ -35,131 +45,101 @@ prepare:
   when: manual
 
 A20-OLinuXino minimal buster:
-  extends: .image
   stage: minimal
+  <<: *image
 
 A20-OLinuXino base buster:
   stage: base
-  extends: .image
+  <<: *base
   needs:
     - "A20-OLinuXino minimal buster"
-  cache:
-    <<: *cache
-    policy: pull
 
 A20-OLinuXino minimal bionic:
   stage: minimal
-  extends: .image
+  <<: *image
 
 A20-OLinuXino base bionic:
   stage: base
-  extends: .image
+  <<: *base
   needs:
     - "A20-OLinuXino minimal bionic"
-  cache:
-    <<: *cache
-    policy: pull
 
 A20-OLinuXino minimal focal:
   stage: minimal
-  extends: .image
+  <<: *image
 
 A20-OLinuXino base focal:
-  extends: .image
   stage: base
+  <<: *base
   needs:
     - "A20-OLinuXino minimal focal"
-  cache:
-    <<: *cache
-    policy: pull
 
 A13-OLinuXino minimal buster:
   stage: minimal
-  extends: .image
+  <<: *image
 
 A13-OLinuXino base buster:
   stage: base
-  extends: .image
+  <<: *base
   needs:
     - "A13-OLinuXino minimal buster"
-  cache:
-    <<: *cache
-    policy: pull
 
 A13-OLinuXino minimal bionic:
   stage: minimal
-  extends: .image
+  <<: *image
 
 A13-OLinuXino base bionic:
   stage: base
-  extends: .image
+  <<: *base
   needs:
     - "A13-OLinuXino minimal bionic"
-  cache:
-    <<: *cache
-    policy: pull
 
 A64-OLinuXino minimal buster:
   stage: minimal
-  extends: .image
+  <<: *image
 
 A64-OLinuXino base buster:
   stage: base
-  extends: .image
+  <<: *base
   needs:
     - "A64-OLinuXino minimal buster"
-  cache:
-    <<: *cache
-    policy: pull
 
 A64-OLinuXino minimal bionic:
   stage: minimal
-  extends: .image
+  <<: *image
 
 A64-OLinuXino base bionic:
   stage: base
-  extends: .image
+  <<: *base
   needs:
     - "A64-OLinuXino minimal bionic"
-  cache:
-    <<: *cache
-    policy: pull
 
 A64-OLinuXino minimal focal:
   stage: minimal
-  extends: .image
+  <<: *image
 
 A64-OLinuXino base focal:
   stage: base
-  extends: .image
+  <<: *base
   needs:
     - "A64-OLinuXino minimal focal"
-  cache:
-    <<: *cache
-    policy: pull
 
 A10-OLinuXino minimal buster:
   stage: minimal
-  extends: .image
+  <<: *image
 
 A10-OLinuXino base buster:
   stage: base
-  extends: .image
+  <<: *base
   needs:
     - "A10-OLinuXino minimal buster"
-  cache:
-    <<: *cache
-    policy: pull
 
 A10-OLinuXino minimal bionic:
   stage: minimal
-  extends: .image
+  <<: *image
 
 A10-OLinuXino base bionic:
   stage: base
-  extends: .image
+  <<: *base
   needs:
     - "A10-OLinuXino minimal bionic"
-  cache:
-    <<: *cache
-    policy: pull
