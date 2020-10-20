@@ -42,6 +42,9 @@ class VariantBase(FileSystemBase):
             # meh broken light-locker in focal
             Utils.shell.chroot('apt-get -y --purge remove light-locker', log_error=False)
 
+            # xfce panel defaults
+            Utils.install('/etc/X11/Xsession.d/99olimex')
+
             # set xfce background
             Utils.shell.run('dpkg-divert --rename --add --divert /usr/share/backgrounds/xfce/xfce-stripes.png.real /usr/share/backgrounds/xfce/xfce-stripes.png')
             Utils.shell.run('dpkg-divert --rename --add --divert /usr/share/backgrounds/xfce/xfce-blue.jpg.real /usr/share/backgrounds/xfce/xfce-blue.jpg')
