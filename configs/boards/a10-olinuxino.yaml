@@ -18,6 +18,8 @@ boards:
       id: 9999
       fdt: 'sun4i-a10-olinuxino-lime.dtb'
       overlays:
+        - 'sun4i-a10-spi0.dtbo'
+        - 'spi0-spiflash.dtbo'
     
   name: 'A10-OLinuXino'
   soc: 'sun4i-a10'
