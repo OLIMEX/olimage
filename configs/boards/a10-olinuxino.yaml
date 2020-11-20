@@ -1,7 +1,7 @@
 boards:
   # Define boards architecture
   arch: 'armhf'
-  default: 'A10-OLinuXino-Lime'
+  default: 'A10-OLinuXino-LIME'
 
   # Define load addresses
   loading:
@@ -14,12 +14,16 @@ boards:
 
   # Define board models
   models:
-    A10-OLinuXino-LIME:
-      id: 9999
-      fdt: 'sun4i-a10-olinuxino-lime.dtb'
+    A10-OLinuXino-LIME-n8GB:
+      id: 8950
+      fdt: 'sun4i-a10-olinuxino-lime-emmc.dtb'
       overlays:
         - 'sun4i-a10-spi0.dtbo'
         - 'spi0-spiflash.dtbo'
-    
+
+    A10-OLinuXino-LIME:
+      id: 4746
+      fdt: 'sun4i-a10-olinuxino-lime.dtb'
+
   name: 'A10-OLinuXino'
   soc: 'sun4i-a10'
