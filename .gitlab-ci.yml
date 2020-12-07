@@ -143,3 +143,7 @@ A10-OLinuXino base bionic:
   <<: *base
   needs:
     - "A10-OLinuXino minimal bionic"
+
+STM32MP1-OLinuXino minimal buster:
+  stage: minimal
+  <<: *image
