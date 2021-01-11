@@ -14,6 +14,13 @@ boards:
 
   # Define board models
   models:
+    A10-OLinuXino-LIME-e16Gs16M:
+      id: 10663
+      fdt: 'sun4i-a10-olinuxino-lime-emmc.dtb'
+      overlays:
+        - 'sun4i-a10-spi0.dtbo'
+        - 'spi0-spiflash.dtbo'
+
     A10-OLinuXino-LIME-n8GB:
       id: 8950
       fdt: 'sun4i-a10-olinuxino-lime-emmc.dtb'
