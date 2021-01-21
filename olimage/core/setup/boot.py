@@ -31,9 +31,7 @@ class SetupBoot(SetupAbstract):
         with Console("Installing /uboot.env"):
             src = env.paths['build'] + "/usr/lib/u-boot-olinuxino/{}/uboot.env".format(board.name.lower())
             dest = env.paths['build'] + "/uboot.env"
-
-            if board.soc != "stm32mp1xx":
-                Utils.shell.run('install -D -v -m {} {} {}'.format(644, src, dest))
+            Utils.shell.run('install -D -v -m {} {} {}'.format(644, src, dest))
 
     @staticmethod
     def _generate_boot_cmd(board: Board) -> None:
