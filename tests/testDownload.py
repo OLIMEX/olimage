@@ -12,7 +12,7 @@ class Archive(unittest.TestCase):
         env.obj_graph = pinject.new_object_graph()
 
         self.path = os.path.dirname(os.path.abspath(__file__)) + "/download"
-        self.url = 'https://github.com/OLIMEX/OLIMEX-sunxi-overlays.git'
+        self.url = 'https://github.com/OLIMEX/olinuxino-overlays.git'
 
         # Create test directory
         if os.path.exists(self.path):
