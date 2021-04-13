@@ -127,9 +127,7 @@ A10-OLinuXino base focal:
 STM32MP1-OLinuXino minimal buster:
   stage: minimal
   <<: *image
-  when: manual
 
 STM32MP1-OLinuXino minimal focal:
   stage: minimal
   <<: *image
-  when: manual
