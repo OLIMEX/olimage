@@ -42,6 +42,7 @@ variants:
       - dialog
       - fake-hwclock
       - gdisk
+      - gpiod
       - i2c-tools
       - ifupdown
       - initramfs-tools
