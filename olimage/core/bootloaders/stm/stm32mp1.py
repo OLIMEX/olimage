@@ -18,6 +18,8 @@ class BootloaderSTM32MP1(BootloaderAbstract):
         return 'stm32mp1xx'
 
     def install(self, output: str):
+        board = env.objects['board']
+
         # map
         lines = Utils.shell.run('kpartx -avs {}'.format(output)).decode('utf-8', 'ignore')
         for line in lines.splitlines():
@@ -28,21 +30,23 @@ class BootloaderSTM32MP1(BootloaderAbstract):
 
         with Console("Writing \'u-boot-spl.stm32\'"):
             # u-boot-spl.stm32 on part1 and part2
+            src = "/usr/lib/u-boot-olinuxino/{}/u-boot-spl.stm32".format(board.name.lower())
             Utils.shell.run(
                 'dd if={} of={} conv=sync,fsync,notrunc'.format(
-                    env.paths['build'] + "/usr/lib/u-boot-olinuxino/stm32mp1-olinuxino/u-boot-spl.stm32",
+                    env.paths['build'] + src,
                     device + "p1"
                 ))
             Utils.shell.run(
                 'dd if={} of={} conv=sync,fsync,notrunc'.format(
-                    env.paths['build'] + "/usr/lib/u-boot-olinuxino/stm32mp1-olinuxino/u-boot-spl.stm32",
+                    env.paths['build'] + src,
                     device + "p2"
                 ))
         with Console("Writing \'u-boot.img\'"):
             # u-boot.img on part3
+            src = "/usr/lib/u-boot-olinuxino/{}/u-boot.img".format(board.name.lower())
             Utils.shell.run(
                 'dd if={} of={} conv=sync,fsync,notrunc'.format(
-                    env.paths['build'] + "/usr/lib/u-boot-olinuxino/stm32mp1-olinuxino/u-boot.img",
+                    env.paths['build'] + src,
                     device + "p3"
                 ))
 

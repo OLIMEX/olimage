@@ -131,3 +131,11 @@ STM32MP1-OLinuXino minimal buster:
 STM32MP1-OLinuXino minimal focal:
   stage: minimal
   <<: *image
+
+STM32MP1-OLinuXino-SOM minimal buster:
+  stage: minimal
+  <<: *image
+
+STM32MP1-OLinuXino-SOM minimal focal:
+  stage: minimal
+  <<: *image
