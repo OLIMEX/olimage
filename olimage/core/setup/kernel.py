@@ -9,6 +9,9 @@ from .base import SetupAbstract
 class SetupKernel(SetupAbstract):
     def setup(self):
 
+        # :)
+        Utils.install('/usr/share/initramfs-tools/hooks/ext4-fsck', mode='755')
+
         with Console("Installing Linux image"):
             Utils.shell.chroot('apt-get install -y {}'.format(' '.join(self.packages)))
 
