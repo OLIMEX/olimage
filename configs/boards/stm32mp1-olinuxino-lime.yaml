@@ -1,7 +1,7 @@
 boards:
   # Define boards architecture
   arch: 'armhf'
-  default: 'STM32MP1xx-OLinuXino'
+  default: 'STM32MP1xx-OLinuXino-LIME'
 
   # Define load addresses
   loading:
@@ -14,9 +14,9 @@ boards:
 
   # Define board models
   models:
-    STM32MP1xx-OLinuXino:
+    STM32MP1xx-OLinuXino-LIME:
       id: 1001
-      fdt: 'stm32mp1xx-olinuxino.dtb'
+      fdt: 'stm32mp1xx-olinuxino-lime.dtb'
 
-  name: 'STM32MP1-OLinuXino'
+  name: 'STM32MP1-OLinuXino-LIME'
   soc: 'stm32mp1xx'

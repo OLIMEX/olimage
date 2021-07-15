@@ -124,11 +124,11 @@ A10-OLinuXino base focal:
   needs:
     - "A10-OLinuXino minimal focal"
 
-STM32MP1-OLinuXino minimal buster:
+STM32MP1-OLinuXino-LIME minimal buster:
   stage: minimal
   <<: *image
 
-STM32MP1-OLinuXino minimal focal:
+STM32MP1-OLinuXino-LIME minimal focal:
   stage: minimal
   <<: *image
 

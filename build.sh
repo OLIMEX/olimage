@@ -29,8 +29,8 @@ bash run.sh -v image A10-OLinuXino focal minimal     A10-OLinuXino-focal-minimal
 bash run.sh -v image A10-OLinuXino focal base        A10-OLinuXino-focal-base-$(date +%Y%m%d-%H%M%S).img
 
 # stm32mp1
-bash run.sh -v image STM32MP1-OLinuXino buster minimal    STM32MP1-OLinuXino-buster-minimal-$(date +%Y%m%d-%H%M%S).img
-bash run.sh -v image STM32MP1-OLinuXino focal minimal     STM32MP1-OLinuXino-focal-minimal-$(date +%Y%m%d-%H%M%S).img
+bash run.sh -v image STM32MP1-OLinuXino-LIME buster minimal   STM32MP1-OLinuXino-buster-minimal-$(date +%Y%m%d-%H%M%S).img
+bash run.sh -v image STM32MP1-OLinuXino-LIME focal minimal    STM32MP1-OLinuXino-focal-minimal-$(date +%Y%m%d-%H%M%S).img
 bash run.sh -v image STM32MP1-OLinuXino-SOM buster minimal    STM32MP1-OLinuXino-SOM-buster-minimal-$(date +%Y%m%d-%H%M%S).img
 bash run.sh -v image STM32MP1-OLinuXino-SOM focal minimal     STM32MP1-OLinuXino-SOM-focal-minimal-$(date +%Y%m%d-%H%M%S).img
 
@@ -60,8 +60,8 @@ ARGS=-r bash run.sh -v image A10-OLinuXino focal minimal     A10-OLinuXino-focal
 ARGS=-r bash run.sh -v image A10-OLinuXino focal base        A10-OLinuXino-focal-base-$(date +%Y%m%d-%H%M%S).img
 
 # stm32mp1
-ARGS=-r bash run.sh -v image STM32MP1-OLinuXino buster minimal    STM32MP1-OLinuXino-buster-minimal-$(date +%Y%m%d-%H%M%S).img
-ARGS=-r bash run.sh -v image STM32MP1-OLinuXino focal minimal     STM32MP1-OLinuXino-focal-minimal-$(date +%Y%m%d-%H%M%S).img
+ARGS=-r bash run.sh -v image STM32MP1-OLinuXino-LIME buster minimal   STM32MP1-OLinuXino-LIME-buster-minimal-$(date +%Y%m%d-%H%M%S).img
+ARGS=-r bash run.sh -v image STM32MP1-OLinuXino-LIME focal minimal    STM32MP1-OLinuXino-LIME-focal-minimal-$(date +%Y%m%d-%H%M%S).img
 
 ARGS=-r bash run.sh -v image STM32MP1-OLinuXino-SOM buster minimal    STM32MP1-OLinuXino-SOM-buster-minimal-$(date +%Y%m%d-%H%M%S).img
 ARGS=-r bash run.sh -v image STM32MP1-OLinuXino-SOM focal minimal     STM32MP1-OLinuXino-SOM-focal-minimal-$(date +%Y%m%d-%H%M%S).img
