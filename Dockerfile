@@ -17,6 +17,11 @@ RUN apt-get update && \
         python3-gdbm \
         python3-pip \
         python3-tk \
+        python3-cerberus \
+        python3-click \
+        python3-jinja2 \
+        python3-yaml \
+        python3-cliapp \
         rsync \
         qemu-user-static \
         qemu-utils \
@@ -26,11 +31,5 @@ RUN apt-get update && \
 
 # Install pip packages
 RUN pip3 install \
-    cerberus \
-    click \
     halo \
-    jinja2 \
-    pinject \
-    pyyaml
-
-RUN pip3 install http://deb.debian.org/debian/pool/main/p/python-cliapp/python-cliapp_1.20180812.1.orig.tar.xz
+    pinject
