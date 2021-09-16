@@ -27,6 +27,13 @@ releases:
     base:
       - chromium
       - mirage
+  bullseye:
+    minimal:
+      - firmware-ralink
+      - firmware-realtek
+    base:
+      - chromium
+      - mirage
 
 variants:
   minimal:

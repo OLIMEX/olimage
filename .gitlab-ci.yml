@@ -44,98 +44,50 @@ prepare:
       dotenv: build.env
   when: manual
 
-A20-OLinuXino minimal buster:
+A20-OLinuXino minimal bullseye:
   stage: minimal
   <<: *image
 
-A20-OLinuXino base buster:
+A20-OLinuXino base bullseye:
   stage: base
   <<: *base
   needs:
-    - "A20-OLinuXino minimal buster"
+    - "A20-OLinuXino minimal bullseye"
 
-A20-OLinuXino minimal focal:
+A13-OLinuXino minimal bullseye:
   stage: minimal
   <<: *image
 
-A20-OLinuXino base focal:
+A13-OLinuXino base bullseye:
   stage: base
   <<: *base
   needs:
-    - "A20-OLinuXino minimal focal"
+    - "A13-OLinuXino minimal bullseye"
 
-A13-OLinuXino minimal buster:
+A64-OLinuXino minimal bullseye:
   stage: minimal
   <<: *image
 
-A13-OLinuXino base buster:
+A64-OLinuXino base bullseye:
   stage: base
   <<: *base
   needs:
-    - "A13-OLinuXino minimal buster"
+    - "A64-OLinuXino minimal bullseye"
 
-A13-OLinuXino minimal focal:
+A10-OLinuXino minimal bullseye:
   stage: minimal
   <<: *image
 
-A13-OLinuXino base focal:
+A10-OLinuXino base bullseye:
   stage: base
   <<: *base
   needs:
-    - "A13-OLinuXino minimal focal"
+    - "A10-OLinuXino minimal bullseye"
 
-A64-OLinuXino minimal buster:
+STM32MP1-OLinuXino-LIME minimal bullseye:
   stage: minimal
   <<: *image
 
-A64-OLinuXino base buster:
-  stage: base
-  <<: *base
-  needs:
-    - "A64-OLinuXino minimal buster"
-
-A64-OLinuXino minimal focal:
-  stage: minimal
-  <<: *image
-
-A64-OLinuXino base focal:
-  stage: base
-  <<: *base
-  needs:
-    - "A64-OLinuXino minimal focal"
-
-A10-OLinuXino minimal buster:
-  stage: minimal
-  <<: *image
-
-A10-OLinuXino base buster:
-  stage: base
-  <<: *base
-  needs:
-    - "A10-OLinuXino minimal buster"
-
-A10-OLinuXino minimal focal:
-  stage: minimal
-  <<: *image
-
-A10-OLinuXino base focal:
-  stage: base
-  <<: *base
-  needs:
-    - "A10-OLinuXino minimal focal"
-
-STM32MP1-OLinuXino-LIME minimal buster:
-  stage: minimal
-  <<: *image
-
-STM32MP1-OLinuXino-LIME minimal focal:
-  stage: minimal
-  <<: *image
-
-STM32MP1-OLinuXino-SOM minimal buster:
-  stage: minimal
-  <<: *image
-
-STM32MP1-OLinuXino-SOM minimal focal:
+STM32MP1-OLinuXino-SOM minimal bullseye:
   stage: minimal
   <<: *image
