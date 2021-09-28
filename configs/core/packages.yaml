@@ -128,7 +128,6 @@ variants:
       - lightdm
       - lightdm-gtk-greeter
       - lxtask
-      - man-db
       - mpv
       - network-manager-gnome
       - network-manager-openvpn-gnome
@@ -147,7 +146,6 @@ variants:
       - pv
       - qrencode
       - rfkill
-      - screen
       - software-properties-common
       - stress
       - sunxi-tools
@@ -155,7 +153,6 @@ variants:
       - system-config-printer
       - system-config-printer-common
       - thunar-volman
-      - tree
       - unattended-upgrades
       - unicode-data
       - unzip
