@@ -43,13 +43,16 @@ variants:
       - fake-hwclock
       - gdisk
       - gpiod
+      - htop
       - i2c-tools
       - ifupdown
       - initramfs-tools
       - lsof
+      - man-db
       - mmc-utils
       - mtd-utils
       - nano
+      - ncdu
       - netcat-openbsd
       - net-tools
       - network-manager
@@ -59,10 +62,13 @@ variants:
       - psmisc
       - resolvconf
       - rsync
+      - screen
       - ssh
       - sudo
       - sysfsutils
       - sysstat
+      - tmux
+      - tree
       - ucf
       - usbutils
       - wget
