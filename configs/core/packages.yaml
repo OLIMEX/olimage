@@ -55,6 +55,7 @@ variants:
       - ifupdown
       - initramfs-tools
       - lsof
+      - memtool
       - man-db
       - mmc-utils
       - mtd-utils
