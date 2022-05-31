@@ -12,5 +12,7 @@ class SetupTimezone(SetupAbstract):
         Utils.install(file)
         Utils.template.install(env.paths['build'] + file, timezone=timezone)
 
+        Utils.shell.chroot('rm -f /etc/localtime')
+
         # Reconfigure
         Utils.shell.chroot('dpkg-reconfigure -f noninteractive tzdata')
