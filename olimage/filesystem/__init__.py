@@ -35,6 +35,12 @@ def verify_options():
 
     env.options['release'] = release
 
+    # Verify any extra files exist in overlays
+    overlay_dir = env.paths['overlay']
+    for file in env.options['extra_file']:
+        if not os.path.isfile(f'{overlay_dir}/{file}'):
+            raise Exception(f"Extra file '{file}' not found in overlays")
+
 
 @click.command(name="filesystem")
 @parameters
