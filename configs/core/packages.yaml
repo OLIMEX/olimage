@@ -126,7 +126,6 @@ variants:
       - hyphen-en-gb
       - ifenslave
       - iotop
-      - iozone3
       - iperf3
       - iputils-arping
       - libgl1-mesa-dri
