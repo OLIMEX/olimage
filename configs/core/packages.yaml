@@ -65,6 +65,7 @@ variants:
       - net-tools
       - network-manager
       - nocache
+      - ntp
       - openssh-server
       - parted
       - psmisc
