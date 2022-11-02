@@ -5,10 +5,3 @@ distributions:
     releases:
       - 'bullseye'
     repository: 'http://httpredir.debian.org/debian'
-
-  ubuntu:
-    components: ['main', 'universe', 'multiverse']
-    recommended: 'focal'
-    releases:
-      - 'focal'
-    repository: 'http://ports.ubuntu.com/'

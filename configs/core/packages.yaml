@@ -6,27 +6,6 @@
 
 # Release specific packages
 releases:
-  bionic:
-    minimal:
-      - linux-firmware
-    base:
-      - adwaita-icon-theme-full
-      - chromium-browser
-      - mirage
-  focal:
-    minimal:
-      - linux-firmware
-    base:
-      - adwaita-icon-theme-full
-      - firefox
-      - eom
-  buster:
-    minimal:
-      - firmware-ralink
-      - firmware-realtek
-    base:
-      - chromium
-      - mirage
   bullseye:
     minimal:
       - firmware-ralink
