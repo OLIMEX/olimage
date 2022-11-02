@@ -11,6 +11,21 @@ class SetupApt(SetupAbstract):
 
     def setup(self, release: str):
 
+        distribution: Distribution = env.objects['distribution']
+        with Console("Adding: \'{}\'".format(distribution.repository)):
+            file = '/etc/apt/sources.list'
+
+            source = env.paths['overlay'] + '/etc/apt/{}.list'.format(str(distribution))
+            destination = env.paths['build'] + file
+
+            # # Install source list
+            Utils.shell.run("install -m 644 {} {}".format(source, destination))
+            Utils.template.install(destination, distribution=distribution, release=release)
+
+        with Console("dist-upgrade"):
+            Utils.shell.chroot('apt-get update -y')
+            Utils.shell.chroot('apt-get dist-upgrade -y')
+
         with Console("Installing packages"):
             Utils.shell.chroot('apt-get install -y {}'.format(' '.join(self.packages)))
 
