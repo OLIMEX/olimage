@@ -97,3 +97,7 @@ STM32MP1-OLinuXino-LIME base bullseye:
 STM32MP1-OLinuXino-SOM minimal bullseye:
   stage: minimal
   <<: *image
+
+STM32MP1-OLinuXino-SOM-BASE minimal bullseye:
+  stage: minimal
+  <<: *image

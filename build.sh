@@ -22,8 +22,9 @@ bash run.sh -v image A10-OLinuXino bullseye minimal    A10-OLinuXino-bullseye-mi
 bash run.sh -v image A10-OLinuXino bullseye base       A10-OLinuXino-bullseye-base-$(date +%Y%m%d-%H%M%S).img
 
 # stm32mp1
-bash run.sh -v image STM32MP1-OLinuXino-LIME bullseye minimal   STM32MP1-OLinuXino-bullseye-minimal-$(date +%Y%m%d-%H%M%S).img
-bash run.sh -v image STM32MP1-OLinuXino-SOM bullseye minimal    STM32MP1-OLinuXino-SOM-bullseye-minimal-$(date +%Y%m%d-%H%M%S).img
+bash run.sh -v image STM32MP1-OLinuXino-LIME bullseye minimal     STM32MP1-OLinuXino-bullseye-minimal-$(date +%Y%m%d-%H%M%S).img
+bash run.sh -v image STM32MP1-OLinuXino-SOM bullseye minimal      STM32MP1-OLinuXino-SOM-bullseye-minimal-$(date +%Y%m%d-%H%M%S).img
+bash run.sh -v image STM32MP1-OLinuXino-SOM-BASE bullseye minimal STM32MP1-OLinuXino-SOM-BASE-bullseye-minimal-$(date +%Y%m%d-%H%M%S).img
 
 # release images
 # a64
@@ -43,7 +44,6 @@ ARGS=-r bash run.sh -v image A10-OLinuXino bullseye minimal    A10-OLinuXino-bul
 ARGS=-r bash run.sh -v image A10-OLinuXino bullseye base       A10-OLinuXino-bullseye-base-$(date +%Y%m%d-%H%M%S).img
 
 # stm32mp1-lime
-ARGS=-r bash run.sh -v image STM32MP1-OLinuXino-LIME bullseye minimal   STM32MP1-OLinuXino-LIME-bullseye-minimal-$(date +%Y%m%d-%H%M%S).img
-
-# stm32mp1-som
-ARGS=-r bash run.sh -v image STM32MP1-OLinuXino-SOM bullseye minimal    STM32MP1-OLinuXino-SOM-bullseye-minimal-$(date +%Y%m%d-%H%M%S).img
+ARGS=-r bash run.sh -v image STM32MP1-OLinuXino-LIME bullseye minimal     STM32MP1-OLinuXino-LIME-bullseye-minimal-$(date +%Y%m%d-%H%M%S).img
+ARGS=-r bash run.sh -v image STM32MP1-OLinuXino-SOM bullseye minimal      STM32MP1-OLinuXino-SOM-bullseye-minimal-$(date +%Y%m%d-%H%M%S).img
+ARGS=-r bash run.sh -v image STM32MP1-OLinuXino-SOM-BASE bullseye minimal STM32MP1-OLinuXino-SOM-BASE-bullseye-minimal-$(date +%Y%m%d-%H%M%S).img
