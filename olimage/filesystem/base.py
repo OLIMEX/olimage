@@ -48,6 +48,11 @@ class FileSystemBase(object):
             if self._release_packages:
                 packages += self._release_packages.get_variant(str(self._variant_packages))
 
+            # Append extra packages from command line option
+            for pkg in env.options['extra_package']:
+                with Console(f'Extra package: {pkg}'):
+                    packages.append(pkg)
+
             # Try 5 times to install packages
             count = 5
             _e = None

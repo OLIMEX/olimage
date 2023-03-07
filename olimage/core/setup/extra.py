@@ -17,3 +17,10 @@ class SetupExtra(SetupAbstract):
         Utils.shell.run('sed -i "s/^#SystemMaxUse=.*/SystemMaxUse=64M/g" {}/etc/systemd/journald.conf'.format(env.paths['build']))
         Utils.shell.run('sed -i "s/^#RuntimeMaxFileSize=.*/RuntimeMaxFileSize=8M/g" {}/etc/systemd/journald.conf'.format(env.paths['build']))
         Utils.shell.run('sed -i "s/^#RuntimeMaxUse=.*/RuntimeMaxUse=16M/g" {}/etc/systemd/journald.conf'.format(env.paths['build']))
+
+        for file in env.options['extra_file']:
+            with Console(f'Extra file: {file}'):
+                Utils.install(file)
+        for cmd in env.options['extra_cmd']:
+            with Console(f'Extra command: {cmd}'):
+                Utils.shell.chroot(cmd)

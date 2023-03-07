@@ -14,7 +14,10 @@ _options = [
     click.option("--keyboard-layout", default="English (UK)", help="Set default system keyboard locale"),
     click.option("--locale", default="en_GB.UTF-8", help="Set default system locale"),
     click.option("--ssh/--no-ssh", default=True, help="Enable/Disable ssh access"),
-    click.option("--timezone", default="Europe/London", help="Set default system timezone")
+    click.option("--timezone", default="Europe/London", help="Set default system timezone"),
+    click.option("--extra-file", multiple=True, default=[], help="Install an extra file from the overlay dir"),
+    click.option("--extra-cmd", multiple=True, default=[], help="Run an extra shell command after files installed"),
+    click.option("--extra-package", multiple=True, default=[], help="Add an extra package to be installed"),
 ]
 
 
