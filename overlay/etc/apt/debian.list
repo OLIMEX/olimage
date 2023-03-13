@@ -2,4 +2,4 @@ deb {{ distribution.repository }} {{ release }} {% for component in distribution
 
 deb {{ distribution.repository }} {{ release }}-updates {% for component in distribution.components %}{{ component }} {% endfor %}
 
-# deb http://security.debian.org/debian-security {{ release }}-security {% for component in distribution.components %}{{ component }} {% endfor %}
+deb http://security.debian.org/debian-security {{ release }}-security {% for component in distribution.components %}{{ component }} {% endfor %}
