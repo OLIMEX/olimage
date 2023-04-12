@@ -75,6 +75,10 @@ boards:
     T2-OLinuXino-LIME-e8Gs16M-IND:
       id: 10481
       fdt: 'sun7i-a20-olinuxino-lime-emmc.dtb'
+      
+    T2-OLinuXino-LIME-e16Gs16M-IND:
+      id: 11444
+      fdt: 'sun7i-a20-olinuxino-lime-emmc.dtb'
 
     # A20-OLinuXino-LIME2
     A20-OLinuXino-LIME2:
@@ -136,6 +140,13 @@ boards:
 
     T2-OLinuXino-LIME2-e8Gs16M-IND:
       id: 9243
+      fdt: 'sun7i-a20-olinuxino-lime2-emmc.dtb'
+      overlays:
+        - 'sun7i-a20-spi0.dtbo'
+        - 'spi0-spiflash.dtbo'
+
+    T2-OLinuXino-LIME2-e16Gs16M-IND:
+      id: 11439
       fdt: 'sun7i-a20-olinuxino-lime2-emmc.dtb'
       overlays:
         - 'sun7i-a20-spi0.dtbo'
