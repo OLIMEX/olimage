@@ -75,7 +75,7 @@ boards:
     T2-OLinuXino-LIME-e8Gs16M-IND:
       id: 10481
       fdt: 'sun7i-a20-olinuxino-lime-emmc.dtb'
-      
+
     T2-OLinuXino-LIME-e16Gs16M-IND:
       id: 11444
       fdt: 'sun7i-a20-olinuxino-lime-emmc.dtb'
@@ -232,6 +232,13 @@ boards:
         - 'sun7i-a20-spi0.dtbo'
         - 'spi0-spiflash.dtbo'
 
+    T2-OLinuXino-MICRO-e16Gs16M-IND:
+      id: 11449
+      fdt: 'sun7i-a20-olinuxino-micro-emmc.dtb'
+      overlays:
+        - 'sun7i-a20-spi0.dtbo'
+        - 'spi0-spiflash.dtbo'
+
     # A20-SOM
     A20-SOM-n4GB:
       id: 4673
@@ -276,6 +283,13 @@ boards:
         - 'sun7i-a20-spi0.dtbo'
         - 'spi0-spiflash.dtbo'
 
+    T2-SOM-e16Gs16M-IND:
+      id: 11454
+      fdt: 'sun7i-a20-olimex-som-evb-emmc.dtb'
+      overlays:
+        - 'sun7i-a20-spi0.dtbo'
+        - 'spi0-spiflash.dtbo'
+
     # A20-SOM204
     A20-SOM204-1G:
       id: 8991
@@ -306,6 +320,22 @@ boards:
 
     T2-SOM204-1Gs16Me8G-MC-I:
       id: 10234
+      fdt: 'sun7i-a20-olimex-som204-evb-emmc.dtb'
+      overlays:
+        - 'sun7i-a20-som204-atecc508a.dtbo'
+        - 'sun7i-a20-spi0.dtbo'
+        - 'spi0-spiflash.dtbo'
+
+    T2-SOM204-1Gs16Me16G-M-I:
+      id: 11458
+      fdt: 'sun7i-a20-olimex-som204-evb-emmc.dtb'
+      overlays:
+        - 'sun7i-a20-som204-atecc508a.dtbo'
+        - 'sun7i-a20-spi0.dtbo'
+        - 'spi0-spiflash.dtbo'
+
+    T2-SOM204-1Gs16Me16G-MC-I:
+      id: 11462
       fdt: 'sun7i-a20-olimex-som204-evb-emmc.dtb'
       overlays:
         - 'sun7i-a20-som204-atecc508a.dtbo'
