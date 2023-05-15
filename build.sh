@@ -45,5 +45,7 @@ ARGS=-r bash run.sh -v image A10-OLinuXino bullseye base       A10-OLinuXino-bul
 
 # stm32mp1-lime
 ARGS=-r bash run.sh -v image STM32MP1-OLinuXino-LIME bullseye minimal     STM32MP1-OLinuXino-LIME-bullseye-minimal-$(date +%Y%m%d-%H%M%S).img
+ARGS=-r bash run.sh -v image STM32MP1-OLinuXino-LIME bullseye base        STM32MP1-OLinuXino-LIME-bullseye-base-$(date +%Y%m%d-%H%M%S).img
 ARGS=-r bash run.sh -v image STM32MP1-OLinuXino-SOM bullseye minimal      STM32MP1-OLinuXino-SOM-bullseye-minimal-$(date +%Y%m%d-%H%M%S).img
 ARGS=-r bash run.sh -v image STM32MP1-OLinuXino-SOM-BASE bullseye minimal STM32MP1-OLinuXino-SOM-BASE-bullseye-minimal-$(date +%Y%m%d-%H%M%S).img
+ARGS=-r bash run.sh -v image STM32MP1-OLinuXino-SOM-BASE bullseye base    STM32MP1-OLinuXino-SOM-BASE-bullseye-base-$(date +%Y%m%d-%H%M%S).img
