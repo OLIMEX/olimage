@@ -82,7 +82,7 @@ def prepare(func):
 
             if _index:
                 file = fs.build_dir + '.tar.gz'
-                file = file.replace(fs.variant, variants[_index -1])
+                file = file.replace(fs.variant + '.tar.gz', variants[_index -1] + '.tar.gz')
 
         if file:
             with Console("Extracting archive: {}".format(os.path.basename(file))):

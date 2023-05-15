@@ -25,6 +25,7 @@ bash run.sh -v image A10-OLinuXino bullseye base       A10-OLinuXino-bullseye-ba
 bash run.sh -v image STM32MP1-OLinuXino-LIME bullseye minimal     STM32MP1-OLinuXino-bullseye-minimal-$(date +%Y%m%d-%H%M%S).img
 bash run.sh -v image STM32MP1-OLinuXino-SOM bullseye minimal      STM32MP1-OLinuXino-SOM-bullseye-minimal-$(date +%Y%m%d-%H%M%S).img
 bash run.sh -v image STM32MP1-OLinuXino-SOM-BASE bullseye minimal STM32MP1-OLinuXino-SOM-BASE-bullseye-minimal-$(date +%Y%m%d-%H%M%S).img
+bash run.sh -v image STM32MP1-OLinuXino-SOM-BASE bullseye base    STM32MP1-OLinuXino-SOM-BASE-bullseye-base-$(date +%Y%m%d-%H%M%S).img
 
 # release images
 # a64
