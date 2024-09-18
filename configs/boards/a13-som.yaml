@@ -1,7 +1,7 @@
 boards:
   # Define boards architecture
   arch: 'armhf'
-  default: 'A13-OLinuXino'
+  default: 'A13-SOM-512'
 
   # Define load addresses
   loading:
@@ -14,11 +14,13 @@ boards:
 
   # Define board models
   models:
-    A13-OLinuXino:
-      id: 4432
-      fdt: 'sun5i-a13-olinuxino.dtb'
-      overlays:
-        - 'sun5i-a13-spi2.dbo'
+    A13-SOM-256:
+      id: 4787
+      fdt: 'sun5i-a13-som-256.dtb'
 
-  name: 'A13-OLinuXino'
+    A13-SOM-512:
+      id: 4788
+      fdt: 'sun5i-a13-som-512.dtb'
+
+  name: 'A13-SOM'
   soc: 'sun5i-a13'

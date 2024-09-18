@@ -15,6 +15,10 @@ class BootloaderA10(BootloaderAbstract):
         """
         return 'sun4i-a10'
 
+    @staticmethod
+    def compatible_name() -> str:
+        pass
+
     def install(self, output: str):
         with Console("Writing \'u-boot-sunxi-with-spl.bin\'"):
             Utils.shell.run(

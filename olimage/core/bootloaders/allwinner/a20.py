@@ -15,6 +15,10 @@ class BootloaderA20(BootloaderAbstract):
         """
         return 'sun7i-a20'
 
+    @staticmethod
+    def compatible_name() -> str:
+        pass
+
     def install(self, output: str):
         with Console("Writing \'u-boot-sunxi-with-spl.bin\'"):
             Utils.shell.run(

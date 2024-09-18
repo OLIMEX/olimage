@@ -5,7 +5,7 @@ from olimage.core.utils import Utils
 from olimage.core.io import Console
 
 
-class BootloaderA64(BootloaderAbstract):
+class BootloaderA13SOM(BootloaderAbstract):
     @staticmethod
     def compatible() -> str:
         """
@@ -13,16 +13,16 @@ class BootloaderA64(BootloaderAbstract):
 
         :return: Supported SoC.
         """
-        return 'sun50i-a64'
+        return 'sun5i-a13'
 
     @staticmethod
     def compatible_name() -> str:
-        pass
+        return 'A13-SOM'
 
     def install(self, output: str):
         with Console("Writing \'u-boot-sunxi-with-spl.bin\'"):
             Utils.shell.run(
                 'dd if={} of={} bs=1k seek=8 conv=sync,fsync,notrunc'.format(
-                    env.paths['build'] + "/usr/lib/u-boot-olinuxino/a64-olinuxino/u-boot-sunxi-with-spl.bin",
+                    env.paths['build'] + "/usr/lib/u-boot-olinuxino/a13-som/u-boot-sunxi-with-spl.bin",
                     output
                 ))

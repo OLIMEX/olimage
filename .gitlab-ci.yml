@@ -64,6 +64,16 @@ A13-OLinuXino base bullseye:
   needs:
     - "A13-OLinuXino minimal bullseye"
 
+A13-SOM minimal bullseye:
+  stage: minimal
+  <<: *image
+
+A13-SOM base bullseye:
+  stage: base
+  <<: *base
+  needs:
+    - "A13-SOM minimal bullseye"
+
 A64-OLinuXino minimal bullseye:
   stage: minimal
   <<: *image

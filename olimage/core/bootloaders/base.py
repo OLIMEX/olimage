@@ -10,6 +10,11 @@ class BootloaderAbstract(metaclass=abc.ABCMeta):
     def compatible() -> str:
         pass
 
+    @staticmethod
+    @abc.abstractmethod
+    def compatible_name() -> str:
+        pass
+
     @abc.abstractmethod
     def install(self, output: str) -> None:
         pass

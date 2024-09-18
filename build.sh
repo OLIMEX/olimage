@@ -17,6 +17,9 @@ bash run.sh -v image A20-OLinuXino bullseye base       A20-OLinuXino-bullseye-ba
 bash run.sh -v image A13-OLinuXino bullseye minimal    A13-OLinuXino-bullseye-minimal-$(date +%Y%m%d-%H%M%S).img
 bash run.sh -v image A13-OLinuXino bullseye base       A13-OLinuXino-bullseye-base-$(date +%Y%m%d-%H%M%S).img
 
+bash run.sh -v image A13-SOM bullseye minimal          A13-SOM-bullseye-minimal-$(date +%Y%m%d-%H%M%S).img
+bash run.sh -v image A13-SOM bullseye base             A13-SOM-bullseye-base-$(date +%Y%m%d-%H%M%S).img
+
 # a10
 bash run.sh -v image A10-OLinuXino bullseye minimal    A10-OLinuXino-bullseye-minimal-$(date +%Y%m%d-%H%M%S).img
 bash run.sh -v image A10-OLinuXino bullseye base       A10-OLinuXino-bullseye-base-$(date +%Y%m%d-%H%M%S).img
@@ -39,6 +42,9 @@ ARGS=-r bash run.sh -v image A20-OLinuXino bullseye base       A20-OLinuXino-bul
 # a13
 ARGS=-r bash run.sh -v image A13-OLinuXino bullseye minimal    A13-OLinuXino-bullseye-minimal-$(date +%Y%m%d-%H%M%S).img
 ARGS=-r bash run.sh -v image A13-OLinuXino bullseye base       A13-OLinuXino-bullseye-base-$(date +%Y%m%d-%H%M%S).img
+
+ARGS=-r bash run.sh -v image A13-SOM bullseye minimal          A13-SOM-bullseye-minimal-$(date +%Y%m%d-%H%M%S).img
+ARGS=-r bash run.sh -v image A13-SOM bullseye base             A13-SOM-bullseye-base-$(date +%Y%m%d-%H%M%S).img
 
 # a10
 ARGS=-r bash run.sh -v image A10-OLinuXino bullseye minimal    A10-OLinuXino-bullseye-minimal-$(date +%Y%m%d-%H%M%S).img

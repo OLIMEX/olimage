@@ -24,9 +24,16 @@ class Bootloader(object):
         # Get bootloader
         self._bootloader = None
         for bootloader in bootloaders:
-            if board.soc == bootloader.compatible():
+            if board.name == bootloader.compatible_name():
                 self._bootloader = bootloader()
                 break
+
+        if not self._bootloader:
+            for bootloader in bootloaders:
+                if board.soc == bootloader.compatible():
+                    self._bootloader = bootloader()
+                    break
+
 
         if not self._bootloader:
             raise BootloaderException("There is no matching bootloader for the SoC \'{}\'!".format(board.soc))

@@ -15,6 +15,10 @@ class BootloaderS3(BootloaderAbstract):
         """
         return 'sun8i-s3'
 
+    @staticmethod
+    def compatible_name() -> str:
+        pass
+
     def install(self, output: str):
         with Console("Writing \'u-boot-sunxi-with-spl.bin\'"):
             Utils.shell.run(

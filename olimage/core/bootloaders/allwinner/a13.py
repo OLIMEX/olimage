@@ -15,6 +15,10 @@ class BootloaderA13(BootloaderAbstract):
         """
         return 'sun5i-a13'
 
+    @staticmethod
+    def compatible_name() -> str:
+        pass
+
     def install(self, output: str):
         with Console("Writing \'u-boot-sunxi-with-spl.bin\'"):
             Utils.shell.run(

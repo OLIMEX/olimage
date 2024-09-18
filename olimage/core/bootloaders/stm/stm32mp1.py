@@ -17,6 +17,10 @@ class BootloaderSTM32MP1(BootloaderAbstract):
         """
         return 'stm32mp1xx'
 
+    @staticmethod
+    def compatible_name() -> str:
+        pass
+
     def install(self, output: str):
         board = env.objects['board']
 
