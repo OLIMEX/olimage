@@ -22,6 +22,7 @@ services:
       blacklist:
         - sun4i_gpadc_iio
         - sun4i_gpadc
+        - etnaviv
       enable:
         - g_serial
         - sun4i_ts
