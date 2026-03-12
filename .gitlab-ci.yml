@@ -44,76 +44,76 @@ prepare:
       dotenv: build.env
   when: manual
 
-A20-OLinuXino minimal bullseye:
+A20-OLinuXino minimal bookworm:
   stage: minimal
   <<: *image
 
-A20-OLinuXino base bullseye:
+A20-OLinuXino base bookworm:
   stage: base
   <<: *base
   needs:
-    - "A20-OLinuXino minimal bullseye"
+    - "A20-OLinuXino minimal bookworm"
 
-A13-OLinuXino minimal bullseye:
+A13-OLinuXino minimal bookworm:
   stage: minimal
   <<: *image
 
-A13-OLinuXino base bullseye:
+A13-OLinuXino base bookworm:
   stage: base
   <<: *base
   needs:
-    - "A13-OLinuXino minimal bullseye"
+    - "A13-OLinuXino minimal bookworm"
 
-A13-SOM minimal bullseye:
+A13-SOM minimal bookworm:
   stage: minimal
   <<: *image
 
-A13-SOM base bullseye:
+A13-SOM base bookworm:
   stage: base
   <<: *base
   needs:
-    - "A13-SOM minimal bullseye"
+    - "A13-SOM minimal bookworm"
 
-A64-OLinuXino minimal bullseye:
+A64-OLinuXino minimal bookworm:
   stage: minimal
   <<: *image
 
-A64-OLinuXino base bullseye:
+A64-OLinuXino base bookworm:
   stage: base
   <<: *base
   needs:
-    - "A64-OLinuXino minimal bullseye"
+    - "A64-OLinuXino minimal bookworm"
 
-A10-OLinuXino minimal bullseye:
+A10-OLinuXino minimal bookworm:
   stage: minimal
   <<: *image
 
-A10-OLinuXino base bullseye:
+A10-OLinuXino base bookworm:
   stage: base
   <<: *base
   needs:
-    - "A10-OLinuXino minimal bullseye"
+    - "A10-OLinuXino minimal bookworm"
 
-STM32MP1-OLinuXino-LIME minimal bullseye:
+STM32MP1-OLinuXino-LIME minimal bookworm:
   stage: minimal
   <<: *image
 
-STM32MP1-OLinuXino-LIME base bullseye:
+STM32MP1-OLinuXino-LIME base bookworm:
   stage: base
   <<: *base
   needs:
-    - "STM32MP1-OLinuXino-LIME minimal bullseye"
+    - "STM32MP1-OLinuXino-LIME minimal bookworm"
 
-STM32MP1-OLinuXino-SOM minimal bullseye:
+STM32MP1-OLinuXino-SOM minimal bookworm:
   stage: minimal
   <<: *image
 
-STM32MP1-OLinuXino-SOM-BASE minimal bullseye:
+STM32MP1-OLinuXino-SOM-BASE minimal bookworm:
   stage: minimal
   <<: *image
 
-STM32MP1-OLinuXino-SOM-BASE base bullseye:
+STM32MP1-OLinuXino-SOM-BASE base bookworm:
   stage: base
   <<: *base
   needs:
-    - "STM32MP1-OLinuXino-SOM-BASE minimal bullseye"
+    - "STM32MP1-OLinuXino-SOM-BASE minimal bookworm"

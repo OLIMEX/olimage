@@ -6,7 +6,7 @@
 
 # Release specific packages
 releases:
-  bullseye:
+  bookworm:
     minimal:
       - firmware-ralink
       - firmware-realtek
@@ -22,7 +22,6 @@ variants:
       - bc
       - can-utils
       - cpufrequtils
-      - crda
       - debconf-utils
       - device-tree-compiler
       - dialog
@@ -93,7 +92,6 @@ variants:
       - geany
       - git
       - gnome-keyring
-      - gnome-orca
       - gnupg2
       - gtk2-engines
       - gtk2-engines-murrine

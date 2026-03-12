@@ -1,7 +1,7 @@
 distributions:
   debian:
-    components: ['main', 'contrib', 'non-free']
-    recommended: 'bullseye'
+    components: ['main', 'contrib', 'non-free', 'non-free-firmware']
+    recommended: 'bookworm'
     releases:
-      - 'bullseye'
+      - 'bookworm'
     repository: 'http://httpredir.debian.org/debian'
