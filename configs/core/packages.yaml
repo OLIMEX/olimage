@@ -1,8 +1,9 @@
 .olimex: &olimex
+  - olinuxino-bluetooth-firmware
   - olinuxino-overlays
+  - olinuxino-tools
   - u-boot-olinuxino
   - u-boot-tools-olinuxino
-  - olinuxino-tools
 
 # Release specific packages
 releases:
