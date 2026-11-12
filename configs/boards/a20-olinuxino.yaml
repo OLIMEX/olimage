@@ -290,6 +290,11 @@ boards:
         - 'sun7i-a20-spi0.dtbo'
         - 'spi0-spiflash.dtbo'
 
+    # A20-SOM-MINI
+    A20-SOM-MINI:
+      id: 12936
+      fdt: 'sun7i-a20-olimex-som-mini.dtb'
+
     # A20-SOM204
     A20-SOM204-1G:
       id: 8991
